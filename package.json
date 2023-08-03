@@ -23,6 +23,8 @@
     "eject": "react-scripts eject",
     "lint": "eslint src/**/*.{js,jsx,ts,tsx,json}",
     "lint:fix": "eslint --fix src/**/*.{js,jsx,ts,tsx,json}",
+    "style": "stylelint src/**/*.{css,scss}",
+    "style:fix": "stylelint --fix src/**/*.{css,scss}",
     "format": "prettier --write src/**/*.{js,jsx,ts,tsx,css,scss,md,json} --config ./.prettierrc"
   },
   "browserslist": {
@@ -51,6 +53,9 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.33.1",
     "prettier": "^3.0.0",
-    "sass": "^1.64.2"
+    "sass": "^1.64.2",
+    "stylelint": "^15.10.2",
+    "stylelint-config-recess-order": "^4.3.0",
+    "stylelint-config-standard-scss": "^10.0.0"
   }
 }
