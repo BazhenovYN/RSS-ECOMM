@@ -1,7 +1,7 @@
-import './App.scss';
+import styles from './App.module.scss';
 
 function App() {
-  return <div className="App">RSS eCommerce Application</div>;
+  return <div className={styles.App}>RSS eCommerce Application</div>;
 }
 
 export default App;

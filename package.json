@@ -10,6 +10,7 @@
     "@types/node": "^16.18.39",
     "@types/react": "^18.2.18",
     "@types/react-dom": "^18.2.7",
+    "classnames": "^2.3.2",
     "normalize.css": "^8.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -23,6 +24,8 @@
     "eject": "react-scripts eject",
     "lint": "eslint src/**/*.{js,jsx,ts,tsx,json}",
     "lint:fix": "eslint --fix src/**/*.{js,jsx,ts,tsx,json}",
+    "style": "stylelint src/**/*.{css,scss}",
+    "style:fix": "stylelint --fix src/**/*.{css,scss}",
     "format": "prettier --write src/**/*.{js,jsx,ts,tsx,css,scss,md,json} --config ./.prettierrc",
     "prepare": "husky install"
   },
@@ -53,6 +56,9 @@
     "eslint-plugin-react": "^7.33.1",
     "prettier": "^3.0.0",
     "sass": "^1.64.2",
+    "stylelint": "^15.10.2",
+    "stylelint-config-recess-order": "^4.3.0",
+    "stylelint-config-standard-scss": "^10.0.0",
     "husky": "^8.0.0"
   }
 }
