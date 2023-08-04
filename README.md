@@ -39,9 +39,17 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
+### `npm run prepare`
+
+Run `husky install`, needed to add a command to a hook or create a new one.
+
 ## Husky
 
 This project initialized Husky to manage Git hooks, automating tasks such as linting checks and code formatting during the commit process.
+
+### Create a hook
+
+To add a command to a hook or create a new one, use `husky add <file> [cmd]` (don't forget to run `husky install` before). More info [here](https://typicode.github.io/husky/getting-started.html#create-a-hook)
 
 ## Learn More
 
