@@ -1,6 +1,45 @@
 # RSS eCommerce Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Table of contents
+- [General](#general)
+- [Technologies](#technologies)
+- [Code of conduct](#code-of-conduct)
+- [Installation](#installation)
+- [Available Scripts](#available-scripts)
+- [Authors](#authors)
+- [Gratitude](#gratitude)
+- [Learn More](#learn-more)
+
+## General
+This app is a learning project [eCommerce Application](https://github.com/rolling-scopes-school/tasks/tree/master/tasks/eCommerce-Application) of the "JavaScript/Front-End 2023Q1" course run by Rolling Scopes School. 
+
+## Technologies
+Project is created with:
+* [Create React App](https://create-react-app.dev/)
+* [TypeScript](https://www.typescriptlang.org/)
+* [SASS](https://sass-lang.com/)
+* [Commercetools](https://commercetools.com/)
+
+## Code of conduct
+### Branch: 
+Template: `type/<issue key>-<issue-summary-in-kebab-case>`
+
+Types: `feat`, `fix`
+
+Example: `feat/JIRA-1-new-cool-feature`
+
+### Commit: 
+Template: `<type>: <description> (<issue key>)`
+
+Types: `feat`, `fix`, `refactor`, `docs`, `style`
+
+Example: `feat: add new cool feature (JIRA-1)`
+
+## Installation
+1. Fork this repository
+2. Clone your newly created repository to local computer
+3. Install all dependencies use `npm install`
+
 
 ## Available Scripts
 
@@ -39,8 +78,20 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
+## Authors
+* Iurii Bazhenov
+* Vitaly Fatkullin
+* Taras Ustiugov
+
+## Gratitude
+We would like to express our sincerest gratitude to the [RS School](https://rs.school/) for the incredible training program and courses you have provided us. We cannot emphasize enough how valuable this experience has been for our personal and professional growth.The dedication and expertise of the instructors have exceeded our expectations, and we are truly grateful for their passion and commitment to delivering high-quality education. The skills and knowledge we have acquired during this program will undoubtedly shape our future careers.
+
 ## Learn More
+* [RS School](https://rs.school/)
+* [Conventional Commits](https://www.conventionalcommits.org/)
+* [React documentation](https://react.dev/)
+* [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started)
+* [CommerceTools documentation](https://docs.commercetools.com/docs/)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## License
+[MIT](./LICENSE)
