@@ -26,7 +26,8 @@
     "lint:fix": "eslint --fix src/**/*.{js,jsx,ts,tsx,json}",
     "style": "stylelint src/**/*.{css,scss}",
     "style:fix": "stylelint --fix src/**/*.{css,scss}",
-    "format": "prettier --write src/**/*.{js,jsx,ts,tsx,css,scss,md,json} --config ./.prettierrc"
+    "format": "prettier --write src/**/*.{js,jsx,ts,tsx,css,scss,md,json} --config ./.prettierrc",
+    "prepare": "husky install"
   },
   "browserslist": {
     "production": [
@@ -57,6 +58,7 @@
     "sass": "^1.64.2",
     "stylelint": "^15.10.2",
     "stylelint-config-recess-order": "^4.3.0",
-    "stylelint-config-standard-scss": "^10.0.0"
+    "stylelint-config-standard-scss": "^10.0.0",
+    "husky": "^8.0.0"
   }
 }
