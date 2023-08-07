@@ -45,6 +45,8 @@ Run `husky install`, needed to add a command to a hook or create a new one.
 
 ## Husky
 
+**Note: pre-commit check run automatically during `git commit` command**
+
 This project initialized Husky to manage Git hooks, automating tasks such as linting checks and code formatting during the commit process.
 
 ### Create a hook
