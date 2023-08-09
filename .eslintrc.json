@@ -45,6 +45,6 @@
     "no-unreachable": "error",
     "react/react-in-jsx-scope": ["off"],
     "react/jsx-uses-react": ["off"],
-    "react/jsx-props-no-spreading": ["warn"]
+    "react/jsx-props-no-spreading": ["off"]
   }
 }
