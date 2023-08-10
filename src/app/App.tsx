@@ -1,6 +1,5 @@
 import { PRIMARY_COLOR, SECONDARY_COLOR } from 'constants/const';
 import { createTheme, ThemeProvider } from '@mui/material';
-import LoginPage from 'pages/LoginPage';
 import styles from './App.module.scss';
 
 const theme = createTheme({
@@ -17,9 +16,7 @@ const theme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <div className={styles.App}>
-        <LoginPage />
-      </div>
+      <div className={styles.App}>RSS eCommerce Application</div>
     </ThemeProvider>
   );
 }
