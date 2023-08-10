@@ -1,7 +1,13 @@
-import { ClientBuilder, type AuthMiddlewareOptions, type HttpMiddlewareOptions } from '@commercetools/sdk-client-v2';
+import {
+  ClientBuilder,
+  type AuthMiddlewareOptions,
+  type HttpMiddlewareOptions,
+  Client,
+} from '@commercetools/sdk-client-v2';
+import { ApiRoot, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import getEnvironmentVariable from '../../utils/getEnvironmentVariable';
 
-const projectKey: string = getEnvironmentVariable('REACT_APP_PROJECT_KEY');
+export const projectKey: string = getEnvironmentVariable('REACT_APP_PROJECT_KEY');
 const scopes: string[] = [getEnvironmentVariable('REACT_APP_SCOPE')];
 const clientId: string = getEnvironmentVariable('REACT_APP_CLIENT_ID');
 const clientSecret: string = getEnvironmentVariable('REACT_APP_SECRET');
@@ -24,8 +30,12 @@ const httpMiddlewareOptions: HttpMiddlewareOptions = {
   fetch,
 };
 
-export default new ClientBuilder()
+const client: Client = new ClientBuilder()
   .withClientCredentialsFlow(authMiddlewareOptions)
   .withHttpMiddleware(httpMiddlewareOptions)
   .withLoggerMiddleware()
   .build();
+
+export const getApiRoot = (): ApiRoot => {
+  return createApiBuilderFromCtpClient(client);
+};
