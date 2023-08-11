@@ -3,12 +3,14 @@ import {
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
   Client,
+  PasswordAuthMiddlewareOptions,
+  TokenStore,
 } from '@commercetools/sdk-client-v2';
 import { ApiRoot, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import getEnvironmentVariable from '../../utils/getEnvironmentVariable';
 
 export const projectKey: string = getEnvironmentVariable('REACT_APP_PROJECT_KEY');
-const scopes: string[] = [getEnvironmentVariable('REACT_APP_SCOPE')];
+const scopes: string[] = [getEnvironmentVariable('REACT_APP_SCOPES')];
 const clientId: string = getEnvironmentVariable('REACT_APP_CLIENT_ID');
 const clientSecret: string = getEnvironmentVariable('REACT_APP_SECRET');
 const authURL: string = getEnvironmentVariable('REACT_APP_AUTH_URL');
@@ -22,12 +24,10 @@ const authMiddlewareOptions: AuthMiddlewareOptions = {
     clientSecret,
   },
   scopes,
-  fetch,
 };
 
 const httpMiddlewareOptions: HttpMiddlewareOptions = {
   host: apiURL,
-  fetch,
 };
 
 const client: Client = new ClientBuilder()
@@ -38,4 +38,37 @@ const client: Client = new ClientBuilder()
 
 export const getApiRoot = (): ApiRoot => {
   return createApiBuilderFromCtpClient(client);
+};
+
+const customerClientBuilder = (email: string, password: string): Client => {
+  const passwordAuthMiddlewareOptions: PasswordAuthMiddlewareOptions = {
+    ...authMiddlewareOptions,
+    credentials: {
+      clientId,
+      clientSecret,
+      user: {
+        username: email,
+        password,
+      },
+    },
+    tokenCache: {
+      get: (): TokenStore => {
+        const tokenStore: string | null = localStorage.getItem('token');
+        return tokenStore ? JSON.parse(tokenStore) : {};
+      },
+      set: (tokenStore: TokenStore): void => {
+        localStorage.setItem('token', JSON.stringify(tokenStore));
+      },
+    },
+  };
+
+  return new ClientBuilder()
+    .withPasswordFlow(passwordAuthMiddlewareOptions)
+    .withHttpMiddleware(httpMiddlewareOptions)
+    .build();
+};
+
+export const getCustomerApiRoot = (email: string, password: string): ApiRoot => {
+  const customerClient: Client = customerClientBuilder(email, password);
+  return createApiBuilderFromCtpClient(customerClient);
 };
