@@ -1,7 +1,7 @@
+import { emailValidationSchema, passwordValidationSchema } from 'constants/validationSchemes';
 import { useForm } from 'react-hook-form';
 import { Box, Button, Stack, TextField } from '@mui/material';
 import PasswordField from 'components/PasswordField';
-import { emailValidationSchema, passwordValidationSchema } from 'utils/inputValidations';
 
 interface IFormValues {
   email: string;

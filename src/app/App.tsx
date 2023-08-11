@@ -1,14 +1,14 @@
-import { PRIMARY_COLOR, SECONDARY_COLOR } from 'constants/const';
+import COLORS from 'constants/colors';
 import { createTheme, ThemeProvider } from '@mui/material';
 import styles from './App.module.scss';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: PRIMARY_COLOR,
+      main: COLORS.PRIMARY_COLOR,
     },
     secondary: {
-      main: SECONDARY_COLOR,
+      main: COLORS.SECONDARY_COLOR,
     },
   },
 });
