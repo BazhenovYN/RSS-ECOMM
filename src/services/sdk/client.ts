@@ -30,14 +30,14 @@ const httpMiddlewareOptions: HttpMiddlewareOptions = {
   host: apiURL,
 };
 
-const client: Client = new ClientBuilder()
+const appClient: Client = new ClientBuilder()
   .withClientCredentialsFlow(authMiddlewareOptions)
   .withHttpMiddleware(httpMiddlewareOptions)
   .withLoggerMiddleware()
   .build();
 
-export const getApiRoot = (): ApiRoot => {
-  return createApiBuilderFromCtpClient(client);
+export const getAppApiRoot = (): ApiRoot => {
+  return createApiBuilderFromCtpClient(appClient);
 };
 
 const customerClientBuilder = (email: string, password: string): Client => {
@@ -53,11 +53,11 @@ const customerClientBuilder = (email: string, password: string): Client => {
     },
     tokenCache: {
       get: (): TokenStore => {
-        const tokenStore: string | null = localStorage.getItem('token');
+        const tokenStore: string | null = localStorage.getItem('tokenStore');
         return tokenStore ? JSON.parse(tokenStore) : {};
       },
       set: (tokenStore: TokenStore): void => {
-        localStorage.setItem('token', JSON.stringify(tokenStore));
+        localStorage.setItem('tokenStore', JSON.stringify(tokenStore));
       },
     },
   };
