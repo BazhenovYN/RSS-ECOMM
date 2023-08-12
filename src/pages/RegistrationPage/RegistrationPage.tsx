@@ -20,7 +20,7 @@ function RegistrationPage() {
           Create account
         </Typography>
         <RegistrationForm />
-        <Typography variant="body2">Already have an account? Login now!</Typography>
+        <Typography variant="body2">Already have an account? Login now</Typography>
       </Box>
     </Container>
   );

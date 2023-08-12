@@ -1,7 +1,9 @@
-import { useForm } from 'react-hook-form';
-import { Box, Button, Grid, TextField } from '@mui/material';
+import validationSchemes from 'constants/validationSchemes';
+import { FormProvider, useForm } from 'react-hook-form';
+import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/material';
 import PasswordField from 'components/PasswordField';
-import { emailValidationSchema, passwordValidationSchema } from 'utils/inputValidations';
+import AddressFields from 'components/AddressFields/AddressFields';
+import DateOfBirthField from 'components/DateOfBirthField';
 
 interface IFormValues {
   email: string;
@@ -9,23 +11,35 @@ interface IFormValues {
   firstName: string;
   lastName: string;
   dateOfBirth: string;
-  street: string;
-  city: string;
-  postalCode: string;
-  country: string;
+  shippingAddress: {
+    street: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    isDefault: boolean;
+  };
+  billingAddress: {
+    street: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    isDefault: boolean;
+  };
 }
 
 const defaultValues = {
   email: '',
   password: '',
+  firstName: '',
 };
 
 function RegistrationForm() {
+  const metods = useForm<IFormValues>({ defaultValues });
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IFormValues>({ defaultValues });
+  } = metods;
 
   const onSubmit = (data: IFormValues) => {
     // eslint-disable-next-line no-console
@@ -33,48 +47,58 @@ function RegistrationForm() {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off" sx={{ width: 1 }}>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <TextField name="firstName" fullWidth id="firstName" label="First Name" />
+    <FormProvider {...metods}>
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off" sx={{ width: 1 }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="First Name"
+              {...register('firstName', validationSchemes.firstName)}
+              error={!!errors.firstName}
+              helperText={errors.firstName?.message}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Last Name"
+              {...register('lastName', validationSchemes.lastName)}
+              error={!!errors.lastName}
+              helperText={errors.lastName?.message}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <DateOfBirthField label="Date of birth" />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Email"
+              type="email"
+              fullWidth
+              {...register('email', validationSchemes.email)}
+              error={!!errors.email}
+              helperText={errors.email?.message}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <PasswordField
+              {...register('password', validationSchemes.password)}
+              isError={!!errors.password}
+              errorMessage={errors.password?.message}
+            />
+          </Grid>
+          <AddressFields label="Shipping address" addressType="shippingAddress" />
+          <AddressFields label="Billing address" addressType="billingAddress" />
+          <Grid item xs={12}>
+            <FormControlLabel control={<Checkbox color="primary" />} label="Billing address matches shipping address" />
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField name="lastName" fullWidth id="lastName" label="Last Name" />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            label="Email"
-            type="email"
-            fullWidth
-            {...register('email', emailValidationSchema)}
-            error={!!errors.email}
-            helperText={errors.email?.message}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <PasswordField
-            {...register('password', passwordValidationSchema)}
-            isError={!!errors.password}
-            errorMessage={errors.password?.message}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField name="country" fullWidth id="country" label="Country" />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField name="postalCode" fullWidth id="postalCode" label="Postal code" />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField name="city" fullWidth id="city" label="City" />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField name="street" fullWidth id="street" label="Street" />
-        </Grid>
-      </Grid>
-      <Button fullWidth type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
-        Login
-      </Button>
-    </Box>
+        <Button fullWidth type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
+          Sign up
+        </Button>
+      </Box>
+    </FormProvider>
   );
 }
 

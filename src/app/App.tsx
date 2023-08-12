@@ -1,4 +1,6 @@
 import { PRIMARY_COLOR, SECONDARY_COLOR } from 'constants/const';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { createTheme, ThemeProvider } from '@mui/material';
 import RegistrationPage from 'pages/RegistrationPage';
 
@@ -16,7 +18,9 @@ const theme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <RegistrationPage />
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <RegistrationPage />
+      </LocalizationProvider>
     </ThemeProvider>
   );
 }
