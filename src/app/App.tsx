@@ -1,10 +1,10 @@
 import { useRoutes } from 'react-router-dom';
-import Home from 'components/Home';
-import Shop from 'components/Shop';
-import Contacts from 'components/Contacts';
-import AboutUs from 'components/AboutUs';
-import Blog from 'components/Blog';
-import NotFound from 'components/NotFound';
+import Home from 'pages/tempPages/Home';
+import Shop from 'pages/tempPages/Shop';
+import Contacts from 'pages/tempPages/Contacts';
+import AboutUs from 'pages/tempPages/AboutUs';
+import Blog from 'pages/tempPages/Blog';
+import NotFound from 'pages/tempPages/NotFound';
 import styles from './App.module.scss';
 
 function App() {
