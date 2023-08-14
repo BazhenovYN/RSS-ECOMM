@@ -1,12 +1,13 @@
 import COLORS from 'constants/colors';
 import { useRoutes } from 'react-router-dom';
+import { createTheme, ThemeProvider } from '@mui/material';
+import Header from 'components/header/Header';
 import Home from 'pages/tempPages/Home';
 import Shop from 'pages/tempPages/Shop';
 import Contacts from 'pages/tempPages/Contacts';
 import AboutUs from 'pages/tempPages/AboutUs';
 import Blog from 'pages/tempPages/Blog';
 import NotFound from 'pages/tempPages/NotFound';
-import { createTheme, ThemeProvider } from '@mui/material';
 import styles from './App.module.scss';
 
 const theme = createTheme({
@@ -50,7 +51,11 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <div className={styles.App}>{routes}</div>
+      <div className={styles.App}>
+        <Header />
+        <main>{routes}</main>
+        <footer>Footer</footer>
+      </div>
     </ThemeProvider>
   );
 }
