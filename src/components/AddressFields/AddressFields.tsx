@@ -1,6 +1,7 @@
 import validationSchemes from 'constants/validationSchemes';
 import { Checkbox, FormControlLabel, Grid, TextField, Typography } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
+import CountrySelect from 'components/CountrySelect';
 
 interface IAddresses {
   shippingAddress: {
@@ -37,12 +38,10 @@ function AddressFields({ label, addressType }: IProps) {
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <TextField
-          fullWidth
-          label="Country"
+        <CountrySelect
           {...register(`${addressType}.country`, validationSchemes.country)}
-          error={!!errors[addressType]?.country}
-          helperText={errors[addressType]?.country?.message}
+          isError={!!errors[addressType]?.country}
+          errorMessage={errors[addressType]?.country?.message}
         />
       </Grid>
       <Grid item xs={12} sm={6}>

@@ -12,7 +12,7 @@ const minDate = dayjs('1900-01-01T00:00:00.000');
 const maxDate = dayjs('2010-12-31T23:59:59.999');
 
 function DateOfBirthField({ label }: IProps) {
-  const { control, register } = useFormContext();
+  const { control } = useFormContext();
   const [error, setError] = useState<DateValidationError | null>(null);
 
   const errorMessage = useMemo(() => {
@@ -34,7 +34,8 @@ function DateOfBirthField({ label }: IProps) {
   return (
     <Controller
       control={control}
-      {...register('dateOfBirth', validationSchemes.dateOfBirth)}
+      name="dateOfBirth"
+      rules={validationSchemes.dateOfBirth}
       render={({ field, fieldState }) => (
         <DatePicker
           sx={{ width: 1 }}
@@ -42,6 +43,7 @@ function DateOfBirthField({ label }: IProps) {
           inputRef={field.ref}
           minDate={minDate}
           maxDate={maxDate}
+          onChange={field.onChange}
           onError={(newError) => setError(newError)}
           slotProps={{
             textField: {
@@ -49,7 +51,6 @@ function DateOfBirthField({ label }: IProps) {
               error: !!(fieldState.error || errorMessage),
             },
           }}
-          {...field}
         />
       )}
     />
