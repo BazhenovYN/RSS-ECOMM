@@ -1,5 +1,8 @@
 import COLORS from 'constants/colors';
+import { useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material';
+import AuthContext from 'context';
+import { TempPage } from 'pages/tempPage';
 import styles from './App.module.scss';
 
 const theme = createTheme({
@@ -14,10 +17,16 @@ const theme = createTheme({
 });
 
 function App() {
+  const [isAuth, setIsAuth] = useState(false);
+
   return (
-    <ThemeProvider theme={theme}>
-      <div className={styles.App}>RSS eCommerce Application</div>
-    </ThemeProvider>
+    // eslint-disable-next-line react/jsx-no-constructed-context-values
+    <AuthContext.Provider value={{ isAuth, setIsAuth }}>
+      <ThemeProvider theme={theme}>
+        <div className={styles.App}>RSS eCommerce Application</div>
+        <TempPage />
+      </ThemeProvider>
+    </AuthContext.Provider>
   );
 }
 
