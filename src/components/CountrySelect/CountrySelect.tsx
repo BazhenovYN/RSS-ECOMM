@@ -8,10 +8,11 @@ interface IProps {
   label?: string;
   isError?: boolean;
   errorMessage?: string;
+  setCountry: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const CountrySelect = React.forwardRef(function CountrySelect(
-  { label = 'Country', isError, errorMessage, ...rest }: IProps,
+  { label = 'Country', isError, errorMessage, setCountry, ...rest }: IProps,
   ref: React.ForwardedRef<HTMLElement>
 ) {
   return (
@@ -26,6 +27,7 @@ const CountrySelect = React.forwardRef(function CountrySelect(
         </Box>
       )}
       ref={ref}
+      onChange={(event, value) => setCountry(value?.code || '')}
       renderInput={(params) => (
         <TextField
           {...params}

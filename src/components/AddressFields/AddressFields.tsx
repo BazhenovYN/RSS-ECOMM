@@ -2,6 +2,8 @@ import validationSchemes from 'constants/validationSchemes';
 import { Checkbox, FormControlLabel, Grid, TextField, Typography } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 import CountrySelect from 'components/CountrySelect';
+import { useState } from 'react';
+import { isPostCodeValid } from 'utils/utils';
 
 interface IAddresses {
   shippingAddress: {
@@ -30,6 +32,9 @@ function AddressFields({ label, addressType }: IProps) {
     register,
     formState: { errors },
   } = useFormContext<IAddresses>();
+
+  const [country, setCountry] = useState('');
+
   return (
     <>
       <Grid item xs={12}>
@@ -39,9 +44,10 @@ function AddressFields({ label, addressType }: IProps) {
       </Grid>
       <Grid item xs={12}>
         <CountrySelect
-          {...register(`${addressType}.country`, validationSchemes.country)}
+          {...register(`${addressType}.country`, { ...validationSchemes.country })}
           isError={!!errors[addressType]?.country}
           errorMessage={errors[addressType]?.country?.message}
+          setCountry={setCountry}
         />
       </Grid>
       <Grid item xs={12} sm={6}>
@@ -57,7 +63,14 @@ function AddressFields({ label, addressType }: IProps) {
         <TextField
           fullWidth
           label="Postal code"
-          {...register(`${addressType}.postalCode`, validationSchemes.postalCode)}
+          {...register(`${addressType}.postalCode`, {
+            ...validationSchemes.postalCode,
+            validate: {
+              matchToCountryCode: (value) => {
+                return isPostCodeValid(value, country) || `Invalid postal code`;
+              },
+            },
+          })}
           error={!!errors[addressType]?.postalCode}
           helperText={errors[addressType]?.postalCode?.message}
         />
