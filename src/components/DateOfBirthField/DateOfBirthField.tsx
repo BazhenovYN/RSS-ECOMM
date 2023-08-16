@@ -5,13 +5,14 @@ import { useMemo, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 interface IProps {
-  label: string;
+  label?: string;
 }
 
+const MIN_USER_AGE = 13;
 const minDate = dayjs('1900-01-01T00:00:00.000');
-const maxDate = dayjs('2010-12-31T23:59:59.999');
+const maxDate = dayjs().subtract(MIN_USER_AGE, 'year');
 
-function DateOfBirthField({ label }: IProps) {
+function DateOfBirthField({ label = 'Date of birth' }: IProps) {
   const { control } = useFormContext();
   const [error, setError] = useState<DateValidationError | null>(null);
 

@@ -10,7 +10,7 @@ interface IProps {
   errorMessage?: string;
   disabled?: boolean;
   value?: string;
-  onChange: (event: unknown) => void;
+  onChange: (value: string) => void;
 }
 
 const CountrySelect = React.forwardRef(function CountrySelect(
@@ -25,7 +25,7 @@ const CountrySelect = React.forwardRef(function CountrySelect(
       options={countries}
       autoHighlight
       disabled={disabled}
-      getOptionLabel={(option) => option.code}
+      getOptionLabel={(option) => option.label}
       renderOption={(props, option) => (
         <Box component="li" {...props}>
           {option.label} ({option.code})
@@ -47,8 +47,9 @@ const CountrySelect = React.forwardRef(function CountrySelect(
       )}
       inputValue={inputValue}
       onInputChange={(_, newValue) => setInputValue(newValue)}
-      onChange={(event, newValue) => onChange({ ...event, target: { ...event, value: newValue?.code } })}
-      value={countries.find(({ code }) => code === value) || null}
+      onChange={(_, newValue) => {
+        onChange(newValue?.code || '');
+      }}
     />
   );
 });

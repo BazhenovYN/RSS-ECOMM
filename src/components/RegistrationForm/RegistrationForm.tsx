@@ -32,6 +32,7 @@ const defaultValues: Partial<IFormValues> = {
   email: '',
   password: '',
   firstName: '',
+  dateOfBirth: '',
   shippingAddress: {
     street: '',
     city: '',
@@ -49,14 +50,14 @@ const defaultValues: Partial<IFormValues> = {
 };
 
 function RegistrationForm() {
-  const metods = useForm<IFormValues>({ defaultValues });
+  const methods = useForm<IFormValues>({ defaultValues });
   const {
     register,
     getValues,
     setValue,
     handleSubmit,
     formState: { errors },
-  } = metods;
+  } = methods;
 
   const [disabledAddress, setDisabledAddress] = useState(false);
 
@@ -75,7 +76,7 @@ function RegistrationForm() {
   };
 
   return (
-    <FormProvider {...metods}>
+    <FormProvider {...methods}>
       <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off" sx={{ width: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
@@ -97,7 +98,7 @@ function RegistrationForm() {
             />
           </Grid>
           <Grid item xs={12}>
-            <DateOfBirthField label="Date of birth" />
+            <DateOfBirthField />
           </Grid>
           <Grid item xs={12}>
             <TextField
