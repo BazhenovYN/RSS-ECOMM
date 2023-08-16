@@ -2,8 +2,8 @@ import COLORS from 'constants/colors';
 import ROUTES from 'router/index';
 import { useRoutes } from 'react-router-dom';
 import { createTheme, ThemeProvider, Box } from '@mui/material';
-import Header from 'components/header/Header';
-import Footer from 'components/footer/Footer';
+import Header from 'components/Header/Header';
+import Footer from 'components/Footer/Footer';
 import styles from './App.module.scss';
 
 const theme = createTheme({
