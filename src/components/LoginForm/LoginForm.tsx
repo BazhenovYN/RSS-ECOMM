@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Box, Button, Stack, TextField } from '@mui/material';
 import PasswordField from 'components/PasswordField';
 import { Customer } from '@commercetools/platform-sdk';
-import { login } from '../../services/sdk/customer';
+import { login } from 'services/sdk/customer';
 
 interface IFormValues {
   email: string;

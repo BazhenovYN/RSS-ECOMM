@@ -1,5 +1,5 @@
 import { ClientResponse, Customer } from '@commercetools/platform-sdk';
-import { getCustomerApiRoot, projectKey } from './client';
+import { getCustomerApiRoot, projectKey } from 'services/sdk/client';
 
 // eslint-disable-next-line import/prefer-default-export
 export const login = async (email: string, password: string): Promise<Customer> => {
