@@ -43,11 +43,19 @@ function AddressFields({ label, addressType, disabled }: IProps) {
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <CountrySelect
-          {...register(`${addressType}.country`, { ...validationSchemes.country })}
-          disabled={disabled}
-          isError={!!errors[addressType]?.country}
-          errorMessage={errors[addressType]?.country?.message}
+        <Controller
+          control={control}
+          name={`${addressType}.country`}
+          rules={validationSchemes.country}
+          render={({ field }) => (
+            <CountrySelect
+              // disabled={disabled}
+              value={field.value}
+              isError={!!errors[addressType]?.country}
+              errorMessage={errors[addressType]?.country?.message}
+              onChange={field.onChange}
+            />
+          )}
         />
       </Grid>
       <Grid item xs={12} sm={6}>

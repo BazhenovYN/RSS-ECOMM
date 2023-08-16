@@ -1,4 +1,5 @@
-import countries from 'constants/countries';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { countries } from 'constants/countries';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -9,10 +10,12 @@ interface IProps {
   isError?: boolean;
   errorMessage?: string;
   disabled?: boolean;
+  value?: string;
+  onChange: any;
 }
 
 const CountrySelect = React.forwardRef(function CountrySelect(
-  { label = 'Country', isError, errorMessage, disabled, ...rest }: IProps,
+  { label = 'Country', isError, errorMessage, disabled, value, onChange, ...rest }: IProps,
   ref: React.ForwardedRef<HTMLElement>
 ) {
   return (
@@ -41,6 +44,8 @@ const CountrySelect = React.forwardRef(function CountrySelect(
           {...rest}
         />
       )}
+      onChange={(event, newValue) => onChange({ ...event, target: { ...event, value: newValue?.code } })}
+      value={countries.find(({ code }) => code === value)}
     />
   );
 });
