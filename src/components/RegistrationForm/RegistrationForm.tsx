@@ -2,7 +2,7 @@ import validationSchemes from 'constants/validationSchemes';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/material';
 import PasswordField from 'components/PasswordField';
-import AddressFields from 'components/AddressFields/AddressFields';
+import AddressFields from 'components/AddressFields';
 import DateOfBirthField from 'components/DateOfBirthField';
 import { useState } from 'react';
 
