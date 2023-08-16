@@ -9,7 +9,7 @@ interface IProps {
 }
 
 const PasswordField = React.forwardRef(function PasswordField(
-  { label, isError, errorMessage, ...rest }: IProps,
+  { label = 'Password', isError, errorMessage, ...rest }: IProps,
   ref: React.ForwardedRef<HTMLElement>
 ) {
   const [showPassword, setShowPassword] = useState(false);
@@ -45,11 +45,5 @@ const PasswordField = React.forwardRef(function PasswordField(
     </FormControl>
   );
 });
-
-PasswordField.defaultProps = {
-  label: 'Password',
-  isError: false,
-  errorMessage: '',
-};
 
 export default PasswordField;

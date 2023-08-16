@@ -1,16 +1,17 @@
-import { PRIMARY_COLOR, SECONDARY_COLOR } from 'constants/const';
+import COLORS from 'constants/colors';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { createTheme, ThemeProvider } from '@mui/material';
-import RegistrationPage from 'pages/RegistrationPage';
+
+import styles from './App.module.scss';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: PRIMARY_COLOR,
+      main: COLORS.PRIMARY_COLOR,
     },
     secondary: {
-      main: SECONDARY_COLOR,
+      main: COLORS.SECONDARY_COLOR,
     },
   },
 });
@@ -19,7 +20,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <RegistrationPage />
+        <div className={styles.App}>RSS eCommerce Application</div>
       </LocalizationProvider>
     </ThemeProvider>
   );
