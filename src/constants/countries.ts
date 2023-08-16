@@ -1,9 +1,9 @@
-export interface ICountryType {
+interface ICountryType {
   code: string;
   label: string;
 }
 
-export const countries: readonly ICountryType[] = [
+const countries: readonly ICountryType[] = [
   { code: 'AD', label: 'Andorra' },
   { code: 'AE', label: 'United Arab Emirates' },
   { code: 'AF', label: 'Afghanistan' },
@@ -253,3 +253,5 @@ export const countries: readonly ICountryType[] = [
   { code: 'ZM', label: 'Zambia' },
   { code: 'ZW', label: 'Zimbabwe' },
 ];
+
+export default countries;

@@ -34,7 +34,6 @@ function AddressFields({ label, addressType, disabled }: IProps) {
     formState: { errors },
     control,
   } = useFormContext<IAddresses>();
-
   return (
     <>
       <Grid item xs={12}>
@@ -49,7 +48,7 @@ function AddressFields({ label, addressType, disabled }: IProps) {
           rules={validationSchemes.country}
           render={({ field }) => (
             <CountrySelect
-              // disabled={disabled}
+              disabled={disabled}
               value={field.value}
               isError={!!errors[addressType]?.country}
               errorMessage={errors[addressType]?.country?.message}
@@ -82,11 +81,9 @@ function AddressFields({ label, addressType, disabled }: IProps) {
           name={`${addressType}.postalCode`}
           rules={{
             ...validationSchemes.postalCode,
-            validate: {
-              matchToCountryCode: (value) => {
-                const country = getValues(`${addressType}.country`);
-                return isPostCodeValid(value, country) || `Invalid postal code`;
-              },
+            validate: (value) => {
+              const country = getValues(`${addressType}.country`);
+              return isPostCodeValid(value, country) || `Invalid postal code`;
             },
           }}
           render={({ field }) => (

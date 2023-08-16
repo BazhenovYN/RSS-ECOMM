@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { countries } from 'constants/countries';
+import countries from 'constants/countries';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -11,13 +10,15 @@ interface IProps {
   errorMessage?: string;
   disabled?: boolean;
   value?: string;
-  onChange: any;
+  onChange: (event: unknown) => void;
 }
 
 const CountrySelect = React.forwardRef(function CountrySelect(
   { label = 'Country', isError, errorMessage, disabled, value, onChange, ...rest }: IProps,
   ref: React.ForwardedRef<HTMLElement>
 ) {
+  const [inputValue, setInputValue] = React.useState('');
+
   return (
     <Autocomplete
       fullWidth
@@ -44,8 +45,10 @@ const CountrySelect = React.forwardRef(function CountrySelect(
           {...rest}
         />
       )}
+      inputValue={inputValue}
+      onInputChange={(_, newValue) => setInputValue(newValue)}
       onChange={(event, newValue) => onChange({ ...event, target: { ...event, value: newValue?.code } })}
-      value={countries.find(({ code }) => code === value)}
+      value={countries.find(({ code }) => code === value) || null}
     />
   );
 });
