@@ -4,6 +4,8 @@ import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/m
 import PasswordField from 'components/PasswordField';
 import AddressFields from 'components/AddressFields/AddressFields';
 import DateOfBirthField from 'components/DateOfBirthField';
+import { createCustomer } from 'services/sdk/customer';
+import { CustomerSignInResult } from '@commercetools/platform-sdk';
 
 interface IFormValues {
   email: string;
@@ -41,9 +43,16 @@ function RegistrationForm() {
     formState: { errors },
   } = metods;
 
-  const onSubmit = (data: IFormValues) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
+  const onSubmit = async (data: IFormValues) => {
+    try {
+      const customerSignInResult: CustomerSignInResult = await createCustomer(data);
+      // eslint-disable-next-line no-console
+      console.log(customerSignInResult);
+    } catch (error) {
+      const errorMessage: string = error instanceof Error ? error.message : 'Unknown error';
+      // eslint-disable-next-line no-console
+      console.log(errorMessage);
+    }
   };
 
   return (

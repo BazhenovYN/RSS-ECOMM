@@ -7,7 +7,7 @@ import {
   TokenStore,
 } from '@commercetools/sdk-client-v2';
 import { ApiRoot, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
-import getEnvironmentVariable from '../../utils/getEnvironmentVariable';
+import getEnvironmentVariable from 'utils/getEnvironmentVariable';
 
 export const projectKey: string = getEnvironmentVariable('REACT_APP_PROJECT_KEY');
 const scopes: string[] = [getEnvironmentVariable('REACT_APP_SCOPES')];
