@@ -9,7 +9,7 @@ interface IProps {
 }
 
 const PasswordField = React.forwardRef(function PasswordField(
-  { label = 'Password', isError, errorMessage, ...rest }: IProps,
+  { label, isError, errorMessage, ...rest }: IProps,
   ref: React.ForwardedRef<HTMLElement>
 ) {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,7 +21,7 @@ const PasswordField = React.forwardRef(function PasswordField(
   };
 
   return (
-    <FormControl variant="outlined" error={isError}>
+    <FormControl fullWidth variant="outlined" error={isError}>
       <InputLabel htmlFor="outlined-adornment-password">{label}</InputLabel>
       <OutlinedInput
         id="outlined-adornment-password"
@@ -45,5 +45,11 @@ const PasswordField = React.forwardRef(function PasswordField(
     </FormControl>
   );
 });
+
+PasswordField.defaultProps = {
+  label: 'Password',
+  isError: false,
+  errorMessage: '',
+};
 
 export default PasswordField;

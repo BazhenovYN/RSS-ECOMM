@@ -31,3 +31,25 @@ export const passwordValidationSchema = {
       and must not contain leading or trailing whitespaces`,
   },
 };
+
+export const firstNameValidationSchema = {
+  required: {
+    value: true,
+    message: 'First name is required',
+  },
+  minLength: {
+    value: 1,
+    message: 'First name must be at least 1 characters long',
+  },
+};
+
+export const lastNameValidationSchema = {
+  required: {
+    value: true,
+    message: 'Last name is required',
+  },
+  minLength: {
+    value: 1,
+    message: 'Last name must be at least 1 characters long',
+  },
+};
