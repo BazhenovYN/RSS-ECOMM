@@ -1,4 +1,4 @@
-import { Stack } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import NavLink from './NavLink';
 
 interface IPageProps {
@@ -16,11 +16,13 @@ const pages: IPageProps[] = [
 
 function NavMenu() {
   return (
-    <Stack direction="row" spacing={2}>
-      {pages.map((page) => (
-        <NavLink key={page.key} title={page.title} link={page.link} />
-      ))}
-    </Stack>
+    <Box sx={{ display: 'flex', justifyContent: 'flex-end', flex: '1 0 auto' }}>
+      <Stack direction="row" spacing={2}>
+        {pages.map((page) => (
+          <NavLink key={page.key} title={page.title} link={page.link} />
+        ))}
+      </Stack>
+    </Box>
   );
 }
 
