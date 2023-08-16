@@ -4,6 +4,7 @@ import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/m
 import PasswordField from 'components/PasswordField';
 import AddressFields from 'components/AddressFields/AddressFields';
 import DateOfBirthField from 'components/DateOfBirthField';
+import { useState } from 'react';
 
 interface IFormValues {
   email: string;
@@ -27,19 +28,46 @@ interface IFormValues {
   };
 }
 
-const defaultValues = {
+const defaultValues: Partial<IFormValues> = {
   email: '',
   password: '',
   firstName: '',
+  shippingAddress: {
+    street: '',
+    city: '',
+    postalCode: '',
+    country: '',
+    isDefault: false,
+  },
+  billingAddress: {
+    street: '',
+    city: '',
+    postalCode: '',
+    country: '',
+    isDefault: false,
+  },
 };
 
 function RegistrationForm() {
   const metods = useForm<IFormValues>({ defaultValues });
   const {
     register,
+    getValues,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = metods;
+
+  const [disabledAddress, setDisabledAddress] = useState(false);
+
+  const copyAddress = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDisabledAddress(event.target.checked);
+    if (!event.target.checked) {
+      return;
+    }
+    const shippingAddress = getValues('shippingAddress');
+    setValue('billingAddress', shippingAddress, { shouldDirty: true, shouldTouch: true });
+  };
 
   const onSubmit = (data: IFormValues) => {
     // eslint-disable-next-line no-console
@@ -89,9 +117,12 @@ function RegistrationForm() {
             />
           </Grid>
           <AddressFields label="Shipping address" addressType="shippingAddress" />
-          <AddressFields label="Billing address" addressType="billingAddress" />
+          <AddressFields label="Billing address" addressType="billingAddress" disabled={disabledAddress} />
           <Grid item xs={12}>
-            <FormControlLabel control={<Checkbox color="primary" />} label="Billing address matches shipping address" />
+            <FormControlLabel
+              control={<Checkbox color="primary" onChange={copyAddress} />}
+              label="Billing address matches shipping address"
+            />
           </Grid>
         </Grid>
         <Button fullWidth type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>

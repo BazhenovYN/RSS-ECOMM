@@ -8,11 +8,11 @@ interface IProps {
   label?: string;
   isError?: boolean;
   errorMessage?: string;
-  setCountry: React.Dispatch<React.SetStateAction<string>>;
+  disabled?: boolean;
 }
 
 const CountrySelect = React.forwardRef(function CountrySelect(
-  { label = 'Country', isError, errorMessage, setCountry, ...rest }: IProps,
+  { label = 'Country', isError, errorMessage, disabled, ...rest }: IProps,
   ref: React.ForwardedRef<HTMLElement>
 ) {
   return (
@@ -20,6 +20,7 @@ const CountrySelect = React.forwardRef(function CountrySelect(
       fullWidth
       options={countries}
       autoHighlight
+      disabled={disabled}
       getOptionLabel={(option) => option.code}
       renderOption={(props, option) => (
         <Box component="li" {...props}>
@@ -27,7 +28,6 @@ const CountrySelect = React.forwardRef(function CountrySelect(
         </Box>
       )}
       ref={ref}
-      onChange={(event, value) => setCountry(value?.code || '')}
       renderInput={(params) => (
         <TextField
           {...params}
