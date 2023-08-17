@@ -26,7 +26,7 @@ describe('RegistrationForm', () => {
     const dateElement = screen.getByLabelText('Date of birth');
     expect(dateElement).toBeInTheDocument();
 
-    const submitElement = screen.getByRole('button', { name: 'Sign up' });
+    const submitElement = screen.getByRole('button', { name: /sign up/i });
     expect(submitElement).toBeInTheDocument();
   });
 });

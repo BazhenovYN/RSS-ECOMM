@@ -14,23 +14,8 @@ describe('RegistrationPage', () => {
     const headerElement = screen.getByRole('heading', { level: 1 });
     expect(headerElement).toBeInTheDocument();
 
-    const firstName = screen.getByLabelText('First Name');
-    expect(firstName).toBeInTheDocument();
-
-    const lastName = screen.getByLabelText('Last Name');
-    expect(lastName).toBeInTheDocument();
-
-    const emailElement = screen.getByLabelText('Email');
-    expect(emailElement).toBeInTheDocument();
-
-    const passwordElement = screen.getByLabelText('Password');
-    expect(passwordElement).toBeInTheDocument();
-
-    const dateElement = screen.getByLabelText('Date of birth');
-    expect(dateElement).toBeInTheDocument();
-
-    const submitElement = screen.getByRole('button', { name: 'Sign up' });
-    expect(submitElement).toBeInTheDocument();
+    const form = screen.getByTestId('registration-form');
+    expect(form).toBeInTheDocument();
 
     const signupElement = screen.getByText(/login/i);
     expect(signupElement).toBeInTheDocument();

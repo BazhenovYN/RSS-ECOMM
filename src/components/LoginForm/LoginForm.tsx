@@ -29,7 +29,13 @@ function LoginForm() {
     }
   };
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off" sx={{ width: 1 }}>
+    <Box
+      data-testid="login-form"
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      autoComplete="off"
+      sx={{ width: 1 }}>
       <Stack spacing={2}>
         <TextField
           label="Email"

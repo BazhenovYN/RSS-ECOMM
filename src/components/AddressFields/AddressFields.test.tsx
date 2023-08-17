@@ -38,7 +38,7 @@ function MockComponent({ label, addressType, disabled }: IProps) {
 }
 
 describe('AddressFields', () => {
-  test('renders correctly', () => {
+  test('renders correctly and enabled', () => {
     render(<MockComponent label="Shipping address" addressType="shippingAddress" />);
 
     const headerElement = screen.getByRole('heading');
@@ -46,15 +46,19 @@ describe('AddressFields', () => {
 
     const countryElement = screen.getByLabelText('Country');
     expect(countryElement).toBeInTheDocument();
+    expect(countryElement).toBeEnabled();
 
     const postalCodeElement = screen.getByLabelText('Postal code');
     expect(postalCodeElement).toBeInTheDocument();
+    expect(postalCodeElement).toBeEnabled();
 
     const cityElement = screen.getByLabelText('City');
     expect(cityElement).toBeInTheDocument();
+    expect(cityElement).toBeEnabled();
 
     const streetElement = screen.getByLabelText('Street');
     expect(streetElement).toBeInTheDocument();
+    expect(streetElement).toBeEnabled();
   });
 
   test('renders correctly and disabled', () => {
