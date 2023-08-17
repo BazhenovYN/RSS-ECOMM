@@ -6,24 +6,8 @@ import {
   CustomerSignInResult,
 } from '@commercetools/platform-sdk';
 import { getAppApiRoot, getCustomerApiRoot, projectKey } from 'services/sdk/client';
-
-export interface RegistrationFormData {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  shippingAddress: RegistrationFormAddress;
-  billingAddress: RegistrationFormAddress;
-}
-
-export interface RegistrationFormAddress {
-  country: string;
-  city: string;
-  postalCode: string;
-  street: string;
-  isDefault: boolean;
-}
+import { RegistrationFormAddress, RegistrationFormData } from 'types/types';
+import dayjs from 'dayjs';
 
 export const login = async (email: string, password: string): Promise<Customer> => {
   try {
@@ -51,16 +35,15 @@ export const createCustomerDraft = (registrationFormData: RegistrationFormData):
   const shippingAddress: AddressDraft = createAddressDraft(registrationFormData.shippingAddress);
   const billingAddress: AddressDraft = createAddressDraft(registrationFormData.billingAddress);
 
-  let dateOfBirth: Date = new Date(registrationFormData.dateOfBirth);
-  const timezoneOffsetMs: number = dateOfBirth.getTimezoneOffset() * 60 * 1000;
-  dateOfBirth = new Date(dateOfBirth.valueOf() - timezoneOffsetMs);
+  const dateOfBirthDayjs: dayjs.Dayjs = dayjs(registrationFormData.dateOfBirth);
+  const dateOfBirth: string = dateOfBirthDayjs.add(dateOfBirthDayjs.utcOffset(), 'minute').toISOString().slice(0, 10);
 
   return {
     email: registrationFormData.email,
     password: registrationFormData.password,
     firstName: registrationFormData.firstName,
     lastName: registrationFormData.lastName,
-    dateOfBirth: dateOfBirth.toISOString().slice(0, 10),
+    dateOfBirth,
     addresses: [shippingAddress, billingAddress],
     shippingAddresses: [0],
     defaultShippingAddress: registrationFormData.shippingAddress.isDefault ? 0 : undefined,
