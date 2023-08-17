@@ -4,7 +4,7 @@ import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/m
 import PasswordField from 'components/PasswordField';
 import AddressFields from 'components/AddressFields';
 import DateOfBirthField from 'components/DateOfBirthField';
-import { useState } from 'react';
+import { type ChangeEvent, useState } from 'react';
 
 interface IFormValues {
   email: string;
@@ -61,7 +61,7 @@ function RegistrationForm() {
 
   const [disabledAddress, setDisabledAddress] = useState(false);
 
-  const copyAddress = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const copyAddress = (event: ChangeEvent<HTMLInputElement>) => {
     setDisabledAddress(event.target.checked);
     if (!event.target.checked) {
       return;
@@ -77,7 +77,13 @@ function RegistrationForm() {
 
   return (
     <FormProvider {...methods}>
-      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off" sx={{ width: 1 }}>
+      <Box
+        data-testid="registration-form"
+        component="form"
+        onSubmit={handleSubmit(onSubmit)}
+        noValidate
+        autoComplete="off"
+        sx={{ width: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField

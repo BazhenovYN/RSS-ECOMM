@@ -49,18 +49,19 @@ describe('password validated correct', () => {
   });
 });
 
+const testData = [
+  { string: 'a', expected: true },
+  { string: 'asdfg', expected: true },
+  { string: 'Fdfdb', expected: true },
+  { string: '1', expected: false },
+  { string: '123', expected: false },
+  { string: 'fff^%$', expected: false },
+  { string: '#', expected: false },
+  { string: '123asdf', expected: false },
+];
+
 describe('first name validated correct', () => {
   const regExp = validationSchemes.firstName.pattern.value;
-  const testData = [
-    { string: 'a', expected: true },
-    { string: 'asdfg', expected: true },
-    { string: 'Fdfdb', expected: true },
-    { string: '1', expected: false },
-    { string: '123', expected: false },
-    { string: 'fff^%$', expected: false },
-    { string: '#', expected: false },
-    { string: '123asdf', expected: false },
-  ];
   testData.forEach((data) => {
     test(`test: ${data.string}`, () => {
       expect(regExp.test(data.string)).toEqual(data.expected);
@@ -70,16 +71,6 @@ describe('first name validated correct', () => {
 
 describe('last name validated correct', () => {
   const regExp = validationSchemes.lastName.pattern.value;
-  const testData = [
-    { string: 'a', expected: true },
-    { string: 'asdfg', expected: true },
-    { string: 'Fdfdb', expected: true },
-    { string: '1', expected: false },
-    { string: '123', expected: false },
-    { string: 'fff^%$', expected: false },
-    { string: '#', expected: false },
-    { string: '123asdf', expected: false },
-  ];
   testData.forEach((data) => {
     test(`test: ${data.string}`, () => {
       expect(regExp.test(data.string)).toEqual(data.expected);
@@ -89,16 +80,6 @@ describe('last name validated correct', () => {
 
 describe('city validated correct', () => {
   const regExp = validationSchemes.city.pattern.value;
-  const testData = [
-    { string: 'a', expected: true },
-    { string: 'asdfg', expected: true },
-    { string: 'Fdfdb', expected: true },
-    { string: '1', expected: false },
-    { string: '123', expected: false },
-    { string: 'fff^%$', expected: false },
-    { string: '#', expected: false },
-    { string: '123asdf', expected: false },
-  ];
   testData.forEach((data) => {
     test(`test: ${data.string}`, () => {
       expect(regExp.test(data.string)).toEqual(data.expected);
