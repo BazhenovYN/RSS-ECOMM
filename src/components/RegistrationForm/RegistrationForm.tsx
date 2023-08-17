@@ -2,8 +2,9 @@ import validationSchemes from 'constants/validationSchemes';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/material';
 import PasswordField from 'components/PasswordField';
-import AddressFields from 'components/AddressFields/AddressFields';
+import AddressFields from 'components/AddressFields';
 import DateOfBirthField from 'components/DateOfBirthField';
+import { useState } from 'react';
 import { createCustomer } from 'services/sdk/customer';
 import { CustomerSignInResult } from '@commercetools/platform-sdk';
 
@@ -29,19 +30,47 @@ interface IFormValues {
   };
 }
 
-const defaultValues = {
+const defaultValues: Partial<IFormValues> = {
   email: '',
   password: '',
   firstName: '',
+  dateOfBirth: '',
+  shippingAddress: {
+    street: '',
+    city: '',
+    postalCode: '',
+    country: '',
+    isDefault: false,
+  },
+  billingAddress: {
+    street: '',
+    city: '',
+    postalCode: '',
+    country: '',
+    isDefault: false,
+  },
 };
 
 function RegistrationForm() {
-  const metods = useForm<IFormValues>({ defaultValues });
+  const methods = useForm<IFormValues>({ defaultValues });
   const {
     register,
+    getValues,
+    setValue,
     handleSubmit,
     formState: { errors },
-  } = metods;
+  } = methods;
+
+  const [disabledAddress, setDisabledAddress] = useState(false);
+
+  const copyAddress = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDisabledAddress(event.target.checked);
+    if (!event.target.checked) {
+      return;
+    }
+    const shippingAddress = getValues('shippingAddress');
+    setValue('billingAddress', shippingAddress, { shouldDirty: true, shouldTouch: true });
+  };
 
   const onSubmit = async (data: IFormValues) => {
     try {
@@ -56,7 +85,7 @@ function RegistrationForm() {
   };
 
   return (
-    <FormProvider {...metods}>
+    <FormProvider {...methods}>
       <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off" sx={{ width: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
@@ -78,7 +107,7 @@ function RegistrationForm() {
             />
           </Grid>
           <Grid item xs={12}>
-            <DateOfBirthField label="Date of birth" />
+            <DateOfBirthField />
           </Grid>
           <Grid item xs={12}>
             <TextField
@@ -98,9 +127,12 @@ function RegistrationForm() {
             />
           </Grid>
           <AddressFields label="Shipping address" addressType="shippingAddress" />
-          <AddressFields label="Billing address" addressType="billingAddress" />
+          <AddressFields label="Billing address" addressType="billingAddress" disabled={disabledAddress} />
           <Grid item xs={12}>
-            <FormControlLabel control={<Checkbox color="primary" />} label="Billing address matches shipping address" />
+            <FormControlLabel
+              control={<Checkbox color="primary" onChange={copyAddress} />}
+              label="Billing address matches shipping address"
+            />
           </Grid>
         </Grid>
         <Button fullWidth type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>

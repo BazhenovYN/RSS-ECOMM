@@ -8,26 +8,30 @@ interface IProps {
   label?: string;
   isError?: boolean;
   errorMessage?: string;
-  setCountry: React.Dispatch<React.SetStateAction<string>>;
+  disabled?: boolean;
+  value?: string;
+  onChange: (value: string) => void;
 }
 
 const CountrySelect = React.forwardRef(function CountrySelect(
-  { label = 'Country', isError, errorMessage, setCountry, ...rest }: IProps,
+  { label = 'Country', isError, errorMessage, disabled, value, onChange, ...rest }: IProps,
   ref: React.ForwardedRef<HTMLElement>
 ) {
+  const [inputValue, setInputValue] = React.useState('');
+
   return (
     <Autocomplete
       fullWidth
       options={countries}
       autoHighlight
-      getOptionLabel={(option) => option.code}
+      disabled={disabled}
+      getOptionLabel={(option) => option.label}
       renderOption={(props, option) => (
         <Box component="li" {...props}>
           {option.label} ({option.code})
         </Box>
       )}
       ref={ref}
-      onChange={(event, value) => setCountry(value?.code || '')}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -41,6 +45,11 @@ const CountrySelect = React.forwardRef(function CountrySelect(
           {...rest}
         />
       )}
+      inputValue={inputValue}
+      onInputChange={(_, newValue) => setInputValue(newValue)}
+      onChange={(_, newValue) => {
+        onChange(newValue?.code || '');
+      }}
     />
   );
 });

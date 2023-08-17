@@ -1,8 +1,7 @@
 import validationSchemes from 'constants/validationSchemes';
 import { Checkbox, FormControlLabel, Grid, TextField, Typography } from '@mui/material';
-import { useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import CountrySelect from 'components/CountrySelect';
-import { useState } from 'react';
 import { isPostCodeValid } from 'utils/utils';
 
 interface IAddresses {
@@ -25,16 +24,16 @@ interface IAddresses {
 interface IProps {
   label: string;
   addressType: 'shippingAddress' | 'billingAddress';
+  disabled?: boolean;
 }
 
-function AddressFields({ label, addressType }: IProps) {
+function AddressFields({ label, addressType, disabled }: IProps) {
   const {
     register,
+    getValues,
     formState: { errors },
+    control,
   } = useFormContext<IAddresses>();
-
-  const [country, setCountry] = useState('');
-
   return (
     <>
       <Grid item xs={12}>
@@ -43,45 +42,79 @@ function AddressFields({ label, addressType }: IProps) {
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <CountrySelect
-          {...register(`${addressType}.country`, { ...validationSchemes.country })}
-          isError={!!errors[addressType]?.country}
-          errorMessage={errors[addressType]?.country?.message}
-          setCountry={setCountry}
+        <Controller
+          control={control}
+          name={`${addressType}.country`}
+          rules={validationSchemes.country}
+          render={({ field }) => (
+            <CountrySelect
+              disabled={disabled}
+              value={field.value}
+              isError={!!errors[addressType]?.country}
+              errorMessage={errors[addressType]?.country?.message}
+              onChange={field.onChange}
+            />
+          )}
         />
       </Grid>
       <Grid item xs={12} sm={6}>
-        <TextField
-          fullWidth
-          label="City"
-          {...register(`${addressType}.city`, validationSchemes.city)}
-          error={!!errors[addressType]?.city}
-          helperText={errors[addressType]?.city?.message}
+        <Controller
+          control={control}
+          name={`${addressType}.city`}
+          rules={validationSchemes.city}
+          render={({ field }) => (
+            <TextField
+              fullWidth
+              label="City"
+              disabled={disabled}
+              value={field.value || ''}
+              onChange={field.onChange}
+              error={!!errors[addressType]?.city}
+              helperText={errors[addressType]?.city?.message}
+            />
+          )}
         />
       </Grid>
       <Grid item xs={12} sm={6}>
-        <TextField
-          fullWidth
-          label="Postal code"
-          {...register(`${addressType}.postalCode`, {
+        <Controller
+          control={control}
+          name={`${addressType}.postalCode`}
+          rules={{
             ...validationSchemes.postalCode,
-            validate: {
-              matchToCountryCode: (value) => {
-                return isPostCodeValid(value, country) || `Invalid postal code`;
-              },
+            validate: (value) => {
+              const country = getValues(`${addressType}.country`);
+              return isPostCodeValid(value, country) || `Invalid postal code`;
             },
-          })}
-          error={!!errors[addressType]?.postalCode}
-          helperText={errors[addressType]?.postalCode?.message}
+          }}
+          render={({ field }) => (
+            <TextField
+              fullWidth
+              label="Postal code"
+              disabled={disabled}
+              value={field.value || ''}
+              onChange={field.onChange}
+              error={!!errors[addressType]?.postalCode}
+              helperText={errors[addressType]?.postalCode?.message}
+            />
+          )}
         />
       </Grid>
       <Grid item xs={12}>
-        <TextField
-          fullWidth
-          label="Street"
-          {...register(`${addressType}.street`, validationSchemes.street)}
-          error={!!errors[addressType]?.street}
-          helperText={errors[addressType]?.street?.message}
+        <Controller
+          control={control}
+          name={`${addressType}.street`}
+          rules={validationSchemes.street}
+          render={({ field }) => (
+            <TextField
+              fullWidth
+              label="Street"
+              disabled={disabled}
+              value={field.value || ''}
+              onChange={field.onChange}
+              error={!!errors[addressType]?.street}
+              helperText={errors[addressType]?.street?.message}
+            />
+          )}
         />
       </Grid>
       <Grid item xs={12}>
