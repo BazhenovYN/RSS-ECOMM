@@ -31,7 +31,6 @@ const defaultValues: Partial<RegistrationFormData> = {
   },
 };
 
-// eslint-disable-next-line max-lines-per-function
 function RegistrationForm() {
   const methods = useForm<RegistrationFormData>({ defaultValues });
   const {

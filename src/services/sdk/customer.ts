@@ -10,16 +10,12 @@ import { RegistrationFormAddress, RegistrationFormData } from 'types/types';
 import dayjs from 'dayjs';
 
 export const login = async (email: string, password: string): Promise<Customer> => {
-  try {
-    const response: ClientResponse<Customer> = await getCustomerApiRoot(email, password)
-      .withProjectKey({ projectKey })
-      .me()
-      .get()
-      .execute();
-    return response.body;
-  } catch {
-    throw new Error('Customer account with the given credentials not found.');
-  }
+  const response: ClientResponse<Customer> = await getCustomerApiRoot(email, password)
+    .withProjectKey({ projectKey })
+    .me()
+    .get()
+    .execute();
+  return response.body;
 };
 
 export const createAddressDraft = (registrationFormAddress: RegistrationFormAddress): AddressDraft => {
