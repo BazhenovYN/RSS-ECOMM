@@ -1,7 +1,7 @@
-import { emailValidationSchema, passwordValidationSchema } from './validationSchemes';
+import validationSchemes from './validationSchemes';
 
 describe('email validated correct', () => {
-  const regExp = emailValidationSchema.pattern.value;
+  const regExp = validationSchemes.email.pattern.value;
   const testData = [
     { string: 'example@example', expected: true },
     { string: 'example@example.com', expected: true },
@@ -26,7 +26,7 @@ describe('email validated correct', () => {
 });
 
 describe('password validated correct', () => {
-  const regExp = passwordValidationSchema.pattern.value;
+  const regExp = validationSchemes.password.pattern.value;
   const testData = [
     { string: 'aB1#', expected: true },
     { string: 'aaBBaa1122##', expected: true },
@@ -42,6 +42,44 @@ describe('password validated correct', () => {
     { string: '1', expected: false },
     { string: '#', expected: false },
   ];
+  testData.forEach((data) => {
+    test(`test: ${data.string}`, () => {
+      expect(regExp.test(data.string)).toEqual(data.expected);
+    });
+  });
+});
+
+const testData = [
+  { string: 'a', expected: true },
+  { string: 'asdfg', expected: true },
+  { string: 'Fdfdb', expected: true },
+  { string: '1', expected: false },
+  { string: '123', expected: false },
+  { string: 'fff^%$', expected: false },
+  { string: '#', expected: false },
+  { string: '123asdf', expected: false },
+];
+
+describe('first name validated correct', () => {
+  const regExp = validationSchemes.firstName.pattern.value;
+  testData.forEach((data) => {
+    test(`test: ${data.string}`, () => {
+      expect(regExp.test(data.string)).toEqual(data.expected);
+    });
+  });
+});
+
+describe('last name validated correct', () => {
+  const regExp = validationSchemes.lastName.pattern.value;
+  testData.forEach((data) => {
+    test(`test: ${data.string}`, () => {
+      expect(regExp.test(data.string)).toEqual(data.expected);
+    });
+  });
+});
+
+describe('city validated correct', () => {
+  const regExp = validationSchemes.city.pattern.value;
   testData.forEach((data) => {
     test(`test: ${data.string}`, () => {
       expect(regExp.test(data.string)).toEqual(data.expected);

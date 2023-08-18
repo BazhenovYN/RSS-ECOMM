@@ -1,4 +1,4 @@
-import { emailValidationSchema, passwordValidationSchema } from 'constants/validationSchemes';
+import validationSchemes from 'constants/validationSchemes';
 import { useForm } from 'react-hook-form';
 import { Box, Button, Stack, TextField } from '@mui/material';
 import PasswordField from 'components/PasswordField';
@@ -29,17 +29,23 @@ function LoginForm() {
     }
   };
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off" sx={{ width: 1 }}>
+    <Box
+      data-testid="login-form"
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      autoComplete="off"
+      sx={{ width: 1 }}>
       <Stack spacing={2}>
         <TextField
           label="Email"
           type="email"
-          {...register('email', emailValidationSchema)}
+          {...register('email', validationSchemes.email)}
           error={!!errors.email}
           helperText={errors.email?.message}
         />
         <PasswordField
-          {...register('password', passwordValidationSchema)}
+          {...register('password', validationSchemes.password)}
           isError={!!errors.password}
           errorMessage={errors.password?.message}
         />
