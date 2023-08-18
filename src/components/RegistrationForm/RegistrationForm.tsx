@@ -8,6 +8,7 @@ import { type ChangeEvent, useState } from 'react';
 import { createCustomer } from 'services/sdk/customer';
 import { CustomerSignInResult } from '@commercetools/platform-sdk';
 import { RegistrationFormData } from 'types/types';
+import FormErrorSnackbar from 'components/FormErrorSnackbar';
 
 const defaultValues: Partial<RegistrationFormData> = {
   email: '',
@@ -30,6 +31,7 @@ const defaultValues: Partial<RegistrationFormData> = {
   },
 };
 
+// eslint-disable-next-line max-lines-per-function
 function RegistrationForm() {
   const methods = useForm<RegistrationFormData>({ defaultValues });
   const {
@@ -41,6 +43,8 @@ function RegistrationForm() {
   } = methods;
 
   const [disabledAddress, setDisabledAddress] = useState(false);
+
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const copyAddress = (event: ChangeEvent<HTMLInputElement>) => {
     setDisabledAddress(event.target.checked);
@@ -58,8 +62,7 @@ function RegistrationForm() {
       console.log(customerSignInResult);
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : 'Unknown error';
-      // eslint-disable-next-line no-console
-      console.log(errorMessage);
+      setAuthError(errorMessage);
     }
   };
 
@@ -124,6 +127,7 @@ function RegistrationForm() {
           Sign up
         </Button>
       </Box>
+      <FormErrorSnackbar error={authError} onClose={() => setAuthError(null)} />
     </FormProvider>
   );
 }
