@@ -21,7 +21,7 @@ const PasswordField = React.forwardRef(function PasswordField(
   };
 
   return (
-    <FormControl variant="outlined" error={isError}>
+    <FormControl fullWidth variant="outlined" error={isError}>
       <InputLabel htmlFor="outlined-adornment-password">{label}</InputLabel>
       <OutlinedInput
         id="outlined-adornment-password"
