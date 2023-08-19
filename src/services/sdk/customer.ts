@@ -1,25 +1,17 @@
-import {
-  AddressDraft,
-  ClientResponse,
-  Customer,
-  CustomerDraft,
-  CustomerSignInResult,
-} from '@commercetools/platform-sdk';
-import { getAppApiRoot, getCustomerApiRoot, projectKey } from 'services/sdk/client';
+import { AddressDraft, ClientResponse, CustomerDraft, CustomerSignInResult } from '@commercetools/platform-sdk';
+import { getAppApiRoot, getCustomerApiRoot, projectKey, removeCustomerApiRoot } from 'services/sdk/client';
 import { RegistrationFormAddress, RegistrationFormData } from 'types/types';
 import dayjs from 'dayjs';
+import { deleteCookie } from 'utils/cookie';
 
-export const login = async (email: string, password: string): Promise<Customer> => {
-  try {
-    const response: ClientResponse<Customer> = await getCustomerApiRoot(email, password)
-      .withProjectKey({ projectKey })
-      .me()
-      .get()
-      .execute();
-    return response.body;
-  } catch {
-    throw new Error('Customer account with the given credentials not found.');
-  }
+export const login = async (email: string = 'default', password: string = 'default'): Promise<void> => {
+  await getCustomerApiRoot(email, password);
+};
+
+export const logout = () => {
+  removeCustomerApiRoot();
+  deleteCookie('authToken');
+  deleteCookie('refreshToken');
 };
 
 export const createAddressDraft = (registrationFormAddress: RegistrationFormAddress): AddressDraft => {

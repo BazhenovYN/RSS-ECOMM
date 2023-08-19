@@ -2,8 +2,10 @@ import validationSchemes from 'constants/validationSchemes';
 import { useForm } from 'react-hook-form';
 import { Box, Button, Stack, TextField } from '@mui/material';
 import PasswordField from 'components/PasswordField';
-import { Customer } from '@commercetools/platform-sdk';
 import { login } from 'services/sdk/customer';
+import { useContext, useState } from 'react';
+import AuthContext from 'context';
+import FormErrorSnackbar from 'components/FormErrorSnackbar';
 
 interface IFormValues {
   email: string;
@@ -17,15 +19,20 @@ function LoginForm() {
     formState: { errors },
   } = useForm<IFormValues>({ defaultValues: { email: '', password: '' } });
 
+  const authContext = useContext(AuthContext);
+  const setIsAuth = authContext?.setIsAuth;
+
+  const [authError, setAuthError] = useState<string | null>(null);
+
   const onSubmit = async (data: IFormValues): Promise<void> => {
     try {
-      const customer: Customer = await login(data.email, data.password);
-      // eslint-disable-next-line no-console
-      console.log(customer);
+      await login(data.email, data.password);
+      if (setIsAuth) {
+        setIsAuth(true);
+      }
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : 'Unknown error';
-      // eslint-disable-next-line no-console
-      console.log(errorMessage);
+      setAuthError(errorMessage);
     }
   };
   return (
@@ -53,6 +60,7 @@ function LoginForm() {
           Login
         </Button>
       </Stack>
+      <FormErrorSnackbar error={authError} onClose={() => setAuthError(null)} />
     </Box>
   );
 }
