@@ -5,30 +5,11 @@ import PasswordField from 'components/PasswordField';
 import AddressFields from 'components/AddressFields';
 import DateOfBirthField from 'components/DateOfBirthField';
 import { type ChangeEvent, useState } from 'react';
+import { createCustomer } from 'services/sdk/customer';
+import { CustomerSignInResult } from '@commercetools/platform-sdk';
+import { RegistrationFormData } from 'types/types';
 
-interface IFormValues {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  shippingAddress: {
-    street: string;
-    city: string;
-    postalCode: string;
-    country: string;
-    isDefault: boolean;
-  };
-  billingAddress: {
-    street: string;
-    city: string;
-    postalCode: string;
-    country: string;
-    isDefault: boolean;
-  };
-}
-
-const defaultValues: Partial<IFormValues> = {
+const defaultValues: Partial<RegistrationFormData> = {
   email: '',
   password: '',
   firstName: '',
@@ -50,7 +31,7 @@ const defaultValues: Partial<IFormValues> = {
 };
 
 function RegistrationForm() {
-  const methods = useForm<IFormValues>({ defaultValues });
+  const methods = useForm<RegistrationFormData>({ defaultValues });
   const {
     register,
     getValues,
@@ -70,9 +51,16 @@ function RegistrationForm() {
     setValue('billingAddress', shippingAddress, { shouldDirty: true, shouldTouch: true });
   };
 
-  const onSubmit = (data: IFormValues) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
+  const onSubmit = async (data: RegistrationFormData) => {
+    try {
+      const customerSignInResult: CustomerSignInResult = await createCustomer(data);
+      // eslint-disable-next-line no-console
+      console.log(customerSignInResult);
+    } catch (error) {
+      const errorMessage: string = error instanceof Error ? error.message : 'Unknown error';
+      // eslint-disable-next-line no-console
+      console.log(errorMessage);
+    }
   };
 
   return (

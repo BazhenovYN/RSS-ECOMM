@@ -11,6 +11,7 @@ import getEnvironmentVariable from 'utils/getEnvironmentVariable';
 
 export const projectKey: string = getEnvironmentVariable('REACT_APP_PROJECT_KEY');
 const scopes: string[] = [getEnvironmentVariable('REACT_APP_SCOPES')];
+const customerScopes: string[] = [getEnvironmentVariable('REACT_APP_CUSTOMER_SCOPES')];
 const clientId: string = getEnvironmentVariable('REACT_APP_CLIENT_ID');
 const clientSecret: string = getEnvironmentVariable('REACT_APP_SECRET');
 const authURL: string = getEnvironmentVariable('REACT_APP_AUTH_URL');
@@ -51,6 +52,7 @@ const customerClientBuilder = (email: string, password: string): Client => {
         password,
       },
     },
+    scopes: customerScopes,
     tokenCache: {
       get: (): TokenStore => {
         const tokenStore: string | null = localStorage.getItem('tokenStore');
