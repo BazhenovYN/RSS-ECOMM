@@ -50,6 +50,7 @@ const CountrySelect = React.forwardRef(function CountrySelect(
       onChange={(_, newValue) => {
         onChange(newValue?.code || '');
       }}
+      value={countries.find(({ code }) => code === value)}
     />
   );
 });
