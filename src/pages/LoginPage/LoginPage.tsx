@@ -1,13 +1,14 @@
 import { Avatar, Box, Container, Typography } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
 import LoginForm from 'components/LoginForm';
+import { Link } from 'react-router-dom';
 
 function LoginPage() {
   return (
     <Container maxWidth="xs">
       <Box
+        my={8}
         sx={{
-          marginTop: 8,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -20,7 +21,7 @@ function LoginPage() {
           Account login
         </Typography>
         <LoginForm />
-        <Typography variant="body2">Don&apos;t have an account? Sign Up!</Typography>
+        <Link to="/registration">Don&apos;t have an account? Sign up</Link>
       </Box>
     </Container>
   );

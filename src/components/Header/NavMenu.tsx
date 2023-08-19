@@ -9,14 +9,13 @@ interface IPageProps {
 
 const pages: IPageProps[] = [
   { title: 'Home', link: '/', key: 'home' },
-  { title: 'Blog', link: '/blog', key: 'blog' },
-  { title: 'Contacts', link: '/contacts', key: 'contacts' },
+  { title: 'Catalog', link: '/catalog', key: 'catalog' },
   { title: 'About Us', link: '/about-us', key: 'about-us' },
 ];
 
 function NavMenu() {
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'flex-end', flex: '1 0 auto' }}>
+    <Box component="nav">
       <Stack direction="row" spacing={2}>
         {pages.map((page) => (
           <NavLink key={page.key} title={page.title} link={page.link} />

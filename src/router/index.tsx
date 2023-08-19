@@ -1,39 +1,34 @@
-import AboutUs from 'pages/tempPages/AboutUs';
-import Blog from 'pages/tempPages/Blog';
-import Contacts from 'pages/tempPages/Contacts';
-import Home from 'pages/tempPages/Home';
+import HomePage from 'pages/HomePage';
 import LoginPage from 'pages/LoginPage';
-import NotFound from 'pages/tempPages/NotFound';
-import Shop from 'pages/tempPages/Shop';
+import RegistrationPage from 'pages/RegistrationPage';
+import NotFoundPage from 'pages/NotFoundPage';
+import CatalogPage from 'pages/CatalogPage';
+import AboutUsPage from 'pages/AboutUsPage';
 
 const ROUTES = [
   {
     path: '/',
-    element: <Home />,
+    element: <HomePage />,
   },
   {
-    path: '/shop',
-    element: <Shop />,
-  },
-  {
-    path: '/blog',
-    element: <Blog />,
-  },
-  {
-    path: '/contacts',
-    element: <Contacts />,
+    path: '/catalog',
+    element: <CatalogPage />,
   },
   {
     path: '/about-us',
-    element: <AboutUs />,
+    element: <AboutUsPage />,
   },
   {
-    path: '/log-in',
+    path: '/login',
     element: <LoginPage />,
   },
   {
+    path: '/registration',
+    element: <RegistrationPage />,
+  },
+  {
     path: '*',
-    element: <NotFound />,
+    element: <NotFoundPage />,
   },
 ];
 

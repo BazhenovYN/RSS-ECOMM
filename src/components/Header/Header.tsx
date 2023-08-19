@@ -1,8 +1,12 @@
 import { AppBar, Toolbar, Stack } from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import LogoutIcon from '@mui/icons-material/Logout';
 import LinkButton from 'components/LinkButton/LinkButton';
-import Logo from './Logo';
 import NavMenu from './NavMenu';
 import CartButton from './CartButton';
+
+import './Header.scss';
 
 function Header() {
   const isAuth = false;
@@ -10,16 +14,12 @@ function Header() {
   return (
     <AppBar component="header" position="static" color="transparent">
       <Toolbar sx={{ justifyContent: 'space-between', fontWeight: '700' }}>
-        <Logo />
-
         <NavMenu />
-
-        <CartButton />
-
         <Stack direction="row" spacing={2}>
-          {!isAuth && <LinkButton title="Log In" link="/log-in" />}
-          {!isAuth && <LinkButton title="Registration" link="/" />}
-          {isAuth && <LinkButton title="Log Out" link="/" />}
+          <CartButton />
+          {!isAuth && <LinkButton title="Sign in" link="/login" icon={<PersonIcon />} />}
+          {!isAuth && <LinkButton title="Sign up" link="/registration" icon={<PersonAddIcon />} />}
+          {isAuth && <LinkButton title="Sign out" link="/" icon={<LogoutIcon />} />}
         </Stack>
       </Toolbar>
     </AppBar>
