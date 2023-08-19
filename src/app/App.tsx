@@ -1,8 +1,9 @@
 import COLORS from 'constants/colors';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material';
 import AuthContext from 'context';
-import { TempPage } from 'pages/tempPage';
 import styles from './App.module.scss';
 
 const theme = createTheme({
@@ -23,8 +24,9 @@ function App() {
     // eslint-disable-next-line react/jsx-no-constructed-context-values
     <AuthContext.Provider value={{ isAuth, setIsAuth }}>
       <ThemeProvider theme={theme}>
-        <div className={styles.App}>RSS eCommerce Application</div>
-        <TempPage />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <div className={styles.App}>RSS eCommerce Application</div>
+        </LocalizationProvider>
       </ThemeProvider>
     </AuthContext.Provider>
   );
