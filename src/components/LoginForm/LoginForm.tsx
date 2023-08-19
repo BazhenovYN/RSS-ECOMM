@@ -2,7 +2,6 @@ import validationSchemes from 'constants/validationSchemes';
 import { useForm } from 'react-hook-form';
 import { Box, Button, Stack, TextField } from '@mui/material';
 import PasswordField from 'components/PasswordField';
-import { Customer } from '@commercetools/platform-sdk';
 import { login } from 'services/sdk/customer';
 import { useContext, useState } from 'react';
 import AuthContext from 'context';
@@ -27,13 +26,10 @@ function LoginForm() {
 
   const onSubmit = async (data: IFormValues): Promise<void> => {
     try {
-      const customer: Customer = await login(data.email, data.password);
+      await login(data.email, data.password);
       if (setIsAuth) {
         setIsAuth(true);
-        localStorage.setItem('auth', 'true');
       }
-      // eslint-disable-next-line no-console
-      console.log(customer);
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : 'Unknown error';
       setAuthError(errorMessage);

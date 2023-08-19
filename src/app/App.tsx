@@ -2,9 +2,9 @@ import COLORS from 'constants/colors';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useEffect, useMemo, useState } from 'react';
-import { Button, createTheme, ThemeProvider } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material';
 import AuthContext from 'context';
-import LoginPage from 'pages/LoginPage';
+import { login } from 'services/sdk/customer';
 import styles from './App.module.scss';
 
 const theme = createTheme({
@@ -24,9 +24,9 @@ function App() {
     return { isAuth, setIsAuth };
   }, [isAuth, setIsAuth]);
   useEffect(() => {
-    if (localStorage.getItem('auth')) {
-      setIsAuth(true);
-    }
+    login()
+      .then(() => setIsAuth(true))
+      .catch(() => {});
   }, []);
 
   return (
@@ -34,14 +34,6 @@ function App() {
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <div className={styles.App}>RSS eCommerce Application</div>
-          <Button
-            onClick={() => {
-              setIsAuth(false);
-              localStorage.removeItem('auth');
-            }}>
-            Logout
-          </Button>
-          <LoginPage />
         </LocalizationProvider>
       </ThemeProvider>
     </AuthContext.Provider>
