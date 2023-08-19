@@ -8,9 +8,11 @@ import {
 } from '@commercetools/sdk-client-v2';
 import { ApiRoot, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import getEnvironmentVariable from 'utils/getEnvironmentVariable';
+import { getCookie, getCookieExpiration, setCookie } from 'utils/cookie';
 
 export const projectKey: string = getEnvironmentVariable('REACT_APP_PROJECT_KEY');
 const scopes: string[] = [getEnvironmentVariable('REACT_APP_SCOPES')];
+const customerScopes: string[] = [getEnvironmentVariable('REACT_APP_CUSTOMER_SCOPES')];
 const clientId: string = getEnvironmentVariable('REACT_APP_CLIENT_ID');
 const clientSecret: string = getEnvironmentVariable('REACT_APP_SECRET');
 const authURL: string = getEnvironmentVariable('REACT_APP_AUTH_URL');
@@ -51,13 +53,21 @@ const customerClientBuilder = (email: string = '', password: string = ''): Clien
         password,
       },
     },
+    scopes: customerScopes,
     tokenCache: {
       get: (): TokenStore => {
-        const tokenStore: string | null = localStorage.getItem('tokenStore');
-        return tokenStore ? JSON.parse(tokenStore) : {};
+        return {
+          token: getCookie('token') || '',
+          expirationTime: getCookieExpiration('token') || 0,
+          refreshToken: getCookie('refreshToken') || undefined,
+        };
       },
       set: (tokenStore: TokenStore): void => {
-        localStorage.setItem('tokenStore', JSON.stringify(tokenStore));
+        const msInYear = 31536000000;
+        setCookie('token', tokenStore.token, tokenStore.expirationTime);
+        if (tokenStore.refreshToken) {
+          setCookie('refreshToken', tokenStore.refreshToken, new Date().getTime() + msInYear);
+        }
       },
     },
   };
