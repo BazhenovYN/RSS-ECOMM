@@ -40,7 +40,7 @@ export const getAppApiRoot = (): ApiRoot => {
   return createApiBuilderFromCtpClient(appClient);
 };
 
-const customerClientBuilder = (email: string, password: string): Client => {
+const customerClientBuilder = (email: string = '', password: string = ''): Client => {
   const passwordAuthMiddlewareOptions: PasswordAuthMiddlewareOptions = {
     ...authMiddlewareOptions,
     credentials: {

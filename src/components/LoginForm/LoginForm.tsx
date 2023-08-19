@@ -4,6 +4,8 @@ import { Box, Button, Stack, TextField } from '@mui/material';
 import PasswordField from 'components/PasswordField';
 import { Customer } from '@commercetools/platform-sdk';
 import { login } from 'services/sdk/customer';
+import { useContext } from 'react';
+import AuthContext from 'context';
 
 interface IFormValues {
   email: string;
@@ -17,9 +19,16 @@ function LoginForm() {
     formState: { errors },
   } = useForm<IFormValues>({ defaultValues: { email: '', password: '' } });
 
+  const authContext = useContext(AuthContext);
+  const setIsAuth = authContext?.setIsAuth;
+
   const onSubmit = async (data: IFormValues): Promise<void> => {
     try {
       const customer: Customer = await login(data.email, data.password);
+      if (setIsAuth) {
+        setIsAuth(true);
+        localStorage.setItem('auth', 'true');
+      }
       // eslint-disable-next-line no-console
       console.log(customer);
     } catch (error) {

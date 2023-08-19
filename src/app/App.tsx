@@ -1,9 +1,10 @@
 import COLORS from 'constants/colors';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { useState } from 'react';
-import { createTheme, ThemeProvider } from '@mui/material';
+import { useEffect, useMemo, useState } from 'react';
+import { Button, createTheme, ThemeProvider } from '@mui/material';
 import AuthContext from 'context';
+import LoginPage from 'pages/LoginPage';
 import styles from './App.module.scss';
 
 const theme = createTheme({
@@ -19,13 +20,28 @@ const theme = createTheme({
 
 function App() {
   const [isAuth, setIsAuth] = useState(false);
+  const authContext = useMemo(() => {
+    return { isAuth, setIsAuth };
+  }, [isAuth, setIsAuth]);
+  useEffect(() => {
+    if (localStorage.getItem('auth')) {
+      setIsAuth(true);
+    }
+  }, []);
 
   return (
-    // eslint-disable-next-line react/jsx-no-constructed-context-values
-    <AuthContext.Provider value={{ isAuth, setIsAuth }}>
+    <AuthContext.Provider value={authContext}>
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <div className={styles.App}>RSS eCommerce Application</div>
+          <Button
+            onClick={() => {
+              setIsAuth(false);
+              localStorage.removeItem('auth');
+            }}>
+            Logout
+          </Button>
+          <LoginPage />
         </LocalizationProvider>
       </ThemeProvider>
     </AuthContext.Provider>

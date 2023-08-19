@@ -1,8 +1,8 @@
-import { createContext } from 'react';
+import { createContext, Dispatch, SetStateAction } from 'react';
 
 interface IAuthContext {
   isAuth: boolean;
-  setIsAuth: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsAuth: Dispatch<SetStateAction<boolean>>;
 }
 
 const AuthContext = createContext<IAuthContext | null>(null);
