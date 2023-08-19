@@ -4,11 +4,12 @@ import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/m
 import PasswordField from 'components/PasswordField';
 import AddressFields from 'components/AddressFields';
 import DateOfBirthField from 'components/DateOfBirthField';
-import { type ChangeEvent, useState } from 'react';
+import { type ChangeEvent, useState, useContext } from 'react';
 import { createCustomer } from 'services/sdk/customer';
-import { CustomerSignInResult } from '@commercetools/platform-sdk';
 import { RegistrationFormData } from 'types/types';
 import FormErrorSnackbar from 'components/FormErrorSnackbar';
+import { useNavigate } from 'react-router-dom';
+import AuthContext from 'context';
 
 const defaultValues: Partial<RegistrationFormData> = {
   email: '',
@@ -41,30 +42,31 @@ function RegistrationForm() {
     formState: { errors },
   } = methods;
 
-  const [disabledAddress, setDisabledAddress] = useState(false);
+  const authContext = useContext(AuthContext);
+  const setIsAuth = authContext?.setIsAuth;
 
+  const [disabledAddress, setDisabledAddress] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   const copyAddress = (event: ChangeEvent<HTMLInputElement>) => {
     setDisabledAddress(event.target.checked);
-    if (!event.target.checked) {
-      return;
-    }
+    if (!event.target.checked) return;
     const shippingAddress = getValues('shippingAddress');
     setValue('billingAddress', shippingAddress, { shouldDirty: true, shouldTouch: true });
   };
 
   const onSubmit = async (data: RegistrationFormData) => {
     try {
-      const customerSignInResult: CustomerSignInResult = await createCustomer(data);
-      // eslint-disable-next-line no-console
-      console.log(customerSignInResult);
+      await createCustomer(data);
+      if (setIsAuth) setIsAuth(true);
+      navigate('/');
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : 'Unknown error';
       setAuthError(errorMessage);
     }
   };
-
   return (
     <FormProvider {...methods}>
       <Box

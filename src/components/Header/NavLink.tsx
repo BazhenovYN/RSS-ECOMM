@@ -8,7 +8,7 @@ interface ILinkProps {
 
 function NavLink({ title, link }: ILinkProps) {
   return (
-    <Typography variant="h6" component={RouterLink} to={link}>
+    <Typography variant="button" component={RouterLink} to={link} color="textPrimary">
       {title}
     </Typography>
   );

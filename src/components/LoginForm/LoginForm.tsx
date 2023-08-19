@@ -6,6 +6,7 @@ import { login } from 'services/sdk/customer';
 import { useContext, useState } from 'react';
 import AuthContext from 'context';
 import FormErrorSnackbar from 'components/FormErrorSnackbar';
+import { useNavigate } from 'react-router-dom';
 
 interface IFormValues {
   email: string;
@@ -24,12 +25,15 @@ function LoginForm() {
 
   const [authError, setAuthError] = useState<string | null>(null);
 
+  const navigate = useNavigate();
+
   const onSubmit = async (data: IFormValues): Promise<void> => {
     try {
       await login(data.email, data.password);
       if (setIsAuth) {
         setIsAuth(true);
       }
+      navigate('/');
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : 'Unknown error';
       setAuthError(errorMessage);
