@@ -2,16 +2,20 @@ import { Avatar, Box, Container, Typography } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
 import LoginForm from 'components/LoginForm';
 import { Link, useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import AuthContext from 'context';
 
 function LoginPage() {
   const authContext = useContext(AuthContext);
   const isAuth = authContext?.isAuth;
+
   const navigate = useNavigate();
-  if (isAuth) {
-    navigate('/');
-  }
+
+  useEffect(() => {
+    if (isAuth) {
+      navigate('/');
+    }
+  });
 
   return (
     <Container maxWidth="xs">

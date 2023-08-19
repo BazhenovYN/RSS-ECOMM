@@ -13,12 +13,14 @@ interface IFormValues {
   password: string;
 }
 
+const defaultValues: IFormValues = { email: '', password: '' };
+
 function LoginForm() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IFormValues>({ defaultValues: { email: '', password: '' } });
+  } = useForm<IFormValues>({ defaultValues, mode: 'all' });
 
   const authContext = useContext(AuthContext);
   const setIsAuth = authContext?.setIsAuth;

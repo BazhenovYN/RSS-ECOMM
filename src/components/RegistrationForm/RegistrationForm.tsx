@@ -33,7 +33,7 @@ const defaultValues: Partial<RegistrationFormData> = {
 };
 
 function RegistrationForm() {
-  const methods = useForm<RegistrationFormData>({ defaultValues });
+  const methods = useForm<RegistrationFormData>({ defaultValues, mode: 'all' });
   const {
     register,
     getValues,

@@ -4,26 +4,27 @@ import RegistrationPage from 'pages/RegistrationPage';
 import NotFoundPage from 'pages/NotFoundPage';
 import CatalogPage from 'pages/CatalogPage';
 import AboutUsPage from 'pages/AboutUsPage';
+import { RouteObject } from 'react-router-dom';
 
-const ROUTES = [
+const ROUTES: RouteObject[] = [
   {
     path: '/',
     element: <HomePage />,
   },
   {
-    path: '/catalog',
+    path: 'catalog',
     element: <CatalogPage />,
   },
   {
-    path: '/about-us',
+    path: 'about-us',
     element: <AboutUsPage />,
   },
   {
-    path: '/login',
+    path: 'login',
     element: <LoginPage />,
   },
   {
-    path: '/registration',
+    path: 'registration',
     element: <RegistrationPage />,
   },
   {
