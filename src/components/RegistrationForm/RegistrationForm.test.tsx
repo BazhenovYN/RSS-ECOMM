@@ -1,13 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { BrowserRouter } from 'react-router-dom';
 import RegistrationForm from './RegistrationForm';
 
 describe('RegistrationForm', () => {
   test('renders correctly', () => {
     render(
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <RegistrationForm />
+        <BrowserRouter>
+          <RegistrationForm />
+        </BrowserRouter>
       </LocalizationProvider>
     );
 
