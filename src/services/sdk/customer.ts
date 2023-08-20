@@ -2,7 +2,6 @@ import { AddressDraft, ClientResponse, CustomerDraft, CustomerSignInResult } fro
 import { getAppApiRoot, getCustomerApiRoot, projectKey, removeCustomerApiRoot } from 'services/sdk/client';
 import { RegistrationFormAddress, RegistrationFormData } from 'types/types';
 import dayjs from 'dayjs';
-import { deleteCookie } from 'utils/cookie';
 
 export const login = async (email: string = 'default', password: string = 'default'): Promise<void> => {
   await getCustomerApiRoot(email, password);
@@ -10,8 +9,6 @@ export const login = async (email: string = 'default', password: string = 'defau
 
 export const logout = () => {
   removeCustomerApiRoot();
-  deleteCookie('authToken');
-  deleteCookie('refreshToken');
 };
 
 export const createAddressDraft = (registrationFormAddress: RegistrationFormAddress): AddressDraft => {

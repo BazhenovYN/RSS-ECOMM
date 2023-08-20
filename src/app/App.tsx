@@ -1,7 +1,7 @@
 import COLORS from 'constants/colors';
 import ROUTES from 'router/index';
 import { useRoutes } from 'react-router-dom';
-import { createTheme, ThemeProvider, Box } from '@mui/material';
+import { createTheme, ThemeProvider, Box, CircularProgress } from '@mui/material';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -23,6 +23,7 @@ const theme = createTheme({
 });
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
   const routes = useRoutes(ROUTES);
   const [isAuth, setIsAuth] = useState(false);
   const authContext = useMemo(() => {
@@ -31,10 +32,14 @@ function App() {
   useEffect(() => {
     login()
       .then(() => setIsAuth(true))
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
   }, []);
-
-  return (
+  return isLoading ? (
+    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+      <CircularProgress />
+    </Box>
+  ) : (
     <AuthContext.Provider value={authContext}>
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
