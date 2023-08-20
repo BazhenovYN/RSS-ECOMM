@@ -5,7 +5,7 @@ import PasswordField from 'components/PasswordField';
 import AddressFields from 'components/AddressFields';
 import DateOfBirthField from 'components/DateOfBirthField';
 import { type ChangeEvent, useState, useContext } from 'react';
-import { createCustomer } from 'services/sdk/customer';
+import { createCustomer, login } from 'services/sdk/customer';
 import { RegistrationFormData } from 'types/types';
 import ErrorSnackbar from 'components/ErrorSnackbar';
 import { useNavigate } from 'react-router-dom';
@@ -60,11 +60,11 @@ function RegistrationForm() {
   const onSubmit = async (data: RegistrationFormData) => {
     try {
       await createCustomer(data);
+      await login(data.email, data.password);
       if (setIsAuth) setIsAuth(true);
       navigate('/', { state: { message: 'The account was successfully created' } });
     } catch (error) {
-      const errorMessage: string = error instanceof Error ? error.message : 'Unknown error';
-      setAuthError(errorMessage);
+      setAuthError(error instanceof Error ? error.message : 'Unknown error');
     }
   };
   return (
