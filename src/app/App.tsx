@@ -1,6 +1,4 @@
 import COLORS from 'constants/colors';
-import ROUTES from 'router/index';
-import { useRoutes } from 'react-router-dom';
 import { createTheme, ThemeProvider, Box, CircularProgress } from '@mui/material';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
@@ -9,6 +7,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useEffect, useMemo, useState } from 'react';
 import AuthContext from 'context';
 import { login } from 'services/sdk/customer';
+import AppRouter from 'router';
+
 import styles from './App.module.scss';
 
 const theme = createTheme({
@@ -24,7 +24,6 @@ const theme = createTheme({
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
-  const routes = useRoutes(ROUTES);
   const [isAuth, setIsAuth] = useState(false);
   const authContext = useMemo(() => {
     return { isAuth, setIsAuth };
@@ -35,6 +34,7 @@ function App() {
       .catch(() => {})
       .finally(() => setIsLoading(false));
   }, []);
+
   return isLoading ? (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
       <CircularProgress />
@@ -46,7 +46,7 @@ function App() {
           <div className={styles.App}>
             <Header />
             <Box component="main" sx={{ flex: '1 0 auto' }}>
-              {routes}
+              <AppRouter />
             </Box>
             <Footer />
           </div>
