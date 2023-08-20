@@ -3,12 +3,12 @@ import validationSchemes from './validationSchemes';
 describe('email validated correct', () => {
   const regExp = validationSchemes.email.pattern.value;
   const testData = [
-    { string: 'example@example', expected: true },
     { string: 'example@example.com', expected: true },
     { string: 'example123456@example.com', expected: true },
     { string: 'example_example@example.com', expected: true },
     { string: 'example-example@example.com', expected: true },
     { string: 'e@e.c', expected: true },
+    { string: 'example@example', expected: false },
     { string: 'example@example.com ', expected: false },
     { string: ' example@example.com', expected: false },
     { string: ' example@example.com ', expected: false },

@@ -101,7 +101,7 @@ function RegistrationForm() {
           <Grid item xs={12}>
             <TextField
               label="Email"
-              type="email"
+              type="text"
               fullWidth
               {...register('email', validationSchemes.email)}
               error={!!errors.email}
