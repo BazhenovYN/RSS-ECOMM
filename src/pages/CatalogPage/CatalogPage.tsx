@@ -1,8 +1,12 @@
+import { Box, Typography } from '@mui/material';
+
 function CatalogPage() {
   return (
-    <div>
-      <h2>Catalog Page</h2>
-    </div>
+    <Box px={3}>
+      <Typography component="h2" variant="h2" mb={2}>
+        Catalog
+      </Typography>
+    </Box>
   );
 }
 
