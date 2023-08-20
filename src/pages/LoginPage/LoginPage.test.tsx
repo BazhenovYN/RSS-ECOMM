@@ -1,9 +1,14 @@
 import { render, screen } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import LoginPage from './LoginPage';
 
 describe('LoginPage', () => {
   test('renders correctly', () => {
-    render(<LoginPage />);
+    render(
+      <BrowserRouter>
+        <LoginPage />
+      </BrowserRouter>
+    );
 
     const headerElement = screen.getByRole('heading');
     expect(headerElement).toBeInTheDocument();

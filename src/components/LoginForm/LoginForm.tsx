@@ -6,23 +6,28 @@ import { login } from 'services/sdk/customer';
 import { useContext, useState } from 'react';
 import AuthContext from 'context';
 import FormErrorSnackbar from 'components/FormErrorSnackbar';
+import { useNavigate } from 'react-router-dom';
 
 interface IFormValues {
   email: string;
   password: string;
 }
 
+const defaultValues: IFormValues = { email: '', password: '' };
+
 function LoginForm() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IFormValues>({ defaultValues: { email: '', password: '' } });
+  } = useForm<IFormValues>({ defaultValues, mode: 'all' });
 
   const authContext = useContext(AuthContext);
   const setIsAuth = authContext?.setIsAuth;
 
   const [authError, setAuthError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   const onSubmit = async (data: IFormValues): Promise<void> => {
     try {
@@ -30,6 +35,7 @@ function LoginForm() {
       if (setIsAuth) {
         setIsAuth(true);
       }
+      navigate('/');
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : 'Unknown error';
       setAuthError(errorMessage);

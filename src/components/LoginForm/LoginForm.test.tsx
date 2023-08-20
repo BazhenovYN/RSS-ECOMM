@@ -1,9 +1,14 @@
 import { render, screen } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import LoginForm from './LoginForm';
 
 describe('LoginForm', () => {
-  test('renders correctly', () => {
-    render(<LoginForm />);
+  test.only('renders correctly', () => {
+    render(
+      <BrowserRouter>
+        <LoginForm />
+      </BrowserRouter>
+    );
 
     const emailElement = screen.getByLabelText('Email');
     expect(emailElement).toBeInTheDocument();

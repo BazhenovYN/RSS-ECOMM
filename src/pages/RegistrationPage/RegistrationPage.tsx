@@ -1,13 +1,14 @@
 import { Avatar, Box, Container, Typography } from '@mui/material';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import RegistrationForm from 'components/RegistrationForm';
+import { Link } from 'react-router-dom';
 
 function RegistrationPage() {
   return (
     <Container maxWidth="xs">
       <Box
+        my={8}
         sx={{
-          marginTop: 8,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -20,7 +21,7 @@ function RegistrationPage() {
           Create account
         </Typography>
         <RegistrationForm />
-        <Typography variant="body2">Already have an account? Login now</Typography>
+        <Link to="/login">Already have an account? Sign in</Link>
       </Box>
     </Container>
   );

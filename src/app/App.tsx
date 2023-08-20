@@ -1,10 +1,14 @@
 import COLORS from 'constants/colors';
+import { createTheme, ThemeProvider, Box, CircularProgress } from '@mui/material';
+import Header from 'components/Header';
+import Footer from 'components/Footer';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useEffect, useMemo, useState } from 'react';
-import { createTheme, ThemeProvider } from '@mui/material';
 import AuthContext from 'context';
 import { login } from 'services/sdk/customer';
+import AppRouter from 'router';
+
 import styles from './App.module.scss';
 
 const theme = createTheme({
@@ -19,6 +23,7 @@ const theme = createTheme({
 });
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
   const authContext = useMemo(() => {
     return { isAuth, setIsAuth };
@@ -26,14 +31,25 @@ function App() {
   useEffect(() => {
     login()
       .then(() => setIsAuth(true))
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
   }, []);
 
-  return (
+  return isLoading ? (
+    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+      <CircularProgress />
+    </Box>
+  ) : (
     <AuthContext.Provider value={authContext}>
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <div className={styles.App}>RSS eCommerce Application</div>
+          <div className={styles.App}>
+            <Header />
+            <Box component="main" sx={{ flex: '1 0 auto' }}>
+              <AppRouter />
+            </Box>
+            <Footer />
+          </div>
         </LocalizationProvider>
       </ThemeProvider>
     </AuthContext.Provider>
