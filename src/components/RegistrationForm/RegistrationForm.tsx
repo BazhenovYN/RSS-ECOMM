@@ -7,7 +7,6 @@ import DateOfBirthField from 'components/DateOfBirthField';
 import { type ChangeEvent, useState, useContext } from 'react';
 import { createCustomer, login } from 'services/sdk/customer';
 import { RegistrationFormData } from 'types/types';
-import ErrorSnackbar from 'components/ErrorSnackbar';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from 'context';
 
@@ -44,9 +43,9 @@ function RegistrationForm() {
 
   const authContext = useContext(AuthContext);
   const setIsAuth = authContext?.setIsAuth;
+  const setMessage = authContext?.setMessage;
 
   const [disabledAddress, setDisabledAddress] = useState(false);
-  const [authError, setAuthError] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -62,9 +61,10 @@ function RegistrationForm() {
       await createCustomer(data);
       await login(data.email, data.password);
       if (setIsAuth) setIsAuth(true);
-      navigate('/', { state: { message: 'The account was successfully created' } });
+      navigate('/');
+      if (setMessage) setMessage({ severity: 'success', text: 'The account was successfully created' });
     } catch (error) {
-      setAuthError(error instanceof Error ? error.message : 'Unknown error');
+      if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
     }
   };
   return (
@@ -128,7 +128,6 @@ function RegistrationForm() {
           Sign up
         </Button>
       </Box>
-      <ErrorSnackbar error={authError} onClose={() => setAuthError(null)} />
     </FormProvider>
   );
 }

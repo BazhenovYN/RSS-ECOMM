@@ -5,10 +5,10 @@ import Footer from 'components/Footer';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useEffect, useMemo, useState } from 'react';
-import AuthContext from 'context';
+import AuthContext, { Message } from 'context';
 import { login } from 'services/sdk/customer';
 import AppRouter from 'router';
-
+import PopupMessage from 'components/PopupMessage';
 import styles from './App.module.scss';
 
 const theme = createTheme({
@@ -25,9 +25,10 @@ const theme = createTheme({
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
+  const [message, setMessage] = useState<Message | null>(null);
   const authContext = useMemo(() => {
-    return { isAuth, setIsAuth };
-  }, [isAuth, setIsAuth]);
+    return { isAuth, setIsAuth, message, setMessage };
+  }, [isAuth, setIsAuth, message, setMessage]);
   useEffect(() => {
     login()
       .then(() => setIsAuth(true))
@@ -49,6 +50,13 @@ function App() {
               <AppRouter />
             </Box>
             <Footer />
+            <PopupMessage
+              text={message?.text || null}
+              severity={message?.severity}
+              onClose={() => {
+                setMessage(null);
+              }}
+            />
           </div>
         </LocalizationProvider>
       </ThemeProvider>
