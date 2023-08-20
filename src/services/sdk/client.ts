@@ -80,20 +80,30 @@ const customerClientBuilder = (email: string, password: string): Client => {
 
 let customerApiRoot: ApiRoot | null = null;
 
-export const getCustomerApiRoot = async (email: string, password: string): Promise<ApiRoot | null> => {
-  if (customerApiRoot) {
-    return customerApiRoot;
-  }
-
-  const customerClient: Client = customerClientBuilder(email, password);
-  const newCustomerApiRoot: ApiRoot = createApiBuilderFromCtpClient(customerClient);
-  await newCustomerApiRoot.withProjectKey({ projectKey }).me().get().execute();
-  customerApiRoot = newCustomerApiRoot;
-  return customerApiRoot;
+const checkApiRoot = async (testedApiRoot: ApiRoot): Promise<void> => {
+  await testedApiRoot.withProjectKey({ projectKey }).me().get().execute();
 };
 
 export const removeCustomerApiRoot = (): void => {
   customerApiRoot = null;
   deleteCookie('authToken');
   deleteCookie('refreshToken');
+};
+
+const createCustomerApiRoot = (email: string, password: string): ApiRoot => {
+  const customerClient: Client = customerClientBuilder(email, password);
+  return createApiBuilderFromCtpClient(customerClient);
+};
+
+export const getCustomerApiRoot = async (email: string, password: string): Promise<ApiRoot | null> => {
+  customerApiRoot = createCustomerApiRoot(email, password);
+
+  try {
+    await checkApiRoot(customerApiRoot);
+  } catch (error) {
+    removeCustomerApiRoot();
+    throw error;
+  }
+
+  return customerApiRoot;
 };

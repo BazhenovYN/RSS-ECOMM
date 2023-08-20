@@ -3,9 +3,8 @@ import { useForm } from 'react-hook-form';
 import { Box, Button, Stack, TextField } from '@mui/material';
 import PasswordField from 'components/PasswordField';
 import { login } from 'services/sdk/customer';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import AuthContext from 'context';
-import FormErrorSnackbar from 'components/FormErrorSnackbar';
 import { useNavigate } from 'react-router-dom';
 
 interface IFormValues {
@@ -24,8 +23,7 @@ function LoginForm() {
 
   const authContext = useContext(AuthContext);
   const setIsAuth = authContext?.setIsAuth;
-
-  const [authError, setAuthError] = useState<string | null>(null);
+  const setMessage = authContext?.setMessage;
 
   const navigate = useNavigate();
 
@@ -37,8 +35,7 @@ function LoginForm() {
       }
       navigate('/');
     } catch (error) {
-      const errorMessage: string = error instanceof Error ? error.message : 'Unknown error';
-      setAuthError(errorMessage);
+      if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
     }
   };
   return (
@@ -66,7 +63,6 @@ function LoginForm() {
           Login
         </Button>
       </Stack>
-      <FormErrorSnackbar error={authError} onClose={() => setAuthError(null)} />
     </Box>
   );
 }
