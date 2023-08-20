@@ -5,7 +5,7 @@ import PasswordField from 'components/PasswordField';
 import { login } from 'services/sdk/customer';
 import { useContext, useState } from 'react';
 import AuthContext from 'context';
-import FormErrorSnackbar from 'components/FormErrorSnackbar';
+import ErrorSnackbar from 'components/ErrorSnackbar';
 import { useNavigate } from 'react-router-dom';
 
 interface IFormValues {
@@ -66,7 +66,7 @@ function LoginForm() {
           Login
         </Button>
       </Stack>
-      <FormErrorSnackbar error={authError} onClose={() => setAuthError(null)} />
+      <ErrorSnackbar error={authError} onClose={() => setAuthError(null)} />
     </Box>
   );
 }

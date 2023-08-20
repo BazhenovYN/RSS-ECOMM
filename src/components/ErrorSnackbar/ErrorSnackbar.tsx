@@ -1,11 +1,11 @@
 import { Snackbar, Alert } from '@mui/material';
 
-interface FormErrorSnackbarProps {
+interface ErrorSnackbarProps {
   error: string | null;
   onClose: () => void;
 }
 
-function FormErrorSnackbar({ error, onClose }: FormErrorSnackbarProps) {
+function ErrorSnackbar({ error, onClose }: ErrorSnackbarProps) {
   return (
     <Snackbar open={!!error} onClose={onClose}>
       <Alert onClose={onClose} severity="error">
@@ -15,4 +15,4 @@ function FormErrorSnackbar({ error, onClose }: FormErrorSnackbarProps) {
   );
 }
 
-export default FormErrorSnackbar;
+export default ErrorSnackbar;

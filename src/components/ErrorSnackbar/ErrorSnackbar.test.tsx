@@ -1,16 +1,16 @@
 import { render, screen } from '@testing-library/react';
-import FormErrorSnackbar from 'components/FormErrorSnackbar/index';
+import ErrorSnackbar from 'components/ErrorSnackbar';
 
-describe('FormErrorSnackbar', () => {
+describe('ErrorSnackbar', () => {
   test('renders correctly', () => {
-    render(<FormErrorSnackbar error="error" onClose={() => {}} />);
+    render(<ErrorSnackbar error="error" onClose={() => {}} />);
 
     const errorSnackbar = screen.getByRole('alert');
     expect(errorSnackbar).toHaveTextContent('error');
   });
 
   test("doesn't render without error", () => {
-    render(<FormErrorSnackbar error={null} onClose={() => {}} />);
+    render(<ErrorSnackbar error={null} onClose={() => {}} />);
 
     const errorSnackbar = screen.queryByRole('alert');
     expect(errorSnackbar).not.toBeInTheDocument();
