@@ -3,7 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import LoginForm from './LoginForm';
 
 describe('LoginForm', () => {
-  test.only('renders correctly', () => {
+  test('renders correctly', () => {
     render(
       <BrowserRouter>
         <LoginForm />

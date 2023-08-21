@@ -49,7 +49,7 @@ function LoginForm() {
       <Stack spacing={2}>
         <TextField
           label="Email"
-          type="email"
+          type="text"
           {...register('email', validationSchemes.email)}
           error={!!errors.email}
           helperText={errors.email?.message}
