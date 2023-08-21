@@ -9,6 +9,8 @@ import AuthContext from 'context';
 import { logout } from 'services/sdk/customer';
 import NavMenu from './NavMenu';
 import CartButton from './CartButton';
+import Logo from './Logo';
+
 import './Header.scss';
 
 function Header() {
@@ -28,7 +30,10 @@ function Header() {
   return (
     <AppBar component="header" position="static" color="transparent">
       <Toolbar sx={{ justifyContent: 'space-between', fontWeight: '700' }}>
-        <NavMenu />
+        <Stack direction="row" alignItems="center">
+          <Logo />
+          <NavMenu />
+        </Stack>
         <Stack direction="row" spacing={2}>
           <CartButton />
           {!isAuth && <LinkButton title="Sign in" link="/login" icon={<PersonIcon />} />}

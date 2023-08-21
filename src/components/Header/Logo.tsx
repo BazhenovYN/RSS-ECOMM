@@ -1,11 +1,12 @@
-import { Link as RouterLink } from 'react-router-dom';
-import { Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { Box } from '@mui/material';
+import logo from 'assets/img/logo.png';
 
 function Logo() {
   return (
-    <Typography variant="h5" component={RouterLink} to="/" sx={{ textDecoration: 'none' }}>
-      Fresh Food
-    </Typography>
+    <Link to="/">
+      <Box component="img" src={logo} width={40} display={{ xs: 'none', md: 'flex' }} mr={2} />
+    </Link>
   );
 }
 
