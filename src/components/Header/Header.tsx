@@ -1,15 +1,16 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppBar, Toolbar, Stack, Button, Box } from '@mui/material';
+import { AppBar, Toolbar, Stack, Button } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LinkButton from 'components/LinkButton/LinkButton';
 import AuthContext from 'context';
 import { logout } from 'services/sdk/customer';
-import logo from 'assets/img/logo.png';
 import NavMenu from './NavMenu';
 import CartButton from './CartButton';
+import Logo from './Logo';
+
 import './Header.scss';
 
 function Header() {
@@ -30,7 +31,7 @@ function Header() {
     <AppBar component="header" position="static" color="transparent">
       <Toolbar sx={{ justifyContent: 'space-between', fontWeight: '700' }}>
         <Stack direction="row" alignItems="center">
-          <Box component="img" src={logo} width={40} display={{ xs: 'none', md: 'flex' }} mr={2} />
+          <Logo />
           <NavMenu />
         </Stack>
         <Stack direction="row" spacing={2}>
