@@ -26,7 +26,7 @@ const theme = createTheme({
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
-  const [message, setMessage] = useState<Message | null>(null);
+  const [message, setMessage] = useState<Message>({ text: null, severity: undefined });
   const authContext = useMemo(() => {
     return { isAuth, setIsAuth, message, setMessage };
   }, [isAuth, setIsAuth, message, setMessage]);
@@ -56,10 +56,10 @@ function App() {
             </Box>
             <Footer />
             <PopupMessage
-              text={message?.text || null}
-              severity={message?.severity}
+              text={message.text}
+              severity={message.severity}
               onClose={() => {
-                setMessage(null);
+                setMessage({ ...message, text: null });
               }}
             />
           </div>

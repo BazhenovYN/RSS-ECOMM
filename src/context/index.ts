@@ -4,13 +4,13 @@ import { AlertColor } from '@mui/material';
 interface IAppContext {
   isAuth: boolean;
   setIsAuth: Dispatch<SetStateAction<boolean>>;
-  message: Message | null;
-  setMessage: Dispatch<SetStateAction<Message | null>>;
+  message: Message;
+  setMessage: Dispatch<SetStateAction<Message>>;
 }
 
 export interface Message {
-  text: string;
-  severity: AlertColor;
+  text: string | null;
+  severity: AlertColor | undefined;
 }
 
 const AuthContext = createContext<IAppContext | null>(null);
