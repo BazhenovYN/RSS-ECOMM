@@ -1,5 +1,6 @@
-import { Box, Button, Container, Grid, Stack, Typography } from '@mui/material';
+import { Box, Container, Grid, Stack, Typography } from '@mui/material';
 import { orange } from '@mui/material/colors';
+import LinkButton from 'components/LinkButton/LinkButton';
 import img from 'assets/img/orange.jpg';
 
 function NotFoundPage() {
@@ -31,7 +32,7 @@ function NotFoundPage() {
               <Typography variant="body1">Sorry, we cannot find the page you are looking for.</Typography>
               <Typography variant="body1">But we found an orange for you.</Typography>
             </Stack>
-            <Button variant="contained">Back Home</Button>
+            <LinkButton title="Back Home" link="/" />
           </Grid>
           <Grid item xs={6}>
             <Box component="img" sx={{ width: '100%' }} src={img} />

@@ -9,6 +9,7 @@ import AuthContext, { Message } from 'context';
 import { login } from 'services/sdk/customer';
 import AppRouter from 'router';
 import PopupMessage from 'components/PopupMessage';
+import { getCookie } from 'utils/cookie';
 import styles from './App.module.scss';
 
 const theme = createTheme({
@@ -25,11 +26,15 @@ const theme = createTheme({
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
-  const [message, setMessage] = useState<Message | null>(null);
+  const [message, setMessage] = useState<Message>({ text: null, severity: undefined });
   const authContext = useMemo(() => {
     return { isAuth, setIsAuth, message, setMessage };
   }, [isAuth, setIsAuth, message, setMessage]);
   useEffect(() => {
+    if (!getCookie('authToken') && !getCookie('refreshToken')) {
+      setIsLoading(false);
+      return;
+    }
     login()
       .then(() => setIsAuth(true))
       .catch(() => {})
@@ -51,10 +56,10 @@ function App() {
             </Box>
             <Footer />
             <PopupMessage
-              text={message?.text || null}
-              severity={message?.severity}
+              text={message.text}
+              severity={message.severity}
               onClose={() => {
-                setMessage(null);
+                setMessage({ ...message, text: null });
               }}
             />
           </div>

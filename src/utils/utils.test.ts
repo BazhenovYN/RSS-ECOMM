@@ -1,6 +1,6 @@
 import { isPostCodeValid } from './utils';
 
-describe('util isPostCodeValid is corect', () => {
+describe('util isPostCodeValid is correct', () => {
   const testData = [
     { postalCode: '111111', expected: true },
     { postalCode: '123456', expected: true },
