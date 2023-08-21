@@ -9,6 +9,7 @@ import AuthContext, { Message } from 'context';
 import { login } from 'services/sdk/customer';
 import AppRouter from 'router';
 import PopupMessage from 'components/PopupMessage';
+import { getCookie } from 'utils/cookie';
 import styles from './App.module.scss';
 
 const theme = createTheme({
@@ -30,6 +31,10 @@ function App() {
     return { isAuth, setIsAuth, message, setMessage };
   }, [isAuth, setIsAuth, message, setMessage]);
   useEffect(() => {
+    if (!getCookie('authToken') && !getCookie('refreshToken')) {
+      setIsLoading(false);
+      return;
+    }
     login()
       .then(() => setIsAuth(true))
       .catch(() => {})
