@@ -22,7 +22,7 @@ Project is created with:
 * [Commercetools](https://commercetools.com/)
 
 ## Code of conduct
-### Branching stategy
+### Branching strategy
 * Create a new branch for the current sprint (e.g., feat/sprint_3) from the previous sprint's branch (e.g., feat/sprint_2). For the first sprint use develop branch as a sprint branch.
 * For each task, create a new branch from the sprint branch, make the changes, and create a pull request to merge the changes back into the sprint branch after a code review.
 * At the end of the sprint, create a pull request from the current sprint's branch (e.g., feat/sprint_3) to the previous sprint's branch (e.g., feat/sprint_2).

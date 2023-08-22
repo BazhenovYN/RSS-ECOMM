@@ -40,11 +40,12 @@
         }
       }
     ],
-    "max-lines-per-function": ["error", 40],
+    "max-lines-per-function": ["error", 100],
     "no-var": "error",
     "no-unreachable": "error",
     "react/react-in-jsx-scope": ["off"],
     "react/jsx-uses-react": ["off"],
-    "react/jsx-props-no-spreading": ["warn"]
+    "react/jsx-props-no-spreading": ["off"],
+    "react/require-default-props": "off"
   }
 }
