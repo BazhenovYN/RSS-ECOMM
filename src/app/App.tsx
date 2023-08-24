@@ -5,7 +5,7 @@ import Footer from 'components/Footer';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useEffect, useMemo, useState } from 'react';
-import AuthContext, { Message } from 'context';
+import AppContext, { Message, Language } from 'context';
 import { login } from 'services/sdk/customer';
 import AppRouter from 'router';
 import PopupMessage from 'components/PopupMessage';
@@ -27,9 +27,10 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
   const [message, setMessage] = useState<Message>({ text: null, severity: undefined });
-  const authContext = useMemo(() => {
-    return { isAuth, setIsAuth, message, setMessage };
-  }, [isAuth, setIsAuth, message, setMessage]);
+  const [language, setLanguage] = useState<Language>('en-US');
+  const appContext = useMemo(() => {
+    return { isAuth, setIsAuth, message, setMessage, language, setLanguage };
+  }, [isAuth, setIsAuth, message, setMessage, language, setLanguage]);
   useEffect(() => {
     if (!getCookie('authToken') && !getCookie('refreshToken')) {
       setIsLoading(false);
@@ -46,7 +47,7 @@ function App() {
       <CircularProgress />
     </Box>
   ) : (
-    <AuthContext.Provider value={authContext}>
+    <AppContext.Provider value={appContext}>
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <div className={styles.App}>
@@ -65,7 +66,7 @@ function App() {
           </div>
         </LocalizationProvider>
       </ThemeProvider>
-    </AuthContext.Provider>
+    </AppContext.Provider>
   );
 }
 

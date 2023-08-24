@@ -8,7 +8,7 @@ import { type ChangeEvent, useState, useContext } from 'react';
 import { createCustomer, login } from 'services/sdk/customer';
 import { RegistrationFormData } from 'types/types';
 import { useNavigate } from 'react-router-dom';
-import AuthContext from 'context';
+import AppContext from 'context';
 
 const defaultValues: Partial<RegistrationFormData> = {
   email: '',
@@ -41,9 +41,9 @@ function RegistrationForm() {
     formState: { errors },
   } = methods;
 
-  const authContext = useContext(AuthContext);
-  const setIsAuth = authContext?.setIsAuth;
-  const setMessage = authContext?.setMessage;
+  const appContext = useContext(AppContext);
+  const setIsAuth = appContext?.setIsAuth;
+  const setMessage = appContext?.setMessage;
 
   const [disabledAddress, setDisabledAddress] = useState(false);
 

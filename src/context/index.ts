@@ -6,6 +6,7 @@ interface IAppContext {
   setIsAuth: Dispatch<SetStateAction<boolean>>;
   message: Message;
   setMessage: Dispatch<SetStateAction<Message>>;
+  language: Language;
 }
 
 export interface Message {
@@ -13,6 +14,8 @@ export interface Message {
   severity: AlertColor | undefined;
 }
 
-const AuthContext = createContext<IAppContext | null>(null);
+export type Language = 'en-US';
 
-export default AuthContext;
+const AppContext = createContext<IAppContext | null>(null);
+
+export default AppContext;

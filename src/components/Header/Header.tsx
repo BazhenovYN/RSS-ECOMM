@@ -5,7 +5,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LinkButton from 'components/LinkButton/LinkButton';
-import AuthContext from 'context';
+import AppContext from 'context';
 import { logout } from 'services/sdk/customer';
 import NavMenu from './NavMenu';
 import CartButton from './CartButton';
@@ -14,9 +14,9 @@ import Logo from './Logo';
 import './Header.scss';
 
 function Header() {
-  const authContext = useContext(AuthContext);
-  const isAuth = authContext?.isAuth;
-  const setIsAuth = authContext?.setIsAuth;
+  const appContext = useContext(AppContext);
+  const isAuth = appContext?.isAuth;
+  const setIsAuth = appContext?.setIsAuth;
 
   const navigate = useNavigate();
 

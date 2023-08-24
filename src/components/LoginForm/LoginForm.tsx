@@ -4,7 +4,7 @@ import { Box, Button, Stack, TextField } from '@mui/material';
 import PasswordField from 'components/PasswordField';
 import { login } from 'services/sdk/customer';
 import { useContext } from 'react';
-import AuthContext from 'context';
+import AppContext from 'context';
 import { useNavigate } from 'react-router-dom';
 
 interface IFormValues {
@@ -21,9 +21,9 @@ function LoginForm() {
     formState: { errors },
   } = useForm<IFormValues>({ defaultValues, mode: 'all' });
 
-  const authContext = useContext(AuthContext);
-  const setIsAuth = authContext?.setIsAuth;
-  const setMessage = authContext?.setMessage;
+  const appContext = useContext(AppContext);
+  const setIsAuth = appContext?.setIsAuth;
+  const setMessage = appContext?.setMessage;
 
   const navigate = useNavigate();
 
