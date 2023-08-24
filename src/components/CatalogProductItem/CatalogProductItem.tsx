@@ -1,3 +1,4 @@
+import COLORS from 'constants/colors';
 import logo from 'assets/img/logo.png';
 import { ProductProjection } from '@commercetools/platform-sdk';
 import { useContext } from 'react';
@@ -25,7 +26,7 @@ function CatalogProductItem({ product }: CatalogProductItemProps) {
         <Box
           sx={{
             height: '200px',
-            backgroundColor: '#F3F3F3',
+            backgroundColor: COLORS.SECONDARY_COLOR,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
