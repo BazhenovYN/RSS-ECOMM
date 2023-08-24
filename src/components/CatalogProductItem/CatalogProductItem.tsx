@@ -33,7 +33,7 @@ function CatalogProductItem({ product }: CatalogProductItemProps) {
           <img src={logo} alt="" />
         </Box>
       )}
-      <CardHeader title={productName} sx={{ fontWeight: '700' }} />
+      <CardHeader title={productName} titleTypographyProps={{ fontWeight: '700' }} />
       {productDescription && (
         <CardContent>
           <Typography>{productDescription}</Typography>
