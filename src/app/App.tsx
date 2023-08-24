@@ -41,17 +41,18 @@ function App() {
       .finally(() => setIsLoading(false));
   }, []);
 
-  return isLoading ? (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-      <CircularProgress />
-    </Box>
-  ) : (
+  return (
     <AuthContext.Provider value={authContext}>
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <div className={styles.App}>
+          <Box className={styles.App}>
+            {isLoading && (
+              <Box className={styles.loader}>
+                <CircularProgress />
+              </Box>
+            )}
             <Header />
-            <Box component="main" sx={{ flex: '1 0 auto' }}>
+            <Box component="main" sx={{ flex: '1 0 auto' }} px={8}>
               <AppRouter />
             </Box>
             <Footer />
@@ -62,7 +63,7 @@ function App() {
                 setMessage({ ...message, text: null });
               }}
             />
-          </div>
+          </Box>
         </LocalizationProvider>
       </ThemeProvider>
     </AuthContext.Provider>
