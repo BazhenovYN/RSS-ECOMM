@@ -15,3 +15,23 @@ export interface RegistrationFormAddress {
   street: string;
   isDefault: boolean;
 }
+
+export interface Image {
+  readonly url: string;
+}
+
+interface Attribute {
+  readonly name: string;
+  readonly value: string;
+}
+
+export interface Product {
+  id: string;
+  key: string;
+  name: string;
+  description: string;
+  cost: number;
+  currency: string;
+  images: Image[];
+  attributes: Attribute[];
+}
