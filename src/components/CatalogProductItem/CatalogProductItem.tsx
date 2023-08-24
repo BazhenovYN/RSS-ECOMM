@@ -6,17 +6,16 @@ import AppContext from 'context';
 import { Box, Card, CardContent, CardHeader, CardMedia, Typography } from '@mui/material';
 
 interface CatalogProductItemProps {
-  product: ProductProjection;
+  product: Pick<ProductProjection, 'id' | 'masterVariant' | 'name' | 'description'>;
 }
 
 function CatalogProductItem({ product }: CatalogProductItemProps) {
   const appContext = useContext(AppContext);
   const language = appContext?.language;
 
-  const productName = language && language in product.name ? product.name[language] : product.name['en-US'];
-  const { images } = product.masterVariant;
-  const imgUrl = images?.length ? images[0].url : null;
-  const productDescription = language && product.description ? product.description[language] : null;
+  const imgUrl = product.masterVariant.images?.[0].url || null;
+  const productName = (language && product.name[language]) || product.name['en-US'];
+  const productDescription = (language && product.description?.[language]) || null;
 
   return (
     <Card sx={{ height: '100%' }}>
