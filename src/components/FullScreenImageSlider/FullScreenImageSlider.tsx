@@ -7,9 +7,10 @@ interface IProps {
   slides: Image[];
   open: boolean;
   onClose: () => void;
+  firstSlide?: number;
 }
 
-function FullScreenImageSlider({ slides, open, onClose }: IProps) {
+function FullScreenImageSlider({ slides, open, onClose, firstSlide = 0 }: IProps) {
   return (
     <Modal open={open} onClose={onClose} disableAutoFocus>
       <Box
@@ -20,7 +21,7 @@ function FullScreenImageSlider({ slides, open, onClose }: IProps) {
           left: 0,
           right: 0,
         }}>
-        <ImageSlider slides={slides} />
+        <ImageSlider slides={slides} firstSlide={firstSlide} />
         <IconButton
           onClick={onClose}
           size="large"

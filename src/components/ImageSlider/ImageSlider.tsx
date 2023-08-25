@@ -7,16 +7,26 @@ import type { Image } from 'types/types';
 interface IProps {
   slides: Image[];
   isCover?: boolean;
+  firstSlide?: number;
+  onChange?: (value: number) => void;
 }
 
-function ImageSlider({ slides, isCover = false }: IProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+function ImageSlider({ slides, onChange, isCover = false, firstSlide = 0 }: IProps) {
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    if (firstSlide > 0 && firstSlide < slides.length) {
+      return firstSlide;
+    }
+    return 0;
+  });
 
   const goToPrevious = (event: React.MouseEvent) => {
     event.stopPropagation();
     const isFirstSlide = currentIndex === 0;
     const newIndex = isFirstSlide ? slides.length - 1 : currentIndex - 1;
     setCurrentIndex(newIndex);
+    if (onChange) {
+      onChange(newIndex);
+    }
   };
 
   const goToNext = (event: React.MouseEvent) => {
@@ -24,6 +34,9 @@ function ImageSlider({ slides, isCover = false }: IProps) {
     const isLastSlide = currentIndex === slides.length - 1;
     const newIndex = isLastSlide ? 0 : currentIndex + 1;
     setCurrentIndex(newIndex);
+    if (onChange) {
+      onChange(newIndex);
+    }
   };
 
   return (

@@ -25,6 +25,8 @@ function ProductPage() {
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
+  const [currentImage, setCurrentImage] = useState(0);
+
   return (
     <Box>
       <Typography component="h2" variant="h2" mb={2}>
@@ -32,7 +34,7 @@ function ProductPage() {
       </Typography>
       <Grid container spacing={4} columns={{ xs: 6, md: 12 }}>
         <Grid item xs={6} md={4} minHeight={350} borderRadius={4} onClick={handleOpenModal}>
-          <ImageSlider slides={product?.images ?? []} isCover />
+          <ImageSlider slides={product?.images ?? []} isCover onChange={setCurrentImage} />
         </Grid>
         <Grid item xs={6} md={8}>
           <Stack spacing={2}>
@@ -43,7 +45,12 @@ function ProductPage() {
           </Stack>
         </Grid>
       </Grid>
-      <FullScreenImageSlider slides={product?.images ?? []} open={openModal} onClose={handleCloseModal} />
+      <FullScreenImageSlider
+        slides={product?.images ?? []}
+        open={openModal}
+        onClose={handleCloseModal}
+        firstSlide={currentImage}
+      />
     </Box>
   );
 }
