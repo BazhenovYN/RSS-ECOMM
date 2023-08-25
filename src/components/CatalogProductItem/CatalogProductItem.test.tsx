@@ -1,28 +1,30 @@
 import { render, screen } from '@testing-library/react';
 import CatalogProductItem from 'components/CatalogProductItem';
 import AppContext, { IAppContext } from 'context';
-import { ProductProjection } from '@commercetools/platform-sdk';
 import logo from 'assets/img/logo.png';
+import { CatalogProductItemProps } from 'components/CatalogProductItem/CatalogProductItem';
 
-const product: Pick<ProductProjection, 'id' | 'masterVariant' | 'name' | 'description'> = {
-  name: {
-    'en-US': 'Product name',
-    ru: 'Имя продукта',
+const catalogProductItemProps: CatalogProductItemProps = {
+  product: {
+    name: {
+      'en-US': 'Product name',
+      ru: 'Имя продукта',
+    },
+    description: {
+      'en-US': 'Product description',
+      ru: 'Описание продукта',
+    },
+    masterVariant: {
+      images: [
+        {
+          url: 'test-img-url',
+          dimensions: { w: 1500, h: 1000 },
+        },
+      ],
+      id: 1,
+    },
+    id: 'test-id',
   },
-  description: {
-    'en-US': 'Product description',
-    ru: 'Описание продукта',
-  },
-  masterVariant: {
-    images: [
-      {
-        url: 'test-img-url',
-        dimensions: { w: 1500, h: 1000 },
-      },
-    ],
-    id: 1,
-  },
-  id: 'test-id',
 };
 
 const appContext: IAppContext = {
@@ -40,7 +42,7 @@ describe('CatalogProductItem', () => {
   test('renders correctly', () => {
     render(
       <AppContext.Provider value={appContext}>
-        <CatalogProductItem product={product} />
+        <CatalogProductItem product={catalogProductItemProps.product} />
       </AppContext.Provider>
     );
 
@@ -57,7 +59,7 @@ describe('CatalogProductItem', () => {
   test('renders correctly with another language', () => {
     render(
       <AppContext.Provider value={{ ...appContext, language: 'ru' }}>
-        <CatalogProductItem product={product} />
+        <CatalogProductItem product={catalogProductItemProps.product} />
       </AppContext.Provider>
     );
 
@@ -73,7 +75,7 @@ describe('CatalogProductItem', () => {
       <AppContext.Provider value={appContext}>
         <CatalogProductItem
           product={{
-            ...product,
+            ...catalogProductItemProps.product,
             masterVariant: {
               id: 1,
             },

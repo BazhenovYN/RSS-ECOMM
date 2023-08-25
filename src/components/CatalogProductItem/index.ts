@@ -1,3 +1,3 @@
-import CatalogProductItem from 'components/CatalogProductItem/CatalogProductItem';
+import CatalogProductItem from './CatalogProductItem';
 
 export default CatalogProductItem;

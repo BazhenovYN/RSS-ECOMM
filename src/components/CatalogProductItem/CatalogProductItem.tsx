@@ -1,11 +1,10 @@
-import COLORS from 'constants/colors';
 import logo from 'assets/img/logo.png';
 import { ProductProjection } from '@commercetools/platform-sdk';
 import { useContext } from 'react';
 import AppContext from 'context';
 import { Box, Card, CardContent, CardHeader, CardMedia, Typography } from '@mui/material';
 
-interface CatalogProductItemProps {
+export interface CatalogProductItemProps {
   product: Pick<ProductProjection, 'id' | 'masterVariant' | 'name' | 'description'>;
 }
 
@@ -13,7 +12,7 @@ function CatalogProductItem({ product }: CatalogProductItemProps) {
   const appContext = useContext(AppContext);
   const language = appContext?.language;
 
-  const imgUrl = product.masterVariant.images?.[0].url || null;
+  const imgUrl = product.masterVariant.images?.[0]?.url || null;
   const productName = (language && product.name[language]) || product.name['en-US'];
   const productDescription = (language && product.description?.[language]) || null;
 
@@ -25,7 +24,7 @@ function CatalogProductItem({ product }: CatalogProductItemProps) {
         <Box
           sx={{
             height: '200px',
-            backgroundColor: COLORS.SECONDARY_COLOR,
+            backgroundColor: 'secondary.main',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
