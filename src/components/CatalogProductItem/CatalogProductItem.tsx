@@ -13,9 +13,6 @@ function CatalogProductItem({ product }: CatalogProductItemProps) {
   const appContext = useContext(AppContext);
   const language = appContext?.language;
 
-  const imgUrl = product.masterVariant.images?.[0]?.url || null;
-  const productName = (language && product.name[language]) || product.name['en-US'];
-  const productDescription = (language && product.description?.[language]) || null;
   const imgUrl = product.images?.[0]?.url;
   const productName = (language && product.name[language]) || product.name[DEFAULT_LANGUAGE];
   const productDescription = language && product.description?.[language];
