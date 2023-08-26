@@ -20,6 +20,9 @@ const theme = createTheme({
     secondary: {
       main: COLORS.SECONDARY_COLOR,
     },
+    warning: {
+      main: COLORS.WARNINGS,
+    },
   },
 });
 

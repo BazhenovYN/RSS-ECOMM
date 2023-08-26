@@ -3,30 +3,49 @@ import { ProductProjection } from '@commercetools/platform-sdk';
 import { getAppApiRoot, projectKey } from 'services/sdk/client';
 import type { Product } from 'types/types';
 
-const getCost = (product: ProductProjection) => {
-  if (product.masterVariant.prices?.length) {
-    return (
-      product.masterVariant.prices[0].value.centAmount / 10 ** product.masterVariant.prices[0].value.fractionDigits
-    );
-  }
-  return 0;
+interface ISellingPrice {
+  price: number;
+  salePrice: number;
+  hasDiscount: boolean;
+  currency: string;
+}
+
+const EMPTY_PRICE: ISellingPrice = {
+  price: 0,
+  salePrice: 0,
+  hasDiscount: false,
+  currency: '',
 };
 
-const getCurrency = (product: ProductProjection) => {
-  if (product.masterVariant.prices?.length) {
-    return product.masterVariant.prices[0].value.currencyCode;
+const getSellingPrice = (product: ProductProjection): ISellingPrice => {
+  if (!product.masterVariant.prices || product.masterVariant.prices.length === 0) {
+    return EMPTY_PRICE;
   }
-  return '';
+
+  const currentPrice = product.masterVariant.prices[0];
+  const price = currentPrice.value.centAmount / 10 ** currentPrice.value.fractionDigits;
+  const currency = currentPrice.value.currencyCode;
+
+  const discountedPrice = currentPrice.discounted;
+  if (!discountedPrice) {
+    return { price, currency, hasDiscount: false, salePrice: price };
+  }
+  const salePrice = discountedPrice.value.centAmount / 10 ** discountedPrice.value.fractionDigits;
+
+  return { price, currency, hasDiscount: true, salePrice };
 };
 
 const adapt = (product: ProductProjection): Product => {
+  const sellingPrice = getSellingPrice(product);
   return {
     id: product.id,
     key: product.key ?? '',
     name: product.name[LOCALE],
     description: product.description ? product.description[LOCALE] : '',
-    cost: getCost(product),
-    currency: getCurrency(product),
+    price: sellingPrice.price,
+    hasDiscount: sellingPrice.hasDiscount,
+    salePrice: sellingPrice.salePrice,
+    currency: sellingPrice.currency,
     images: product.masterVariant.images ?? [],
     attributes: product.masterVariant.attributes ?? [],
   };

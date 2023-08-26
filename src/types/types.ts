@@ -30,7 +30,9 @@ export interface Product {
   key: string;
   name: string;
   description: string;
-  cost: number;
+  price: number;
+  hasDiscount: boolean;
+  salePrice: number;
   currency: string;
   images: Image[];
   attributes: Attribute[];

@@ -1,10 +1,13 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getProductDetails } from 'services/sdk/product';
-import { Product } from 'types/types';
+import { Box, Button, Grid, IconButton, Stack, Typography } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import ImageSlider from 'components/ImageSlider';
-import { Box, Grid, Stack, Typography } from '@mui/material';
 import FullScreenImageSlider from 'components/FullScreenImageSlider';
+import PriceField from 'components/PriceField';
+import type { Product } from 'types/types';
 
 function ProductPage() {
   const [product, setProduct] = useState<Product | undefined>();
@@ -26,6 +29,7 @@ function ProductPage() {
   const handleCloseModal = () => setOpenModal(false);
 
   const [currentImage, setCurrentImage] = useState(0);
+  const [count, setCount] = useState(1);
 
   return (
     <Box>
@@ -41,7 +45,22 @@ function ProductPage() {
             <Typography component="h3" variant="h3">
               {product?.name}
             </Typography>
+            <PriceField product={product} />
             <Typography variant="body1">{product?.description}</Typography>
+            <Stack direction="row" spacing={2}>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <IconButton onClick={() => (count > 1 ? setCount(count - 1) : 1)}>
+                  <RemoveIcon />
+                </IconButton>
+                <Box component="span" minWidth={20} textAlign="center">
+                  {count}
+                </Box>
+                <IconButton onClick={() => setCount(count + 1)}>
+                  <AddIcon />
+                </IconButton>
+              </Stack>
+              <Button variant="contained">Add to basket</Button>
+            </Stack>
           </Stack>
         </Grid>
       </Grid>
