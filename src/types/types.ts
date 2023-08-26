@@ -26,6 +26,7 @@ export interface Product {
   name: LocalizedString;
   description?: LocalizedString;
   cost?: number;
+  discountedCost?: number;
   currency?: string;
   images?: Image[];
   attributes?: Attribute[];

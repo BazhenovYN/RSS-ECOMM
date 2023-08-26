@@ -8,6 +8,13 @@ const getCost = (product: ProductProjection): number | undefined => {
     : undefined;
 };
 
+const getDiscountCost = (product: ProductProjection): number | undefined => {
+  return product.masterVariant.prices?.[0]?.discounted
+    ? product.masterVariant.prices[0].discounted.value.centAmount /
+        10 ** product.masterVariant.prices[0].discounted.value.fractionDigits
+    : undefined;
+};
+
 const getCurrency = (product: ProductProjection): string | undefined => {
   return product.masterVariant.prices?.length ? product.masterVariant.prices[0].value.currencyCode : undefined;
 };
@@ -19,6 +26,7 @@ const adapt = (product: ProductProjection): Product => {
     name: product.name,
     description: product.description,
     cost: getCost(product),
+    discountedCost: getDiscountCost(product),
     currency: getCurrency(product),
     images: product.masterVariant.images,
     attributes: product.masterVariant.attributes,
