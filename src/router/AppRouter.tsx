@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import AuthContext from 'context';
+import AppContext from 'context';
 import AboutUsPage from 'pages/AboutUsPage';
 import CatalogPage from 'pages/CatalogPage';
 import HomePage from 'pages/HomePage';
@@ -11,8 +11,8 @@ import BasketPage from 'pages/BasketPage';
 import ProductPage from 'pages/ProductPage';
 
 function AppRouter() {
-  const authContext = useContext(AuthContext);
-  const isAuth = authContext?.isAuth;
+  const appContext = useContext(AppContext);
+  const isAuth = appContext?.isAuth;
 
   return (
     <Routes>

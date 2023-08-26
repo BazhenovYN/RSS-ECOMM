@@ -16,6 +16,8 @@ export interface RegistrationFormAddress {
   isDefault: boolean;
 }
 
+export type Language = 'en-US' | 'ru';
+
 export interface Image {
   readonly url: string;
 }
