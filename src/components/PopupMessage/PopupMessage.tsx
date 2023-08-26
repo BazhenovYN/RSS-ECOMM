@@ -8,7 +8,7 @@ interface PopupMessageProps {
 
 function PopupMessage({ text, onClose, severity }: PopupMessageProps) {
   return (
-    <Snackbar autoHideDuration={3000} open={!!text} onClose={onClose}>
+    <Snackbar autoHideDuration={5000} open={!!text} onClose={onClose}>
       <Alert onClose={onClose} severity={severity}>
         {text}
       </Alert>
