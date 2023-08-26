@@ -35,7 +35,7 @@ const getSellingPrice = (product: ProductProjection): ISellingPrice => {
   return { price, currency, hasDiscount: true, salePrice };
 };
 
-const adapt = (product: ProductProjection): Product => {
+const getProductData = (product: ProductProjection): Product => {
   const sellingPrice = getSellingPrice(product);
   return {
     id: product.id,
@@ -51,14 +51,14 @@ const adapt = (product: ProductProjection): Product => {
   };
 };
 
-export const getProductDetails = async (ID: string): Promise<Product> => {
+export const fetchProductDetails = async (ID: string): Promise<Product> => {
   const response = await getAppApiRoot()
     .withProjectKey({ projectKey })
     .productProjections()
     .withId({ ID })
     .get()
     .execute();
-  return adapt(response.body);
+  return getProductData(response.body);
 };
 
-export default getProductDetails;
+export default fetchProductDetails;

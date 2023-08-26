@@ -7,10 +7,11 @@ interface IProps {
   slides: Image[];
   open: boolean;
   onClose: () => void;
-  firstSlide?: number;
+  currentSlide: number;
+  onChange: (slideIndex: number) => void;
 }
 
-function FullScreenImageSlider({ slides, open, onClose, firstSlide = 0 }: IProps) {
+function FullScreenImageSlider({ slides, open, onClose, onChange, currentSlide }: IProps) {
   return (
     <Modal open={open} onClose={onClose} disableAutoFocus>
       <Box
@@ -21,8 +22,9 @@ function FullScreenImageSlider({ slides, open, onClose, firstSlide = 0 }: IProps
           left: 0,
           right: 0,
         }}>
-        <ImageSlider slides={slides} firstSlide={firstSlide} />
+        <ImageSlider slides={slides} currentSlide={currentSlide} isFullScreenMode onChange={onChange} />
         <IconButton
+          data-testid="close-button"
           onClick={onClose}
           size="large"
           sx={{ position: 'absolute', top: '16px', right: '16px', color: 'white' }}>

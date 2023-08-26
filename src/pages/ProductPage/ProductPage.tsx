@@ -1,13 +1,12 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getProductDetails } from 'services/sdk/product';
-import { Box, Button, Grid, IconButton, Stack, Typography } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
+import { fetchProductDetails } from 'services/sdk/product';
+import { Box, Button, Grid, Stack, Typography } from '@mui/material';
 import ImageSlider from 'components/ImageSlider';
 import FullScreenImageSlider from 'components/FullScreenImageSlider';
 import PriceField from 'components/PriceField';
 import type { Product } from 'types/types';
+import Counter from 'components/Counter';
 
 function ProductPage() {
   const [product, setProduct] = useState<Product | undefined>();
@@ -15,7 +14,7 @@ function ProductPage() {
 
   useEffect(() => {
     const fetchProduct = async (id: string) => {
-      const res = await getProductDetails(id);
+      const res = await fetchProductDetails(id);
       setProduct(res);
     };
 
@@ -38,7 +37,7 @@ function ProductPage() {
       </Typography>
       <Grid container spacing={4} columns={{ xs: 6, md: 12 }}>
         <Grid item xs={6} md={4} minHeight={350} borderRadius={4} onClick={handleOpenModal}>
-          <ImageSlider slides={product?.images ?? []} isCover onChange={setCurrentImage} />
+          <ImageSlider slides={product?.images ?? []} currentSlide={currentImage} onChange={setCurrentImage} />
         </Grid>
         <Grid item xs={6} md={8}>
           <Stack spacing={2}>
@@ -48,17 +47,7 @@ function ProductPage() {
             <PriceField product={product} />
             <Typography variant="body1">{product?.description}</Typography>
             <Stack direction="row" spacing={2}>
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <IconButton onClick={() => (count > 1 ? setCount(count - 1) : 1)}>
-                  <RemoveIcon />
-                </IconButton>
-                <Box component="span" minWidth={20} textAlign="center">
-                  {count}
-                </Box>
-                <IconButton onClick={() => setCount(count + 1)}>
-                  <AddIcon />
-                </IconButton>
-              </Stack>
+              <Counter count={count} setCount={setCount} />
               <Button variant="contained">Add to basket</Button>
             </Stack>
           </Stack>
@@ -67,8 +56,9 @@ function ProductPage() {
       <FullScreenImageSlider
         slides={product?.images ?? []}
         open={openModal}
+        onChange={setCurrentImage}
         onClose={handleCloseModal}
-        firstSlide={currentImage}
+        currentSlide={currentImage}
       />
     </Box>
   );
