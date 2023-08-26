@@ -1,15 +1,17 @@
 import COLORS from 'constants/colors';
+import { DEFAULT_LANGUAGE } from 'constants/const';
 import { createTheme, ThemeProvider, Box, CircularProgress } from '@mui/material';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useEffect, useMemo, useState } from 'react';
-import AppContext, { Message, Language } from 'context';
+import AppContext, { Message } from 'context';
 import { login } from 'services/sdk/customer';
 import AppRouter from 'router';
 import PopupMessage from 'components/PopupMessage';
 import { getCookie } from 'utils/cookie';
+import { Language } from 'types/types';
 import styles from './App.module.scss';
 
 const theme = createTheme({
@@ -27,7 +29,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
   const [message, setMessage] = useState<Message>({ text: null, severity: undefined });
-  const [language, setLanguage] = useState<Language>('en-US');
+  const [language, setLanguage] = useState<Language>(DEFAULT_LANGUAGE);
   const appContext = useMemo(() => {
     return { isAuth, setIsAuth, message, setMessage, language, setLanguage };
   }, [isAuth, setIsAuth, message, setMessage, language, setLanguage]);

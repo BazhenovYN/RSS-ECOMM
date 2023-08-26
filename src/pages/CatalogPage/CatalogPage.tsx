@@ -1,20 +1,20 @@
 import { Box, CircularProgress, Grid, Typography } from '@mui/material';
 import { getProducts } from 'services/sdk/product';
 import { useContext, useEffect, useState } from 'react';
-import { ProductProjection } from '@commercetools/platform-sdk';
 import AppContext from 'context';
 import CatalogProductItem from 'components/CatalogProductItem';
+import { Product } from 'types/types';
 
 function CatalogPage() {
   const [isLoading, setIsLoading] = useState(true);
-  const [products, setProducts] = useState<ProductProjection[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
   const appContext = useContext(AppContext);
   const setMessage = appContext?.setMessage;
 
   useEffect(() => {
     getProducts()
-      .then((productsData) => setProducts(productsData.results))
+      .then((productsData) => setProducts(productsData))
       .catch((error) => {
         if (setMessage)
           setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });

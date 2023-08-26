@@ -1,11 +1,12 @@
+import { DEFAULT_LANGUAGE } from 'constants/const';
 import logo from 'assets/img/logo.png';
-import { ProductProjection } from '@commercetools/platform-sdk';
 import { useContext } from 'react';
 import AppContext from 'context';
 import { Box, Card, CardContent, CardHeader, CardMedia, Typography } from '@mui/material';
+import { Product } from 'types/types';
 
-export interface CatalogProductItemProps {
-  product: Pick<ProductProjection, 'id' | 'masterVariant' | 'name' | 'description'>;
+interface CatalogProductItemProps {
+  product: Product;
 }
 
 function CatalogProductItem({ product }: CatalogProductItemProps) {
@@ -15,6 +16,9 @@ function CatalogProductItem({ product }: CatalogProductItemProps) {
   const imgUrl = product.masterVariant.images?.[0]?.url || null;
   const productName = (language && product.name[language]) || product.name['en-US'];
   const productDescription = (language && product.description?.[language]) || null;
+  const imgUrl = product.images?.[0]?.url;
+  const productName = (language && product.name[language]) || product.name[DEFAULT_LANGUAGE];
+  const productDescription = language && product.description?.[language];
 
   return (
     <Card sx={{ height: '100%' }}>
