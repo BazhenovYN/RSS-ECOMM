@@ -1,7 +1,8 @@
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { fetchProductDetails } from 'services/sdk/product';
 import { Box, Button, Grid, Stack, Typography } from '@mui/material';
+import AppContext from 'context';
 import ImageSlider from 'components/ImageSlider';
 import FullScreenImageSlider from 'components/FullScreenImageSlider';
 import PriceField from 'components/PriceField';
@@ -9,19 +10,34 @@ import type { Product } from 'types/types';
 import Counter from 'components/Counter';
 
 function ProductPage() {
+  const appContext = useContext(AppContext);
+  const setMessage = appContext?.setMessage;
+  const setIsLoading = appContext?.setIsLoading;
+
   const [product, setProduct] = useState<Product | undefined>();
   const { productId } = useParams();
 
   useEffect(() => {
     const fetchProduct = async (id: string) => {
-      const res = await fetchProductDetails(id);
-      setProduct(res);
+      if (setIsLoading) {
+        setIsLoading(true);
+      }
+      try {
+        const res = await fetchProductDetails(id);
+        setProduct(res);
+      } catch (error) {
+        if (setMessage) {
+          setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
+        }
+      } finally {
+        if (setIsLoading) setIsLoading(false);
+      }
     };
 
     if (productId) {
       fetchProduct(productId);
     }
-  }, [productId]);
+  }, [productId, setIsLoading, setMessage]);
 
   const [openModal, setOpenModal] = useState(false);
   const handleOpenModal = () => setOpenModal(true);
