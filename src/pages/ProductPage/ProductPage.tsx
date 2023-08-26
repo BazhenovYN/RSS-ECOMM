@@ -11,6 +11,7 @@ import Counter from 'components/Counter';
 
 function ProductPage() {
   const appContext = useContext(AppContext);
+  const language = appContext?.language;
   const setMessage = appContext?.setMessage;
   const setIsLoading = appContext?.setIsLoading;
 
@@ -23,7 +24,7 @@ function ProductPage() {
         setIsLoading(true);
       }
       try {
-        const res = await fetchProductDetails(id);
+        const res = await fetchProductDetails(id, language);
         setProduct(res);
       } catch (error) {
         if (setMessage) {
@@ -37,7 +38,7 @@ function ProductPage() {
     if (productId) {
       fetchProduct(productId);
     }
-  }, [productId, setIsLoading, setMessage]);
+  }, [productId, language, setIsLoading, setMessage]);
 
   const [openModal, setOpenModal] = useState(false);
   const handleOpenModal = () => setOpenModal(true);
