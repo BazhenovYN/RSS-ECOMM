@@ -34,7 +34,12 @@ const adapt = (product: ProductProjection): Product => {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export const getProducts = async (): Promise<Product[]> => {
-  const response = await getAppApiRoot().productProjections().get().execute();
+export const searchProducts = async (sortingField: string, sortingDirection: string) => {
+  const response = await getAppApiRoot()
+    .productProjections()
+    .search()
+    .get({ queryArgs: { sort: `${sortingField} ${sortingDirection}` } })
+    .execute();
+
   return response.body.results.map((product) => adapt(product));
 };
