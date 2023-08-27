@@ -4,6 +4,7 @@ import { useContext } from 'react';
 import AppContext from 'context';
 import { Box, Card, CardContent, CardHeader, CardMedia, Typography, Stack, useTheme } from '@mui/material';
 import { Product } from 'types/types';
+import { Link as RouterLink } from 'react-router-dom';
 
 interface CatalogProductItemProps {
   product: Product;
@@ -23,14 +24,16 @@ function CatalogProductItem({ product }: CatalogProductItemProps) {
 
   return (
     <Card
+      component={RouterLink}
+      to={`/catalog/${product.id}`}
       sx={{
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, scale 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+        transition: 'box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, scale 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+        textDecoration: 'none',
         '&:hover': {
           boxShadow: `0 2px 5px 1px ${theme.palette.primary.main}`,
-          cursor: 'pointer',
           scale: '1.05',
         },
       }}>
