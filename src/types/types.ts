@@ -31,3 +31,7 @@ export interface Product {
   images?: Image[];
   attributes?: Attribute[];
 }
+
+export type AttributesList = Record<string, Set<string>>;
+
+export type SelectedAttributesList = Record<string, string>;

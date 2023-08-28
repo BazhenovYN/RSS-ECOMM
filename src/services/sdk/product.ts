@@ -1,6 +1,6 @@
 import { getAppApiRoot } from 'services/sdk/client';
 import { ProductProjection } from '@commercetools/platform-sdk';
-import { Product } from 'types/types';
+import { Product, SelectedAttributesList } from 'types/types';
 
 const getCost = (product: ProductProjection): number | undefined => {
   return product.masterVariant.prices?.length
@@ -38,8 +38,14 @@ export const searchProducts = async (
   searchParameter: string,
   searchQuery: string,
   sortingField: string,
-  sortingDirection: string
+  sortingDirection: string,
+  selectedAttributes: SelectedAttributesList = {}
 ) => {
+  const filterStrings = Object.keys(selectedAttributes).map((attributeName) => {
+    const filterAttributeName = `variants.attributes.${attributeName}`;
+    const filterAttributeValue = selectedAttributes[attributeName];
+    return `${filterAttributeName}:"${filterAttributeValue}"`;
+  });
   const response = await getAppApiRoot()
     .productProjections()
     .search()
@@ -48,6 +54,7 @@ export const searchProducts = async (
         [searchParameter]: searchQuery,
         fuzzy: true,
         sort: `${sortingField} ${sortingDirection}`,
+        filter: filterStrings,
       },
     })
     .execute();

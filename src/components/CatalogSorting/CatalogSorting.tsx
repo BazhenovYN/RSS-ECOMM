@@ -23,16 +23,18 @@ function CatalogSorting({
   };
 
   return (
-    <Stack direction="row" alignItems="center" alignSelf="flex-end" spacing={1}>
-      <Typography>Sorting:</Typography>
-      <Select defaultValue={sortingNameParameter} onChange={changeSortingField}>
-        <MenuItem value={sortingNameParameter}>Name</MenuItem>
-        <MenuItem value={sortingPriceParameter}>Price</MenuItem>
-      </Select>
-      <Select defaultValue={sortingDirections.ASC} onChange={changeSortingDirection}>
-        <MenuItem value={sortingDirections.ASC}>{sortingDirections.ASC}</MenuItem>
-        <MenuItem value={sortingDirections.DESC}>{sortingDirections.DESC}</MenuItem>
-      </Select>
+    <Stack spacing={1}>
+      <Typography>Sort by:</Typography>
+      <Stack direction="row" spacing={1}>
+        <Select fullWidth defaultValue={sortingNameParameter} onChange={changeSortingField}>
+          <MenuItem value={sortingNameParameter}>Name</MenuItem>
+          <MenuItem value={sortingPriceParameter}>Price</MenuItem>
+        </Select>
+        <Select fullWidth defaultValue={sortingDirections.ASC} onChange={changeSortingDirection}>
+          <MenuItem value={sortingDirections.ASC}>{sortingDirections.ASC}</MenuItem>
+          <MenuItem value={sortingDirections.DESC}>{sortingDirections.DESC}</MenuItem>
+        </Select>
+      </Stack>
     </Stack>
   );
 }
