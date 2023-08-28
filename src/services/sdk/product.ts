@@ -50,7 +50,10 @@ const getProductData = (product: ProductProjection): Product => {
   };
 };
 
-export const getProductDetails = async (ID: string): Promise<Product> => {
+export const getProductDetails = async (ID: string | undefined): Promise<Product> => {
+  if (!ID) {
+    throw Error('Product ID is not defined');
+  }
   const response = await getAppApiRoot().productProjections().withId({ ID }).get().execute();
   return getProductData(response.body);
 };
