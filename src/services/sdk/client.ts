@@ -6,9 +6,10 @@ import {
   PasswordAuthMiddlewareOptions,
   TokenStore,
 } from '@commercetools/sdk-client-v2';
-import { ApiRoot, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
+import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import getEnvironmentVariable from 'utils/getEnvironmentVariable';
 import { deleteCookie, getCookie, getCookieExpiration, setCookie } from 'utils/cookie';
+import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 
 export const projectKey: string = getEnvironmentVariable('REACT_APP_PROJECT_KEY');
 const scopes: string[] = [getEnvironmentVariable('REACT_APP_SCOPES')];
@@ -38,8 +39,8 @@ const appClient: Client = new ClientBuilder()
   .withLoggerMiddleware()
   .build();
 
-export const getAppApiRoot = (): ApiRoot => {
-  return createApiBuilderFromCtpClient(appClient);
+export const getAppApiRoot = (): ByProjectKeyRequestBuilder => {
+  return createApiBuilderFromCtpClient(appClient).withProjectKey({ projectKey });
 };
 
 const customerClientBuilder = (email: string, password: string): Client => {
@@ -78,10 +79,10 @@ const customerClientBuilder = (email: string, password: string): Client => {
     .build();
 };
 
-let customerApiRoot: ApiRoot | null = null;
+let customerApiRoot: ByProjectKeyRequestBuilder | null = null;
 
-const checkApiRoot = async (testedApiRoot: ApiRoot): Promise<void> => {
-  await testedApiRoot.withProjectKey({ projectKey }).me().get().execute();
+const checkApiRoot = async (testedApiRoot: ByProjectKeyRequestBuilder): Promise<void> => {
+  await testedApiRoot.me().get().execute();
 };
 
 export const removeCustomerApiRoot = (): void => {
@@ -90,12 +91,15 @@ export const removeCustomerApiRoot = (): void => {
   deleteCookie('refreshToken');
 };
 
-const createCustomerApiRoot = (email: string, password: string): ApiRoot => {
+const createCustomerApiRoot = (email: string, password: string): ByProjectKeyRequestBuilder => {
   const customerClient: Client = customerClientBuilder(email, password);
-  return createApiBuilderFromCtpClient(customerClient);
+  return createApiBuilderFromCtpClient(customerClient).withProjectKey({ projectKey });
 };
 
-export const getCustomerApiRoot = async (email: string, password: string): Promise<ApiRoot | null> => {
+export const getCustomerApiRoot = async (
+  email: string,
+  password: string
+): Promise<ByProjectKeyRequestBuilder | null> => {
   customerApiRoot = createCustomerApiRoot(email, password);
 
   try {

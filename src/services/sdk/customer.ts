@@ -1,5 +1,5 @@
 import { AddressDraft, ClientResponse, CustomerDraft, CustomerSignInResult } from '@commercetools/platform-sdk';
-import { getAppApiRoot, getCustomerApiRoot, projectKey, removeCustomerApiRoot } from 'services/sdk/client';
+import { getAppApiRoot, getCustomerApiRoot, removeCustomerApiRoot } from 'services/sdk/client';
 import { RegistrationFormAddress, RegistrationFormData } from 'types/types';
 import dayjs from 'dayjs';
 
@@ -44,7 +44,6 @@ export const createCustomerDraft = (registrationFormData: RegistrationFormData):
 export const createCustomer = async (registrationFormData: RegistrationFormData): Promise<CustomerSignInResult> => {
   const customerDraft: CustomerDraft = createCustomerDraft(registrationFormData);
   const response: ClientResponse<CustomerSignInResult> = await getAppApiRoot()
-    .withProjectKey({ projectKey })
     .customers()
     .post({ body: customerDraft })
     .execute();
