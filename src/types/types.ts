@@ -29,6 +29,6 @@ export interface Product {
   hasDiscount: boolean;
   salePrice: number;
   currency: string;
-  images: Image[];
-  attributes: Attribute[];
+  images?: Image[];
+  attributes?: Attribute[];
 }

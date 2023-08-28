@@ -1,7 +1,7 @@
 import { Box, IconButton } from '@mui/material';
 import ArrowBackIosOutlinedIcon from '@mui/icons-material/ArrowBackIosOutlined';
 import ArrowForwardIosOutlinedIcon from '@mui/icons-material/ArrowForwardIosOutlined';
-import type { Image } from 'types/types';
+import type { Image } from '@commercetools/platform-sdk';
 
 interface IProps {
   slides: Image[];

@@ -5,6 +5,8 @@ import logo from 'assets/img/logo.png';
 import { Product } from 'types/types';
 
 const product: Product = {
+  id: 'test-id',
+  key: 'test-key',
   name: {
     'en-US': 'Product name',
     ru: 'Имя продукта',
@@ -13,13 +15,16 @@ const product: Product = {
     'en-US': 'Product description',
     ru: 'Описание продукта',
   },
+  price: 0,
+  hasDiscount: false,
+  salePrice: 0,
+  currency: 'EUR',
   images: [
     {
       url: 'test-img-url',
       dimensions: { w: 1, h: 1 },
     },
   ],
-  id: 'test-id',
 };
 
 const appContext: IAppContext = {

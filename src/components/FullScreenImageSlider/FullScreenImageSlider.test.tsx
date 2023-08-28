@@ -1,16 +1,19 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import type { Image } from 'types/types';
+import type { Image } from '@commercetools/platform-sdk';
 import FullScreenImageSlider from './FullScreenImageSlider';
 
 const slides: Image[] = [
   {
     url: '',
+    dimensions: { w: 1, h: 1 },
   },
   {
     url: '',
+    dimensions: { w: 1, h: 1 },
   },
   {
     url: '',
+    dimensions: { w: 1, h: 1 },
   },
 ];
 

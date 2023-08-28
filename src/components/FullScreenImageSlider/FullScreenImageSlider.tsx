@@ -1,7 +1,7 @@
 import { Box, IconButton, Modal } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ImageSlider from 'components/ImageSlider';
-import type { Image } from 'types/types';
+import type { Image } from '@commercetools/platform-sdk';
 
 interface IProps {
   slides: Image[];
