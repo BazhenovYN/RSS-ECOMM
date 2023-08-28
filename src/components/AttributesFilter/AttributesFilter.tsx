@@ -43,7 +43,7 @@ function AttributesFilter({ products, onChangeSelectedAttribute }: AttributesFil
 
   return (
     <Stack spacing={1}>
-      <Typography>Filters:</Typography>
+      <Typography variant="h5">Filters:</Typography>
       {Object.keys(attributes).map((attributeName) => (
         <FormControl fullWidth key={attributeName}>
           <InputLabel id={attributeName}>{attributeName}</InputLabel>

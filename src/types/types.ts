@@ -1,4 +1,4 @@
-import { Attribute, Image, LocalizedString } from '@commercetools/platform-sdk';
+import { Attribute, Category, Image, LocalizedString } from '@commercetools/platform-sdk';
 
 export interface RegistrationFormData {
   email: string;
@@ -35,3 +35,8 @@ export interface Product {
 export type AttributesList = Record<string, Set<string>>;
 
 export type SelectedAttributesList = Record<string, string>;
+
+export interface CategoriesList {
+  mains: Category[];
+  subs: Category[];
+}

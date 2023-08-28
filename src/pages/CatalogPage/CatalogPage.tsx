@@ -4,17 +4,20 @@ import { Grid, Stack, Typography } from '@mui/material';
 import { searchProducts } from 'services/sdk/product';
 import { useContext, useMemo, useState } from 'react';
 import CatalogProductItem from 'components/CatalogProductItem';
-import { Product, SelectedAttributesList } from 'types/types';
+import { CategoriesList, Product, SelectedAttributesList } from 'types/types';
 import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
 import AppContext from 'context';
 import CatalogSorting from 'components/CatalogSorting';
 import SearchField from 'components/SearchField';
 import AttributesFilter from 'components/AttributesFilter/AttributesFilter';
+import CategoriesListing from 'components/CategoriesListing';
+import { useParams } from 'react-router-dom';
+import { getCategories } from 'services/sdk/category';
 
 function CatalogPage() {
   const appContext = useContext(AppContext);
   const language = appContext?.language;
-
+  const { categoryId } = useParams();
   const sortingNameParameter = useMemo(() => `name.${language || DEFAULT_LANGUAGE}`, [language]);
   const sortingPriceParameter = 'price';
   const searchTextParameter = useMemo(() => `text.${language || DEFAULT_LANGUAGE}`, [language]);
@@ -26,6 +29,7 @@ function CatalogPage() {
   const [selectedAttributes, setSelectedAttributes] = useState<SelectedAttributesList>({});
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [isFiltered, setIsFiltered] = useState(false);
+  const [categories, setCategories] = useState<CategoriesList>({ mains: [], subs: [] });
 
   const loadingLogic = useMemo(() => {
     return async () => {
@@ -33,19 +37,22 @@ function CatalogPage() {
       const searchedProducts = await searchProducts(searchTextParameter, searchQuery, sortingField, sortingDirection);
       setProducts(searchedProducts);
 
-      if (Object.keys(selectedAttributes).length) {
+      if (Object.keys(selectedAttributes).length || categoryId) {
         setIsFiltered(true);
         const searchedFilteredProducts = await searchProducts(
           searchTextParameter,
           searchQuery,
           sortingField,
           sortingDirection,
-          selectedAttributes
+          selectedAttributes,
+          categoryId
         );
         setFilteredProducts(searchedFilteredProducts);
       }
+
+      setCategories(await getCategories());
     };
-  }, [searchTextParameter, searchQuery, sortingField, sortingDirection, selectedAttributes]);
+  }, [searchTextParameter, searchQuery, sortingField, sortingDirection, selectedAttributes, categoryId]);
 
   const onSearch = (searchFieldValue: string) => {
     setSearchQuery(searchFieldValue);
@@ -72,6 +79,11 @@ function CatalogPage() {
         <Grid item sm={12} md={3} lg={2}>
           <Stack spacing={3}>
             <SearchField onSearch={onSearch} />
+            <CategoriesListing
+              language={language || DEFAULT_LANGUAGE}
+              categories={categories}
+              currentCategoryID={categoryId}
+            />
             <CatalogSorting
               sortingPriceParameter={sortingPriceParameter}
               sortingNameParameter={sortingNameParameter}

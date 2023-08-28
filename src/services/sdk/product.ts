@@ -39,13 +39,19 @@ export const searchProducts = async (
   searchQuery: string,
   sortingField: string,
   sortingDirection: string,
-  selectedAttributes: SelectedAttributesList = {}
+  selectedAttributes: SelectedAttributesList = {},
+  categoryId: string = ''
 ) => {
   const filterStrings = Object.keys(selectedAttributes).map((attributeName) => {
     const filterAttributeName = `variants.attributes.${attributeName}`;
     const filterAttributeValue = selectedAttributes[attributeName];
     return `${filterAttributeName}:"${filterAttributeValue}"`;
   });
+
+  if (categoryId) {
+    filterStrings.push(`categories.id:subtree("${categoryId}")`);
+  }
+
   const response = await getAppApiRoot()
     .productProjections()
     .search()

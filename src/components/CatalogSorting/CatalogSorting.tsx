@@ -24,7 +24,7 @@ function CatalogSorting({
 
   return (
     <Stack spacing={1}>
-      <Typography>Sort by:</Typography>
+      <Typography variant="h5">Sort by:</Typography>
       <Stack direction="row" spacing={1}>
         <Select fullWidth defaultValue={sortingNameParameter} onChange={changeSortingField}>
           <MenuItem value={sortingNameParameter}>Name</MenuItem>
