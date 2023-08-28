@@ -8,27 +8,18 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { AttributesList, Product, SelectedAttributesList } from 'types/types';
-import { useMemo, useState } from 'react';
+import { AttributesList, SelectedAttributesList } from 'types/types';
+import { useState } from 'react';
 import { RestartAlt } from '@mui/icons-material';
 
 interface AttributesFilterProps {
-  products: Product[];
+  attributes: AttributesList;
   onChangeSelectedAttribute: (selectedAttributes: SelectedAttributesList) => void;
 }
 
-function AttributesFilter({ products, onChangeSelectedAttribute }: AttributesFilterProps) {
-  const attributes = useMemo(() => {
-    const currentAttributes: AttributesList = {};
-    products.forEach((product) => {
-      product.attributes?.forEach((productAttribute) => {
-        if (!currentAttributes[productAttribute.name]) currentAttributes[productAttribute.name] = new Set();
-        currentAttributes[productAttribute.name].add(productAttribute.value);
-      });
-    });
-    return currentAttributes;
-  }, [products]);
+function AttributesFilter({ attributes, onChangeSelectedAttribute }: AttributesFilterProps) {
   const [selectedAttributes, setSelectedAttributes] = useState<SelectedAttributesList>({});
+  const attributesKeys = Object.keys(attributes);
 
   const changeSelectedAttribute = (event: SelectChangeEvent) => {
     const newSelectedAttributes = { ...selectedAttributes, [event.target.name]: event.target.value };
@@ -41,7 +32,7 @@ function AttributesFilter({ products, onChangeSelectedAttribute }: AttributesFil
     onChangeSelectedAttribute({});
   };
 
-  return (
+  return attributesKeys.length ? (
     <Stack spacing={1}>
       <Typography variant="h5">Filters:</Typography>
       {Object.keys(attributes).map((attributeName) => (
@@ -68,7 +59,7 @@ function AttributesFilter({ products, onChangeSelectedAttribute }: AttributesFil
         </IconButton>
       </Stack>
     </Stack>
-  );
+  ) : null;
 }
 
 export default AttributesFilter;

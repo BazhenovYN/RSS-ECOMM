@@ -1,6 +1,6 @@
 import { getAppApiRoot } from 'services/sdk/client';
 import { ProductProjection } from '@commercetools/platform-sdk';
-import { Product, SelectedAttributesList } from 'types/types';
+import { AttributesList, Product, SearchParams } from 'types/types';
 
 const getCost = (product: ProductProjection): number | undefined => {
   return product.masterVariant.prices?.length
@@ -34,14 +34,15 @@ const adapt = (product: ProductProjection): Product => {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export const searchProducts = async (
-  searchParameter: string,
-  searchQuery: string,
-  sortingField: string,
-  sortingDirection: string,
-  selectedAttributes: SelectedAttributesList = {},
-  categoryId: string = ''
-) => {
+export const searchProducts = async (searchParams: SearchParams) => {
+  const {
+    selectedAttributes = searchParams.selectedAttributes || {},
+    searchTextParameter,
+    searchQuery,
+    categoryId,
+    sortingField,
+    sortingDirection,
+  } = searchParams;
   const filterStrings = Object.keys(selectedAttributes).map((attributeName) => {
     const filterAttributeName = `variants.attributes.${attributeName}`;
     const filterAttributeValue = selectedAttributes[attributeName];
@@ -57,7 +58,7 @@ export const searchProducts = async (
     .search()
     .get({
       queryArgs: {
-        [searchParameter]: searchQuery,
+        [searchTextParameter]: searchQuery,
         fuzzy: true,
         sort: `${sortingField} ${sortingDirection}`,
         filter: filterStrings,
@@ -66,4 +67,16 @@ export const searchProducts = async (
     .execute();
 
   return response.body.results.map((product) => adapt(product));
+};
+
+export const getAttributes = (products: Product[]): AttributesList => {
+  const attributes: AttributesList = {};
+  products.forEach((product) => {
+    product.attributes?.forEach((productAttribute) => {
+      if (!attributes[productAttribute.name]) attributes[productAttribute.name] = new Set();
+      attributes[productAttribute.name].add(productAttribute.value);
+    });
+  });
+
+  return attributes;
 };

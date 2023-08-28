@@ -40,3 +40,12 @@ export interface CategoriesList {
   mains: Category[];
   subs: Category[];
 }
+
+export interface SearchParams {
+  searchTextParameter: string;
+  searchQuery: string;
+  sortingField: string;
+  sortingDirection: string;
+  selectedAttributes?: SelectedAttributesList;
+  categoryId?: string;
+}
