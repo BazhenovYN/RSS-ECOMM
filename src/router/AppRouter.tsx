@@ -20,7 +20,7 @@ function AppRouter() {
       <Route path="login" element={isAuth ? <Navigate to="/" replace /> : <LoginPage />} />
       <Route path="registration" element={<RegistrationPage />} />
       <Route path="catalog" element={<CatalogPage />} />
-      <Route path="catalog/:productId" element={<ProductPage />} />
+      <Route path="products/:productId" element={<ProductPage />} />
       <Route path="about-us" element={<AboutUsPage />} />
       <Route path="basket" element={<BasketPage />} />
       <Route path="*" element={<NotFoundPage />} />
