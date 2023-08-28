@@ -47,11 +47,7 @@ function App() {
       .finally(() => setIsLoading(false));
   }, []);
 
-  return isLoading ? (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-      <CircularProgress />
-    </Box>
-  ) : (
+  return (
     <AppContext.Provider value={appContext}>
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>

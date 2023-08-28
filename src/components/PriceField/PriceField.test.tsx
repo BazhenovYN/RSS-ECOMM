@@ -4,7 +4,6 @@ import PriceField from './PriceField';
 
 const productWithoutDiscount: Product = {
   id: 'test1',
-  key: 'test1',
   name: { 'en-US': 'Product1' },
   description: { 'en-US': 'Test product1' },
   price: 10,
@@ -17,7 +16,6 @@ const productWithoutDiscount: Product = {
 
 const productWithDiscount: Product = {
   id: 'test2',
-  key: 'test2',
   name: { 'en-US': 'Product2' },
   description: { 'en-US': 'Test product2' },
   price: 10,

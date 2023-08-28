@@ -1,3 +1,4 @@
+import { MouseEvent } from 'react';
 import { Box, IconButton } from '@mui/material';
 import ArrowBackIosOutlinedIcon from '@mui/icons-material/ArrowBackIosOutlined';
 import ArrowForwardIosOutlinedIcon from '@mui/icons-material/ArrowForwardIosOutlined';
@@ -11,7 +12,7 @@ interface IProps {
 }
 
 function ImageSlider({ slides, onChange, isFullScreenMode = false, currentSlide }: IProps) {
-  const goToPrevious = (event: React.MouseEvent) => {
+  const goToPrevious = (event: MouseEvent) => {
     event.stopPropagation();
     const isFirstSlide = currentSlide === 0;
     const newIndex = isFirstSlide ? slides.length - 1 : currentSlide - 1;
@@ -20,7 +21,7 @@ function ImageSlider({ slides, onChange, isFullScreenMode = false, currentSlide 
     }
   };
 
-  const goToNext = (event: React.MouseEvent) => {
+  const goToNext = (event: MouseEvent) => {
     event.stopPropagation();
     const isLastSlide = currentSlide === slides.length - 1;
     const newIndex = isLastSlide ? 0 : currentSlide + 1;

@@ -22,7 +22,6 @@ export type Language = 'en-US' | 'ru';
 
 export interface Product {
   id: string;
-  key: string;
   name: LocalizedString;
   description?: LocalizedString;
   price: number;

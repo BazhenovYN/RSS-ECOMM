@@ -38,15 +38,14 @@ const getProductData = (product: ProductProjection): Product => {
   const sellingPrice = getSellingPrice(product);
   return {
     id: product.id,
-    key: product.key ?? '',
     name: product.name,
     description: product.description,
     price: sellingPrice.price,
     hasDiscount: sellingPrice.hasDiscount,
     salePrice: sellingPrice.salePrice,
     currency: sellingPrice.currency,
-    images: product.masterVariant.images ?? [],
-    attributes: product.masterVariant.attributes ?? [],
+    images: product.masterVariant.images,
+    attributes: product.masterVariant.attributes,
   };
 };
 

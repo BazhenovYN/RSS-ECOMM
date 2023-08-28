@@ -7,7 +7,6 @@ jest.mock('services/sdk/product', () => ({
   getProductDetails: () =>
     Promise.resolve<Product>({
       id: '1',
-      key: 'test1',
       name: { 'en-US': 'Product1' },
       description: { 'en-US': 'Description' },
       price: 10,

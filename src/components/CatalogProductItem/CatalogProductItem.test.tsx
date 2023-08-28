@@ -6,7 +6,6 @@ import { Product } from 'types/types';
 
 const product: Product = {
   id: 'test-id',
-  key: 'test-key',
   name: {
     'en-US': 'Product name',
     ru: 'Имя продукта',
