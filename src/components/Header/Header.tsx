@@ -1,32 +1,20 @@
 import { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AppBar, Toolbar, Stack, Button } from '@mui/material';
+import { AppBar, Toolbar, Stack } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import LogoutIcon from '@mui/icons-material/Logout';
 import LinkButton from 'components/LinkButton/LinkButton';
 import AppContext from 'context';
-import { logout } from 'services/sdk/customer';
 import NavMenu from './NavMenu';
 import CartButton from './CartButton';
 import Logo from './Logo';
+import UserAvatar from './UserAvatar';
 
 import './Header.scss';
 
 function Header() {
   const appContext = useContext(AppContext);
   const isAuth = appContext?.isAuth;
-  const setIsAuth = appContext?.setIsAuth;
 
-  const navigate = useNavigate();
-
-  const handleSignOut = () => {
-    logout();
-    if (setIsAuth) {
-      setIsAuth(false);
-    }
-    navigate('/');
-  };
   return (
     <AppBar component="header" position="static" color="transparent">
       <Toolbar sx={{ justifyContent: 'space-between', fontWeight: '700' }}>
@@ -38,11 +26,7 @@ function Header() {
           <CartButton />
           {!isAuth && <LinkButton title="Sign in" link="/login" icon={<PersonIcon />} />}
           {!isAuth && <LinkButton title="Sign up" link="/registration" icon={<PersonAddIcon />} />}
-          {isAuth && (
-            <Button variant="contained" startIcon={<LogoutIcon />} onClick={handleSignOut}>
-              Sign out
-            </Button>
-          )}
+          {isAuth && <UserAvatar />}
         </Stack>
       </Toolbar>
     </AppBar>

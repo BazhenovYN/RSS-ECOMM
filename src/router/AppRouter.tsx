@@ -8,6 +8,7 @@ import LoginPage from 'pages/LoginPage';
 import NotFoundPage from 'pages/NotFoundPage';
 import RegistrationPage from 'pages/RegistrationPage';
 import BasketPage from 'pages/BasketPage';
+import UserProfilePage from 'pages/UserProfilePage';
 
 function AppRouter() {
   const appContext = useContext(AppContext);
@@ -21,6 +22,7 @@ function AppRouter() {
       <Route path="catalog" element={<CatalogPage />} />
       <Route path="about-us" element={<AboutUsPage />} />
       <Route path="basket" element={<BasketPage />} />
+      <Route path="profile" element={<UserProfilePage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
