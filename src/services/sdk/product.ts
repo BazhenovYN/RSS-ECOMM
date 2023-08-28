@@ -1,7 +1,6 @@
-import { DEFAULT_LANGUAGE } from 'constants/const';
 import { ProductProjection } from '@commercetools/platform-sdk';
-import { getAppApiRoot, projectKey } from 'services/sdk/client';
-import type { Language, Product } from 'types/types';
+import { getAppApiRoot } from 'services/sdk/client';
+import type { Product } from 'types/types';
 
 interface ISellingPrice {
   price: number;
@@ -35,13 +34,13 @@ const getSellingPrice = (product: ProductProjection): ISellingPrice => {
   return { price, currency, hasDiscount: true, salePrice };
 };
 
-const getProductData = (product: ProductProjection, language: Language): Product => {
+const getProductData = (product: ProductProjection): Product => {
   const sellingPrice = getSellingPrice(product);
   return {
     id: product.id,
     key: product.key ?? '',
-    name: product.name[language],
-    description: product.description ? product.description[language] : '',
+    name: product.name,
+    description: product.description,
     price: sellingPrice.price,
     hasDiscount: sellingPrice.hasDiscount,
     salePrice: sellingPrice.salePrice,
@@ -51,14 +50,12 @@ const getProductData = (product: ProductProjection, language: Language): Product
   };
 };
 
-export const fetchProductDetails = async (ID: string, language: Language = DEFAULT_LANGUAGE): Promise<Product> => {
-  const response = await getAppApiRoot()
-    .withProjectKey({ projectKey })
-    .productProjections()
-    .withId({ ID })
-    .get()
-    .execute();
-  return getProductData(response.body, language);
+export const getProductDetails = async (ID: string): Promise<Product> => {
+  const response = await getAppApiRoot().productProjections().withId({ ID }).get().execute();
+  return getProductData(response.body);
 };
 
-export default fetchProductDetails;
+export const getProducts = async (): Promise<Product[]> => {
+  const response = await getAppApiRoot().productProjections().get().execute();
+  return response.body.results.map((product) => getProductData(product));
+};

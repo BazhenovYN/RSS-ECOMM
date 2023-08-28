@@ -34,8 +34,8 @@ function App() {
   const [message, setMessage] = useState<Message>({ text: null, severity: undefined });
   const [language, setLanguage] = useState<Language>(DEFAULT_LANGUAGE);
   const appContext = useMemo(() => {
-    return { isAuth, setIsAuth, message, setMessage, language, setLanguage, setIsLoading };
-  }, [isAuth, setIsAuth, message, setMessage, language, setLanguage, setIsLoading]);
+    return { isAuth, setIsAuth, message, setMessage, language, setLanguage };
+  }, [isAuth, setIsAuth, message, setMessage, language, setLanguage]);
   useEffect(() => {
     if (!getCookie('authToken') && !getCookie('refreshToken')) {
       setIsLoading(false);
@@ -47,7 +47,11 @@ function App() {
       .finally(() => setIsLoading(false));
   }, []);
 
-  return (
+  return isLoading ? (
+    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+      <CircularProgress />
+    </Box>
+  ) : (
     <AppContext.Provider value={appContext}>
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>

@@ -1,3 +1,5 @@
+import { Attribute, Image, LocalizedString } from '@commercetools/platform-sdk';
+
 export interface RegistrationFormData {
   email: string;
   password: string;
@@ -18,20 +20,11 @@ export interface RegistrationFormAddress {
 
 export type Language = 'en-US' | 'ru';
 
-export interface Image {
-  readonly url: string;
-}
-
-interface Attribute {
-  readonly name: string;
-  readonly value: string;
-}
-
 export interface Product {
   id: string;
   key: string;
-  name: string;
-  description: string;
+  name: LocalizedString;
+  description?: LocalizedString;
   price: number;
   hasDiscount: boolean;
   salePrice: number;

@@ -1,14 +1,15 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { Product } from 'types/types';
 import ProductPage from './ProductPage';
 
 jest.mock('services/sdk/product', () => ({
   __esModule: true,
-  fetchProductDetails: () =>
-    Promise.resolve({
+  getProductDetails: () =>
+    Promise.resolve<Product>({
       id: '1',
       key: 'test1',
-      name: 'Product1',
-      description: 'Description',
+      name: { 'en-US': 'Product1' },
+      description: { 'en-US': 'Description' },
       price: 10,
       hasDiscount: false,
       salePrice: 10,

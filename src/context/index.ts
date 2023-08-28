@@ -8,7 +8,6 @@ export interface IAppContext {
   message: Message;
   setMessage: Dispatch<SetStateAction<Message>>;
   language: Language;
-  setIsLoading: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface Message {
