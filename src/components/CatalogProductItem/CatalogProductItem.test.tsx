@@ -14,10 +14,6 @@ const product: Product = {
     'en-US': 'Product description',
     ru: 'Описание продукта',
   },
-  price: 0,
-  hasDiscount: false,
-  salePrice: 0,
-  currency: 'EUR',
   images: [
     {
       url: 'test-img-url',

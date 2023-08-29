@@ -24,10 +24,9 @@ export interface Product {
   id: string;
   name: LocalizedString;
   description?: LocalizedString;
-  price: number;
-  hasDiscount: boolean;
-  salePrice: number;
-  currency: string;
+  price?: number;
+  salePrice?: number;
+  currency?: string;
   images?: Image[];
   attributes?: Attribute[];
 }

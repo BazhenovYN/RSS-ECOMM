@@ -7,7 +7,6 @@ const productWithoutDiscount: Product = {
   name: { 'en-US': 'Product1' },
   description: { 'en-US': 'Test product1' },
   price: 10,
-  hasDiscount: false,
   salePrice: 10,
   currency: 'EUR',
   images: [],
@@ -19,7 +18,6 @@ const productWithDiscount: Product = {
   name: { 'en-US': 'Product2' },
   description: { 'en-US': 'Test product2' },
   price: 10,
-  hasDiscount: true,
   salePrice: 8,
   currency: 'EUR',
   images: [],
@@ -29,7 +27,7 @@ const productWithDiscount: Product = {
 describe('PriceField', () => {
   test('renders correctly without discount', () => {
     render(<PriceField product={productWithoutDiscount} />);
-    const price = screen.getByText(new RegExp(`${productWithoutDiscount.price.toFixed(2)}`));
+    const price = screen.getByText(new RegExp(`${productWithoutDiscount.price?.toFixed(2)}`));
     expect(price).toBeInTheDocument();
     const currency = screen.getByText(new RegExp(`${productWithoutDiscount.currency}`));
     expect(currency).toBeInTheDocument();
@@ -37,9 +35,9 @@ describe('PriceField', () => {
 
   test('renders correctly with discount', () => {
     render(<PriceField product={productWithDiscount} />);
-    const price = screen.getByText(new RegExp(`${productWithDiscount.price.toFixed(2)}`));
+    const price = screen.getByText(new RegExp(`${productWithDiscount.price?.toFixed(2)}`));
     expect(price).toBeInTheDocument();
-    const salePrice = screen.getByText(new RegExp(`${productWithDiscount.salePrice.toFixed(2)}`));
+    const salePrice = screen.getByText(new RegExp(`${productWithDiscount.salePrice?.toFixed(2)}`));
     expect(salePrice).toBeInTheDocument();
     const currencyFields = screen.getAllByText(new RegExp(`${productWithDiscount.currency}`));
     expect(currencyFields[0]).toBeInTheDocument(); // price currency

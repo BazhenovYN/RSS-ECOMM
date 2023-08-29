@@ -10,7 +10,6 @@ jest.mock('services/sdk/product', () => ({
       name: { 'en-US': 'Product1' },
       description: { 'en-US': 'Description' },
       price: 10,
-      hasDiscount: false,
       salePrice: 10,
       currency: 'EUR',
       images: [],
