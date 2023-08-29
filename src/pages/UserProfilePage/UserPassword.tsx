@@ -1,38 +1,38 @@
 import validationSchemes from 'constants/validationSchemes';
-import { useContext, useState } from 'react';
+import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { Customer } from '@commercetools/platform-sdk';
 import { Box, Button, Container, Stack } from '@mui/material';
 import PasswordField from 'components/PasswordField';
 import AppContext from 'context';
+import { updateUserPassword } from 'services/sdk/customer';
+import { PasswordUpdate } from 'types/types';
 
 interface IProps {
   user: Customer | undefined;
+  setUser: Dispatch<SetStateAction<Customer | undefined>>;
 }
 
-interface IFormValues {
-  currentPassword: string;
-  newPassword: string;
-  confirmNewPassword: string;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function UserPassword({ user }: IProps) {
+function UserPassword({ user, setUser }: IProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IFormValues>({ mode: 'all' });
+  } = useForm<PasswordUpdate>({ mode: 'all' });
 
   const appContext = useContext(AppContext);
   const setMessage = appContext?.setMessage;
 
   const [editMode, setEditMode] = useState(false);
 
-  const onSubmit = async (data: IFormValues): Promise<void> => {
-    // eslint-disable-next-line no-console
-    console.log(data);
+  const onSubmit = async (data: PasswordUpdate): Promise<void> => {
+    if (!user?.email || user?.version) {
+      if (setMessage) setMessage({ severity: 'error', text: 'User data not found' });
+      return;
+    }
     try {
+      const updatedUser = await updateUserPassword(user.email, data, user.version);
+      setUser(updatedUser);
       setEditMode(false);
       if (setMessage) setMessage({ severity: 'success', text: 'The password was successfully updated' });
     } catch (error) {

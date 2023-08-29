@@ -38,3 +38,9 @@ export interface UserDataUpdate {
   email: string;
   dateOfBirth: dayjs.Dayjs;
 }
+
+export interface PasswordUpdate {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}

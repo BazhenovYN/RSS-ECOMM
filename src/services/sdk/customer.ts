@@ -4,10 +4,11 @@ import {
   Customer,
   CustomerDraft,
   CustomerSignInResult,
+  MyCustomerChangePassword,
   MyCustomerUpdate,
 } from '@commercetools/platform-sdk';
 import { getAppApiRoot, getCustomerApiRoot, removeCustomerApiRoot } from 'services/sdk/client';
-import type { UserDataUpdate, RegistrationFormAddress, RegistrationFormData } from 'types/types';
+import type { PasswordUpdate, RegistrationFormAddress, RegistrationFormData, UserDataUpdate } from 'types/types';
 import dayjs from 'dayjs';
 
 export const login = async (email: string = 'default', password: string = 'default'): Promise<void> => {
@@ -63,7 +64,7 @@ export const getUserCustomer = async (email = 'default', password = 'default'): 
   return response?.body;
 };
 
-const createCustomerUpdate = (version: number, userData: UserDataUpdate): MyCustomerUpdate => {
+const createCustomerUpdate = (userData: UserDataUpdate, version: number): MyCustomerUpdate => {
   const dateOfBirth: string = userData.dateOfBirth
     .add(userData.dateOfBirth.utcOffset(), 'minute')
     .toISOString()
@@ -91,12 +92,34 @@ const createCustomerUpdate = (version: number, userData: UserDataUpdate): MyCust
   };
 };
 
-export const updateUserCustomer = async (userData: UserDataUpdate, version?: number): Promise<Customer | undefined> => {
-  if (!version) {
-    throw Error('Customer version undefined');
-  }
-  const customerUpdate = createCustomerUpdate(version, userData);
+export const updateUserCustomer = async (userData: UserDataUpdate, version: number): Promise<Customer | undefined> => {
+  const customerUpdate = createCustomerUpdate(userData, version);
   const customerApiRoot = await getCustomerApiRoot('default', 'default');
   const response = await customerApiRoot?.me().post({ body: customerUpdate }).execute();
+  return response?.body;
+};
+
+const createPasswordUpdate = (data: PasswordUpdate, version: number): MyCustomerChangePassword => {
+  return {
+    version,
+    currentPassword: data.currentPassword,
+    newPassword: data.newPassword,
+  };
+};
+
+export const updateUserPassword = async (
+  email: string,
+  data: PasswordUpdate,
+  version: number
+): Promise<Customer | undefined> => {
+  const passwordUpdate = createPasswordUpdate(data, version);
+  const customerApiRoot = await getCustomerApiRoot('default', 'default');
+  const response = await customerApiRoot?.me().password().post({ body: passwordUpdate }).execute();
+
+  if (response?.statusCode === 200) {
+    logout();
+    await login(email, data.newPassword);
+  }
+
   return response?.body;
 };

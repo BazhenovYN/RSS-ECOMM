@@ -1,5 +1,5 @@
 import validationSchemes from 'constants/validationSchemes';
-import { SetStateAction, useContext, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Box, Button, Container, Grid, TextField } from '@mui/material';
 import type { Customer } from '@commercetools/platform-sdk';
@@ -11,7 +11,7 @@ import type { UserDataUpdate } from 'types/types';
 
 interface IProps {
   user: Customer | undefined;
-  setUser: React.Dispatch<SetStateAction<Customer | undefined>>;
+  setUser: Dispatch<SetStateAction<Customer | undefined>>;
 }
 
 function UserInformation({ user, setUser }: IProps) {
@@ -28,8 +28,12 @@ function UserInformation({ user, setUser }: IProps) {
   const [editMode, setEditMode] = useState(false);
 
   const onSubmit = async (data: UserDataUpdate) => {
+    if (!user?.version) {
+      if (setMessage) setMessage({ severity: 'error', text: 'User data not found' });
+      return;
+    }
     try {
-      const updatedUser = await updateUserCustomer(data, user?.version);
+      const updatedUser = await updateUserCustomer(data, user.version);
       setUser(updatedUser);
       setEditMode(false);
       if (setMessage) setMessage({ severity: 'success', text: 'The account was successfully updated' });
