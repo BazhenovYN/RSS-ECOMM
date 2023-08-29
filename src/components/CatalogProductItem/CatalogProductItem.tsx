@@ -25,7 +25,7 @@ function CatalogProductItem({ product }: CatalogProductItemProps) {
   return (
     <Card
       component={RouterLink}
-      to={`/catalog/${product.id}`}
+      to={`/products/${product.id}`}
       sx={{
         height: '100%',
         display: 'flex',
