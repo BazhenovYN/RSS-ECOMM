@@ -5,6 +5,7 @@ import logo from 'assets/img/logo.png';
 import { Product } from 'types/types';
 
 const product: Product = {
+  id: 'test-id',
   name: {
     'en-US': 'Product name',
     ru: 'Имя продукта',
@@ -19,7 +20,6 @@ const product: Product = {
       dimensions: { w: 1, h: 1 },
     },
   ],
-  id: 'test-id',
 };
 
 const appContext: IAppContext = {
