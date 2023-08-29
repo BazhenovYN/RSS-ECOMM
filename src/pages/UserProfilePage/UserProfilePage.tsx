@@ -5,6 +5,7 @@ import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
 import { getUserCustomer } from 'services/sdk/customer';
 import UserAddresses from './UserAddresses';
 import UserInformation from './UserInformation';
+import UserPassword from './UserPassword';
 
 interface ITabPanelProps {
   children?: ReactNode;
@@ -65,7 +66,7 @@ function UserProfilePage() {
           <UserInformation user={user} />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          Password
+          <UserPassword user={user} />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={2}>
           <UserAddresses user={user} />

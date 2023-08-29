@@ -11,7 +11,7 @@ interface IProps {
   user: Customer | undefined;
 }
 
-interface UserInformationFormData {
+interface IFormValues {
   email: string;
   firstName: string;
   lastName: string;
@@ -19,7 +19,7 @@ interface UserInformationFormData {
 }
 
 function UserInformation({ user }: IProps) {
-  const methods = useForm<UserInformationFormData>({ mode: 'all' });
+  const methods = useForm<IFormValues>({ mode: 'all' });
   const {
     register,
     handleSubmit,
@@ -31,7 +31,7 @@ function UserInformation({ user }: IProps) {
 
   const [editMode, setEditMode] = useState(false);
 
-  const onSubmit = async (data: UserInformationFormData) => {
+  const onSubmit = async (data: IFormValues) => {
     // eslint-disable-next-line no-console
     console.log(data);
     try {
@@ -54,7 +54,7 @@ function UserInformation({ user }: IProps) {
       <Box my={8}>
         <FormProvider {...methods}>
           <Box
-            data-testid="registration-form"
+            data-testid="change-user-information-form"
             component="form"
             onSubmit={handleSubmit(onSubmit)}
             noValidate
