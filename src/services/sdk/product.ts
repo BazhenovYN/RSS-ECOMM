@@ -34,7 +34,7 @@ const adapt = (product: ProductProjection): Product => {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export const searchProducts = async (searchParams: SearchParams) => {
+export const searchProducts = async (searchParams: SearchParams): Promise<Product[]> => {
   const {
     selectedAttributes = searchParams.selectedAttributes || {},
     searchTextParameter,

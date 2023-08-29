@@ -54,7 +54,7 @@ function AttributesFilter({ attributes, onChangeSelectedAttribute }: AttributesF
       ))}
       <Stack direction="row" alignItems="center" spacing={1}>
         <Typography>Reset filters:</Typography>
-        <IconButton onClick={resetSelectedAttributes}>
+        <IconButton data-testid="reset-button" onClick={resetSelectedAttributes}>
           <RestartAlt />
         </IconButton>
       </Stack>

@@ -1,6 +1,5 @@
 import { Link, Stack, Typography } from '@mui/material';
-import { CategoriesList, Language } from 'types/types';
-import { Category } from '@commercetools/platform-sdk';
+import { CategoriesList, CategoryListItem, Language } from 'types/types';
 import { Link as RouterLink } from 'react-router-dom';
 
 interface CategoriesListingProps {
@@ -10,7 +9,7 @@ interface CategoriesListingProps {
 }
 
 function CategoriesListing({ language, categories, currentCategoryID = '' }: CategoriesListingProps) {
-  const findSubCategories = (category: Category): Category[] => {
+  const findSubCategories = (category: CategoryListItem): CategoryListItem[] => {
     return categories.subs.filter((subCategory) => subCategory.parent?.id === category.id);
   };
 

@@ -36,9 +36,11 @@ export type AttributesList = Record<string, Set<string>>;
 
 export type SelectedAttributesList = Record<string, string>;
 
+export type CategoryListItem = Pick<Category, 'id' | 'name' | 'parent'>;
+
 export interface CategoriesList {
-  mains: Category[];
-  subs: Category[];
+  mains: CategoryListItem[];
+  subs: CategoryListItem[];
 }
 
 export interface SearchParams {

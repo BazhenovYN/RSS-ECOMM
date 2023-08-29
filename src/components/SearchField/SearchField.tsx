@@ -1,4 +1,4 @@
-import { IconButton, OutlinedInput } from '@mui/material';
+import { FormControl, IconButton, InputLabel, OutlinedInput } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import { ChangeEvent, KeyboardEvent, useState } from 'react';
 
@@ -22,17 +22,24 @@ function SearchField({ onSearch }: SearchFieldProps) {
   };
 
   return (
-    <OutlinedInput
-      fullWidth
-      value={searchQuery}
-      onChange={handleChange}
-      onKeyDown={onKeyDown}
-      endAdornment={
-        <IconButton onClick={handleSubmit}>
-          <Search />
-        </IconButton>
-      }
-    />
+    <FormControl>
+      <InputLabel htmlFor="search-field" id="search-label">
+        Search
+      </InputLabel>
+      <OutlinedInput
+        fullWidth
+        value={searchQuery}
+        onChange={handleChange}
+        onKeyDown={onKeyDown}
+        label="Search"
+        id="search-field"
+        endAdornment={
+          <IconButton onClick={handleSubmit}>
+            <Search />
+          </IconButton>
+        }
+      />
+    </FormControl>
   );
 }
 

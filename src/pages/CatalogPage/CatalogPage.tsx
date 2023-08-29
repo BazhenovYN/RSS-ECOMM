@@ -72,7 +72,7 @@ function CatalogPage() {
       <Grid container spacing={3} height="100%">
         <Grid item xs={12} sm={12} md={3} lg={2}>
           <Stack spacing={3}>
-            <SearchField onSearch={setSearchQuery} />
+            <SearchField data-testid="catalog-search" onSearch={setSearchQuery} />
             <ContentLoaderWrapper loadingLogic={loadingCategories}>
               <CategoriesListing
                 language={language || DEFAULT_LANGUAGE}
