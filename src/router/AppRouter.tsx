@@ -22,7 +22,7 @@ function AppRouter() {
       <Route path="catalog" element={<CatalogPage />} />
       <Route path="about-us" element={<AboutUsPage />} />
       <Route path="basket" element={<BasketPage />} />
-      <Route path="profile" element={<UserProfilePage />} />
+      <Route path="profile" element={isAuth ? <UserProfilePage /> : <Navigate to="/login" replace />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

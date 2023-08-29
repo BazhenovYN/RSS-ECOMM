@@ -1,10 +1,19 @@
-import { AddressDraft, ClientResponse, CustomerDraft, CustomerSignInResult } from '@commercetools/platform-sdk';
+import {
+  AddressDraft,
+  ClientResponse,
+  Customer,
+  CustomerDraft,
+  CustomerSignInResult,
+} from '@commercetools/platform-sdk';
 import { getAppApiRoot, getCustomerApiRoot, removeCustomerApiRoot } from 'services/sdk/client';
 import { RegistrationFormAddress, RegistrationFormData } from 'types/types';
 import dayjs from 'dayjs';
+import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
+
+let customerApiRoot: ByProjectKeyRequestBuilder | null = null;
 
 export const login = async (email: string = 'default', password: string = 'default'): Promise<void> => {
-  await getCustomerApiRoot(email, password);
+  customerApiRoot = await getCustomerApiRoot(email, password);
 };
 
 export const logout = () => {
@@ -48,4 +57,9 @@ export const createCustomer = async (registrationFormData: RegistrationFormData)
     .post({ body: customerDraft })
     .execute();
   return response.body;
+};
+
+export const getUserCustomer = async (): Promise<Customer | undefined> => {
+  const response = await customerApiRoot?.me().get().execute();
+  return response?.body;
 };
