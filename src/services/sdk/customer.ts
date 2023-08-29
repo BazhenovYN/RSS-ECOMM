@@ -8,12 +8,9 @@ import {
 import { getAppApiRoot, getCustomerApiRoot, removeCustomerApiRoot } from 'services/sdk/client';
 import { RegistrationFormAddress, RegistrationFormData } from 'types/types';
 import dayjs from 'dayjs';
-import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
-
-let customerApiRoot: ByProjectKeyRequestBuilder | null = null;
 
 export const login = async (email: string = 'default', password: string = 'default'): Promise<void> => {
-  customerApiRoot = await getCustomerApiRoot(email, password);
+  await getCustomerApiRoot(email, password);
 };
 
 export const logout = () => {
@@ -59,7 +56,8 @@ export const createCustomer = async (registrationFormData: RegistrationFormData)
   return response.body;
 };
 
-export const getUserCustomer = async (): Promise<Customer | undefined> => {
+export const getUserCustomer = async (email = 'default', password = 'default'): Promise<Customer | undefined> => {
+  const customerApiRoot = await getCustomerApiRoot(email, password);
   const response = await customerApiRoot?.me().get().execute();
   return response?.body;
 };
