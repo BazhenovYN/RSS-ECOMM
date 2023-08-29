@@ -63,7 +63,7 @@ function UserProfilePage() {
           </Tabs>
         </Box>
         <CustomTabPanel value={value} index={0}>
-          <UserInformation user={user} />
+          <UserInformation user={user} setUser={setUser} />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
           <UserPassword user={user} />

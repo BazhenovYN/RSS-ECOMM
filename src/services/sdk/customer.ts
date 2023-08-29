@@ -4,9 +4,10 @@ import {
   Customer,
   CustomerDraft,
   CustomerSignInResult,
+  MyCustomerUpdate,
 } from '@commercetools/platform-sdk';
 import { getAppApiRoot, getCustomerApiRoot, removeCustomerApiRoot } from 'services/sdk/client';
-import { RegistrationFormAddress, RegistrationFormData } from 'types/types';
+import type { UserDataUpdate, RegistrationFormAddress, RegistrationFormData } from 'types/types';
 import dayjs from 'dayjs';
 
 export const login = async (email: string = 'default', password: string = 'default'): Promise<void> => {
@@ -59,5 +60,43 @@ export const createCustomer = async (registrationFormData: RegistrationFormData)
 export const getUserCustomer = async (email = 'default', password = 'default'): Promise<Customer | undefined> => {
   const customerApiRoot = await getCustomerApiRoot(email, password);
   const response = await customerApiRoot?.me().get().execute();
+  return response?.body;
+};
+
+const createCustomerUpdate = (version: number, userData: UserDataUpdate): MyCustomerUpdate => {
+  const dateOfBirth: string = userData.dateOfBirth
+    .add(userData.dateOfBirth.utcOffset(), 'minute')
+    .toISOString()
+    .slice(0, 10);
+  return {
+    version,
+    actions: [
+      {
+        action: 'setFirstName',
+        firstName: userData.firstName,
+      },
+      {
+        action: 'setLastName',
+        lastName: userData.lastName,
+      },
+      {
+        action: 'changeEmail',
+        email: userData.email,
+      },
+      {
+        action: 'setDateOfBirth',
+        dateOfBirth,
+      },
+    ],
+  };
+};
+
+export const updateUserCustomer = async (userData: UserDataUpdate, version?: number): Promise<Customer | undefined> => {
+  if (!version) {
+    throw Error('Customer version undefined');
+  }
+  const customerUpdate = createCustomerUpdate(version, userData);
+  const customerApiRoot = await getCustomerApiRoot('default', 'default');
+  const response = await customerApiRoot?.me().post({ body: customerUpdate }).execute();
   return response?.body;
 };

@@ -1,25 +1,21 @@
 import validationSchemes from 'constants/validationSchemes';
-import { useContext, useEffect, useState } from 'react';
+import { SetStateAction, useContext, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Box, Button, Container, Grid, TextField } from '@mui/material';
 import type { Customer } from '@commercetools/platform-sdk';
 import dayjs from 'dayjs';
 import AppContext from 'context';
 import DateOfBirthField from 'components/DateOfBirthField';
+import { updateUserCustomer } from 'services/sdk/customer';
+import type { UserDataUpdate } from 'types/types';
 
 interface IProps {
   user: Customer | undefined;
+  setUser: React.Dispatch<SetStateAction<Customer | undefined>>;
 }
 
-interface IFormValues {
-  email: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: dayjs.Dayjs;
-}
-
-function UserInformation({ user }: IProps) {
-  const methods = useForm<IFormValues>({ mode: 'all' });
+function UserInformation({ user, setUser }: IProps) {
+  const methods = useForm<UserDataUpdate>({ mode: 'all' });
   const {
     register,
     handleSubmit,
@@ -31,10 +27,10 @@ function UserInformation({ user }: IProps) {
 
   const [editMode, setEditMode] = useState(false);
 
-  const onSubmit = async (data: IFormValues) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
+  const onSubmit = async (data: UserDataUpdate) => {
     try {
+      const updatedUser = await updateUserCustomer(data, user?.version);
+      setUser(updatedUser);
       setEditMode(false);
       if (setMessage) setMessage({ severity: 'success', text: 'The account was successfully updated' });
     } catch (error) {

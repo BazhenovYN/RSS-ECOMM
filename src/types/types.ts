@@ -1,4 +1,5 @@
 import { Attribute, Image, LocalizedString } from '@commercetools/platform-sdk';
+import dayjs from 'dayjs';
 
 export interface RegistrationFormData {
   email: string;
@@ -29,4 +30,11 @@ export interface Product {
   currency?: string;
   images?: Image[];
   attributes?: Attribute[];
+}
+
+export interface UserDataUpdate {
+  firstName: string;
+  lastName: string;
+  email: string;
+  dateOfBirth: dayjs.Dayjs;
 }
