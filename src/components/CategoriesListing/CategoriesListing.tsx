@@ -16,6 +16,13 @@ function CategoriesListing({ language, categories, currentCategoryID = '' }: Cat
   return (
     <Stack>
       <Typography variant="h5">Categories:</Typography>
+      <Link
+        variant="h6"
+        component={RouterLink}
+        to="/catalog"
+        sx={{ fontWeight: currentCategoryID === '' ? '700' : '400' }}>
+        All categories
+      </Link>
       {categories.mains.map((category) => (
         <Stack key={category.id}>
           <Link
