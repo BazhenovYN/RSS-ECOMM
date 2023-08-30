@@ -1,10 +1,11 @@
-import { DEFAULT_LANGUAGE } from 'constants/const';
 import logo from 'assets/img/logo.png';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import AppContext from 'context';
-import { Box, Card, CardContent, CardHeader, CardMedia, Typography, Stack, useTheme } from '@mui/material';
+import { Box, Card, CardContent, CardHeader, CardMedia, Typography, useTheme } from '@mui/material';
 import { Product } from 'types/types';
 import { Link as RouterLink } from 'react-router-dom';
+import { getProductDescription, getProductName } from 'utils/utils';
+import PriceField from 'components/PriceField';
 
 interface CatalogProductItemProps {
   product: Product;
@@ -16,11 +17,9 @@ function CatalogProductItem({ product }: CatalogProductItemProps) {
 
   const theme = useTheme();
 
-  const imgUrl = product.images?.[0]?.url;
-  const name = (language && product.name[language]) || product.name[DEFAULT_LANGUAGE];
-  const description = language && product.description?.[language];
-  const price = product?.cost ? `${product.currency} ${product.cost}` : null;
-  const discountedPrice = product?.discountedCost ? `${product.currency} ${product.discountedCost}` : null;
+  const imgUrl = useMemo(() => product.images?.[0]?.url, [product]);
+  const name = useMemo(() => getProductName(product, language), [product, language]);
+  const description = useMemo(() => getProductDescription(product, language), [product, language]);
 
   return (
     <Card
@@ -60,19 +59,9 @@ function CatalogProductItem({ product }: CatalogProductItemProps) {
           </CardContent>
         )}
       </Box>
-      {price && (
+      {product.price && (
         <CardContent>
-          <Stack direction="row" spacing={1}>
-            {discountedPrice && <Typography sx={{ color: 'red', fontWeight: '700' }}>{discountedPrice}</Typography>}
-            <Typography
-              sx={
-                discountedPrice
-                  ? { color: 'grey', fontWeight: '400', textDecoration: 'line-through' }
-                  : { fontWeight: '700' }
-              }>
-              {price}
-            </Typography>
-          </Stack>
+          <PriceField product={product} />
         </CardContent>
       )}
     </Card>

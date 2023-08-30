@@ -17,7 +17,7 @@ function CatalogPage() {
 
   return (
     <ContentLoaderWrapper loadingLogic={loadingLogic}>
-      <Box px={3}>
+      <Box>
         <Typography component="h2" variant="h2" mb={2}>
           Catalog
         </Typography>
