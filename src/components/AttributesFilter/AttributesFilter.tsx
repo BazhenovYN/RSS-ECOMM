@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 import { AttributesList, SelectedAttributesList } from 'types/types';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { RestartAlt } from '@mui/icons-material';
 
 interface AttributesFilterProps {
@@ -19,7 +19,7 @@ interface AttributesFilterProps {
 
 function AttributesFilter({ attributes, onChangeSelectedAttribute }: AttributesFilterProps) {
   const [selectedAttributes, setSelectedAttributes] = useState<SelectedAttributesList>({});
-  const attributesKeys = Object.keys(attributes);
+  const attributesKeys = useMemo(() => Object.keys(attributes), [attributes]);
 
   const changeSelectedAttribute = (event: SelectChangeEvent) => {
     const newSelectedAttributes = { ...selectedAttributes, [event.target.name]: event.target.value };
@@ -28,6 +28,7 @@ function AttributesFilter({ attributes, onChangeSelectedAttribute }: AttributesF
   };
 
   const resetSelectedAttributes = () => {
+    if (!Object.keys(selectedAttributes).length) return;
     setSelectedAttributes({});
     onChangeSelectedAttribute({});
   };

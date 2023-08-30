@@ -65,7 +65,7 @@ function CatalogPage() {
   }, []);
 
   return (
-    <Stack spacing={3} height="100%">
+    <Stack gap={3} height="100%">
       <Typography component="h2" variant="h2">
         Catalog
       </Typography>
@@ -93,7 +93,7 @@ function CatalogPage() {
           <ContentLoaderWrapper loadingLogic={loadingProducts}>
             <Grid container spacing={3}>
               {(isFiltered ? filteredProducts : products).map((product) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
+                <Grid item xs={12} sm={6} lg={4} xl={3} key={product.id}>
                   <CatalogProductItem product={product} />
                 </Grid>
               ))}
