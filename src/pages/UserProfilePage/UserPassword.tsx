@@ -17,6 +17,7 @@ function UserPassword({ user, setUser }: IProps) {
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<PasswordUpdate>({ mode: 'all' });
 
@@ -26,7 +27,7 @@ function UserPassword({ user, setUser }: IProps) {
   const [editMode, setEditMode] = useState(false);
 
   const onSubmit = async (data: PasswordUpdate): Promise<void> => {
-    if (!user?.email || user?.version) {
+    if (!user?.email || !user?.version) {
       if (setMessage) setMessage({ severity: 'error', text: 'User data not found' });
       return;
     }
@@ -71,7 +72,13 @@ function UserPassword({ user, setUser }: IProps) {
             id="confirmNewPassword"
             label="Confirm new password"
             disabled={!editMode}
-            {...register('confirmNewPassword', validationSchemes.password)}
+            {...register('confirmNewPassword', {
+              ...validationSchemes.password,
+              validate: (value) => {
+                const newPassword = getValues('newPassword');
+                return newPassword === value || `Password not matching`;
+              },
+            })}
             isError={!!errors.confirmNewPassword}
             errorMessage={errors.confirmNewPassword?.message}
           />
