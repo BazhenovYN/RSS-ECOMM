@@ -1,11 +1,11 @@
 import { Button, Dialog, Grid, Stack } from '@mui/material';
-import type { Address, Customer } from '@commercetools/platform-sdk';
+import type { Customer } from '@commercetools/platform-sdk';
 import { Dispatch, SetStateAction, useContext, useEffect, useMemo, useState } from 'react';
 import { AddressData } from 'types/types';
 import AddressCard from 'components/AddressCard';
 import AddressFields from 'components/AddressFields';
 import { FormProvider, useForm } from 'react-hook-form';
-import { addAddress, editAddress } from 'services/sdk/customer';
+import { addAddress, editAddress, getAddressesData } from 'services/sdk/customer';
 import AppContext from 'context';
 
 interface UserAddressesProps {
@@ -34,39 +34,8 @@ const defaultFormValues: AddressFormData = {
   address: defaultAddress,
 };
 
-// eslint-disable-next-line max-lines-per-function
 function UserAddresses({ user, setUser }: UserAddressesProps) {
-  const addressesData = useMemo(() => {
-    const addresses: Address[] = user?.addresses || [];
-    const billingAddressIds: string[] = user?.billingAddressIds || [];
-    const defaultBillingAddressId: string | undefined = user?.defaultBillingAddressId;
-    const shippingAddressIds: string[] = user?.shippingAddressIds || [];
-    const defaultShippingAddressId: string | undefined = user?.defaultShippingAddressId;
-
-    return addresses.map((address): AddressData => {
-      const { id } = address;
-      const isBilling = id ? billingAddressIds.includes(id) : false;
-      const isShipping = id ? shippingAddressIds.includes(id) : false;
-      const isDefaultBilling = id ? defaultBillingAddressId === id : false;
-      const isDefaultShipping = id ? defaultShippingAddressId === id : false;
-
-      return {
-        id,
-        country: address.country,
-        city: address.city || '',
-        postalCode: address.postalCode || '',
-        street: address.streetName || '',
-        isBilling,
-        isBillingBefore: isBilling,
-        isShipping,
-        isShippingBefore: isShipping,
-        isDefaultBilling,
-        isDefaultBillingBefore: isDefaultBilling,
-        isDefaultShipping,
-        isDefaultShippingBefore: isDefaultShipping,
-      };
-    });
-  }, [user]);
+  const addressesData = useMemo(() => getAddressesData(user), [user]);
 
   const appContext = useContext(AppContext);
   const setMessage = appContext?.setMessage;
@@ -119,7 +88,7 @@ function UserAddresses({ user, setUser }: UserAddressesProps) {
   };
 
   return (
-    <Stack gap={3} alignItems="flex-start">
+    <Stack gap={3} alignItems="flex-start" mt={4}>
       <Grid container spacing={3}>
         {addressesData.map((address) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={address.id}>

@@ -1,4 +1,5 @@
 import {
+  Address,
   AddressDraft,
   ClientResponse,
   Customer,
@@ -130,6 +131,38 @@ export const updateUserPassword = async (
   }
 
   return response?.body;
+};
+
+export const getAddressesData = (user: Customer | undefined): AddressData[] => {
+  const addresses: Address[] = user?.addresses || [];
+  const billingAddressIds: string[] = user?.billingAddressIds || [];
+  const defaultBillingAddressId: string | undefined = user?.defaultBillingAddressId;
+  const shippingAddressIds: string[] = user?.shippingAddressIds || [];
+  const defaultShippingAddressId: string | undefined = user?.defaultShippingAddressId;
+
+  return addresses.map((address): AddressData => {
+    const { id } = address;
+    const isBilling = id ? billingAddressIds.includes(id) : false;
+    const isShipping = id ? shippingAddressIds.includes(id) : false;
+    const isDefaultBilling = id ? defaultBillingAddressId === id : false;
+    const isDefaultShipping = id ? defaultShippingAddressId === id : false;
+
+    return {
+      id,
+      country: address.country,
+      city: address.city || '',
+      postalCode: address.postalCode || '',
+      street: address.streetName || '',
+      isBilling,
+      isBillingBefore: isBilling,
+      isShipping,
+      isShippingBefore: isShipping,
+      isDefaultBilling,
+      isDefaultBillingBefore: isDefaultBilling,
+      isDefaultShipping,
+      isDefaultShippingBefore: isDefaultShipping,
+    };
+  });
 };
 
 const createAddAddressUpdate = (address: AddressData, version: number): MyCustomerUpdate => {
