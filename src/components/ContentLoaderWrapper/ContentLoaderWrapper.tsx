@@ -14,6 +14,7 @@ function ContentLoaderWrapper({ loadingLogic, children }: ContentLoaderWrapperPr
   const setMessage = appContext?.setMessage;
 
   useEffect(() => {
+    setIsLoading(true);
     loadingLogic()
       .then(() => setIsLoading(false))
       .catch((error) => {

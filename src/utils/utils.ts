@@ -11,12 +11,12 @@ export const getProductName = (product?: Product, language = DEFAULT_LANGUAGE): 
   if (!product) {
     return '';
   }
-  return product.name[language];
+  return product.name[language] || product.name[DEFAULT_LANGUAGE];
 };
 
 export const getProductDescription = (product?: Product, language = DEFAULT_LANGUAGE): string => {
   if (!product) {
     return '';
   }
-  return product.description ? product.description[language] : '';
+  return product.description?.[language] ? product.description[language] : '';
 };
