@@ -1,6 +1,6 @@
 import { ProductProjection } from '@commercetools/platform-sdk';
 import { getAppApiRoot } from 'services/sdk/client';
-import type { Product } from 'types/types';
+import { Product } from 'types/types';
 
 interface ISellingPrice {
   price?: number;
