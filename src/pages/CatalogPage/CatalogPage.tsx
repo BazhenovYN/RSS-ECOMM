@@ -65,7 +65,7 @@ function CatalogPage() {
   }, []);
 
   return (
-    <Stack gap={3} px={3} height="100%">
+    <Stack spacing={3} height="100%">
       <Typography component="h2" variant="h2">
         Catalog
       </Typography>

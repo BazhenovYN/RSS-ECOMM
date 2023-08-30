@@ -22,11 +22,10 @@ export type Language = 'en-US' | 'ru';
 
 export interface Product {
   id: string;
-  key?: string;
   name: LocalizedString;
   description?: LocalizedString;
-  cost?: number;
-  discountedCost?: number;
+  price?: number;
+  salePrice?: number;
   currency?: string;
   images?: Image[];
   attributes?: Attribute[];

@@ -7,6 +7,7 @@ import { Product } from 'types/types';
 import { BrowserRouter } from 'react-router-dom';
 
 const product: Product = {
+  id: 'test-id',
   name: {
     'en-US': 'Product name',
     ru: 'Имя продукта',
@@ -21,7 +22,6 @@ const product: Product = {
       dimensions: { w: 1, h: 1 },
     },
   ],
-  id: 'test-id',
 };
 
 const appContext: IAppContext = {
