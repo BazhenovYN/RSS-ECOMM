@@ -6,9 +6,16 @@ import {
   CustomerSignInResult,
   MyCustomerChangePassword,
   MyCustomerUpdate,
+  MyCustomerUpdateAction,
 } from '@commercetools/platform-sdk';
 import { getAppApiRoot, getCustomerApiRoot, removeCustomerApiRoot } from 'services/sdk/client';
-import type { PasswordUpdate, RegistrationFormAddress, RegistrationFormData, UserDataUpdate } from 'types/types';
+import type {
+  AddressData,
+  PasswordUpdate,
+  RegistrationFormAddress,
+  RegistrationFormData,
+  UserDataUpdate,
+} from 'types/types';
 import dayjs from 'dayjs';
 
 export const login = async (email: string = 'default', password: string = 'default'): Promise<void> => {
@@ -19,8 +26,9 @@ export const logout = () => {
   removeCustomerApiRoot();
 };
 
-export const createAddressDraft = (registrationFormAddress: RegistrationFormAddress): AddressDraft => {
+export const createAddressDraft = (registrationFormAddress: RegistrationFormAddress | AddressData): AddressDraft => {
   return {
+    key: registrationFormAddress.key,
     streetName: registrationFormAddress.street,
     city: registrationFormAddress.city,
     postalCode: registrationFormAddress.postalCode,
@@ -120,6 +128,151 @@ export const updateUserPassword = async (
     logout();
     await login(email, data.newPassword);
   }
+
+  return response?.body;
+};
+
+const createAddAddressUpdate = (address: AddressData, version: number): MyCustomerUpdate => {
+  const addressKey = crypto.randomUUID();
+  const actions: MyCustomerUpdateAction[] = [];
+  actions.push({
+    action: 'addAddress',
+    address: createAddressDraft({ ...address, key: addressKey }),
+  });
+  if (address.isBilling) {
+    actions.push({
+      action: 'addBillingAddressId',
+      addressKey,
+    });
+  }
+  if (address.isDefaultBilling) {
+    actions.push({
+      action: 'setDefaultBillingAddress',
+      addressKey,
+    });
+  }
+  if (address.isShipping) {
+    actions.push({
+      action: 'addShippingAddressId',
+      addressKey,
+    });
+  }
+  if (address.isDefaultShipping) {
+    actions.push({
+      action: 'setDefaultShippingAddress',
+      addressKey,
+    });
+  }
+  return {
+    version,
+    actions,
+  };
+};
+
+export const addAddress = async (address: AddressData, version: number): Promise<Customer | undefined> => {
+  const apiRoot = await getCustomerApiRoot();
+  const response = await apiRoot
+    ?.me()
+    .post({ body: createAddAddressUpdate(address, version) })
+    .execute();
+
+  return response?.body;
+};
+
+const createEditAddressUpdate = async (address: AddressData, version: number): Promise<MyCustomerUpdate> => {
+  const addressId = address.id;
+  if (!addressId) throw Error('Address not found');
+
+  const actions: MyCustomerUpdateAction[] = [];
+
+  actions.push({
+    action: 'changeAddress',
+    addressId,
+    address: createAddressDraft(address),
+  });
+
+  if (address.isBilling) {
+    actions.push({
+      action: 'addBillingAddressId',
+      addressId,
+    });
+  } else if (address.isBillingBefore) {
+    actions.push({
+      action: 'removeBillingAddressId',
+      addressId,
+    });
+  }
+
+  if (address.isDefaultBilling) {
+    actions.push({
+      action: 'setDefaultBillingAddress',
+      addressId,
+    });
+  } else if (address.isDefaultBillingBefore) {
+    actions.push({
+      action: 'setDefaultBillingAddress',
+      addressId: undefined,
+    });
+  }
+
+  if (address.isShipping) {
+    actions.push({
+      action: 'addShippingAddressId',
+      addressId,
+    });
+  } else if (address.isShippingBefore) {
+    actions.push({
+      action: 'removeShippingAddressId',
+      addressId,
+    });
+  }
+
+  if (address.isDefaultShipping) {
+    actions.push({
+      action: 'setDefaultShippingAddress',
+      addressId,
+    });
+  } else if (address.isDefaultShippingBefore) {
+    actions.push({
+      action: 'setDefaultShippingAddress',
+      addressId: undefined,
+    });
+  }
+
+  return {
+    version,
+    actions,
+  };
+};
+
+export const editAddress = async (address: AddressData, version: number): Promise<Customer | undefined> => {
+  const apiRoot = await getCustomerApiRoot();
+  const response = await apiRoot
+    ?.me()
+    .post({ body: await createEditAddressUpdate(address, version) })
+    .execute();
+
+  return response?.body;
+};
+
+const createAddressDeleteUpdate = (address: AddressData, version: number): MyCustomerUpdate => {
+  return {
+    version,
+    actions: [
+      {
+        action: 'removeAddress',
+        addressId: address.id,
+      },
+    ],
+  };
+};
+
+export const deleteAddress = async (address: AddressData, version: number): Promise<Customer | undefined> => {
+  const apiRoot = await getCustomerApiRoot();
+  const response = await apiRoot
+    ?.me()
+    .post({ body: createAddressDeleteUpdate(address, version) })
+    .execute();
 
   return response?.body;
 };
