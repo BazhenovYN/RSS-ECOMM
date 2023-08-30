@@ -18,6 +18,7 @@ function UserPassword({ user, setUser }: IProps) {
     register,
     handleSubmit,
     getValues,
+    reset,
     formState: { errors },
   } = useForm<PasswordUpdate>({ mode: 'all' });
 
@@ -82,18 +83,29 @@ function UserPassword({ user, setUser }: IProps) {
             isError={!!errors.confirmNewPassword}
             errorMessage={errors.confirmNewPassword?.message}
           />
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            sx={{ mt: 2 }}
-            disabled={editMode}
-            onClick={() => setEditMode(true)}>
-            Edit
-          </Button>
-          <Button disabled={!editMode} fullWidth type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
-            Save
-          </Button>
+          {!editMode && (
+            <Button fullWidth variant="contained" color="primary" sx={{ mt: 2 }} onClick={() => setEditMode(true)}>
+              Edit
+            </Button>
+          )}
+          {editMode && (
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              sx={{ mt: 2 }}
+              onClick={() => {
+                setEditMode(false);
+                reset();
+              }}>
+              Cancel
+            </Button>
+          )}
+          {editMode && (
+            <Button fullWidth type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
+              Save
+            </Button>
+          )}
         </Stack>
       </Box>
     </Container>

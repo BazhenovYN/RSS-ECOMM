@@ -20,6 +20,7 @@ function UserInformation({ user, setUser }: IProps) {
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = methods;
   const appContext = useContext(AppContext);
@@ -95,18 +96,40 @@ function UserInformation({ user, setUser }: IProps) {
                 />
               </Grid>
             </Grid>
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              sx={{ mt: 2 }}
-              disabled={editMode}
-              onClick={() => setEditMode(true)}>
-              Edit
-            </Button>
-            <Button disabled={!editMode} fullWidth type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
-              Save
-            </Button>
+            {!editMode && (
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                sx={{ mt: 2 }}
+                disabled={editMode}
+                onClick={() => setEditMode(true)}>
+                Edit
+              </Button>
+            )}
+            {editMode && (
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                sx={{ mt: 2 }}
+                onClick={() => {
+                  setEditMode(false);
+                  reset({
+                    firstName: user?.firstName,
+                    lastName: user?.lastName,
+                    dateOfBirth: dayjs(user?.dateOfBirth),
+                    email: user?.email,
+                  });
+                }}>
+                Cancel
+              </Button>
+            )}
+            {editMode && (
+              <Button fullWidth type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
+                Save
+              </Button>
+            )}
           </Box>
         </FormProvider>
       </Box>
