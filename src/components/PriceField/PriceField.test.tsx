@@ -7,7 +7,6 @@ const productWithoutDiscount: Product = {
   name: { 'en-US': 'Product1' },
   description: { 'en-US': 'Test product1' },
   price: 10,
-  salePrice: 10,
   currency: 'EUR',
   images: [],
   attributes: [],
