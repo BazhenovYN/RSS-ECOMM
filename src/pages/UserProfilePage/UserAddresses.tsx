@@ -107,7 +107,13 @@ function UserAddresses({ user, setUser }: UserAddressesProps) {
       </Button>
       <Dialog open={formOpen} onClose={handleFormClose}>
         <FormProvider {...methods}>
-          <Grid container component="form" spacing={2} onSubmit={handleSubmit(handleFormSubmit)} padding={3}>
+          <Grid
+            container
+            component="form"
+            spacing={2}
+            onSubmit={handleSubmit(handleFormSubmit)}
+            padding={3}
+            data-testid="address-form">
             <AddressFields label={formLabel} addressType="address" />
             <Grid item xs={12}>
               <Button fullWidth type="submit" variant="contained" color="primary">
