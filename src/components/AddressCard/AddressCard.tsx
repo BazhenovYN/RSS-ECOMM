@@ -1,10 +1,11 @@
 import countries from 'constants/countries';
-import { Button, Card, CardActions, CardContent, Typography } from '@mui/material';
-import { AddressData } from 'types/types';
-import { deleteAddress } from 'services/sdk/customer';
 import { Dispatch, SetStateAction, useContext } from 'react';
-import AppContext from 'context';
 import { Customer } from '@commercetools/platform-sdk';
+import { Button, Card, CardActions, CardContent, Typography } from '@mui/material';
+import { grey, lightBlue } from '@mui/material/colors';
+import AppContext from 'context';
+import { deleteAddress } from 'services/sdk/customer';
+import { AddressData } from 'types/types';
 
 interface AddressCardProps {
   address: AddressData;
@@ -37,16 +38,33 @@ function AddressCard({ address, userVersion, setUser, setRedactedAddress, handle
     handleEdit();
   };
 
+  const styles = {
+    primaryLabel: {
+      backgroundColor: grey[300],
+      borderRadius: '16px',
+      padding: '0 8px',
+      margin: '4px 0',
+      width: 'max-content',
+    },
+    secondaryLabel: {
+      backgroundColor: lightBlue[50],
+      borderRadius: '16px',
+      padding: '0 8px',
+      margin: '4px 0',
+      width: 'max-content',
+    },
+  };
+
   return (
     <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       {address.id &&
         (address.isBilling || address.isShipping || address.isDefaultBilling || address.isDefaultShipping) && (
           <CardContent>
             <Typography>Address types:</Typography>
-            {address.isBilling && <Typography>Billing</Typography>}
-            {address.isShipping && <Typography>Shipping</Typography>}
-            {address.isDefaultBilling && <Typography>Default Billing</Typography>}
-            {address.isDefaultShipping && <Typography>Default Shipping</Typography>}
+            {address.isBilling && <Typography sx={styles.primaryLabel}>Billing</Typography>}
+            {address.isShipping && <Typography sx={styles.primaryLabel}>Shipping</Typography>}
+            {address.isDefaultBilling && <Typography sx={styles.secondaryLabel}>Default Billing</Typography>}
+            {address.isDefaultShipping && <Typography sx={styles.secondaryLabel}>Default Shipping</Typography>}
           </CardContent>
         )}
       <CardContent>
@@ -55,7 +73,7 @@ function AddressCard({ address, userVersion, setUser, setRedactedAddress, handle
         {address.postalCode && <Typography>Postal Code: {address.postalCode}</Typography>}
         {address.street && <Typography>Street: {address.street}</Typography>}
       </CardContent>
-      <CardActions sx={{ marginTop: 'auto' }}>
+      <CardActions sx={{ marginTop: 'auto', padding: '16px' }}>
         <Button variant="contained" color="primary" onClick={onEditClick}>
           Edit
         </Button>
