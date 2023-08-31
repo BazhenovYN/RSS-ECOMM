@@ -1,8 +1,10 @@
+import { DEFAULT_LANGUAGE } from 'constants/const';
 import { render, screen } from '@testing-library/react';
 import CatalogProductItem from 'components/CatalogProductItem';
 import AppContext, { IAppContext } from 'context';
 import logo from 'assets/img/logo.png';
 import { Product } from 'types/types';
+import { BrowserRouter } from 'react-router-dom';
 
 const product: Product = {
   id: 'test-id',
@@ -30,14 +32,16 @@ const appContext: IAppContext = {
     severity: undefined,
   },
   setMessage: () => {},
-  language: 'en-US',
+  language: DEFAULT_LANGUAGE,
 };
 
 describe('CatalogProductItem', () => {
   test('renders correctly', () => {
     render(
       <AppContext.Provider value={appContext}>
-        <CatalogProductItem product={product} />
+        <BrowserRouter>
+          <CatalogProductItem product={product} />
+        </BrowserRouter>
       </AppContext.Provider>
     );
 
@@ -54,7 +58,9 @@ describe('CatalogProductItem', () => {
   test('renders correctly with another language', () => {
     render(
       <AppContext.Provider value={{ ...appContext, language: 'ru' }}>
-        <CatalogProductItem product={product} />
+        <BrowserRouter>
+          <CatalogProductItem product={product} />
+        </BrowserRouter>
       </AppContext.Provider>
     );
 
@@ -68,12 +74,14 @@ describe('CatalogProductItem', () => {
   test('renders correctly without img', () => {
     render(
       <AppContext.Provider value={appContext}>
-        <CatalogProductItem
-          product={{
-            ...product,
-            images: undefined,
-          }}
-        />
+        <BrowserRouter>
+          <CatalogProductItem
+            product={{
+              ...product,
+              images: undefined,
+            }}
+          />
+        </BrowserRouter>
       </AppContext.Provider>
     );
 

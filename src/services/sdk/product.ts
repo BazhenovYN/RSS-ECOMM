@@ -1,6 +1,6 @@
-import { ProductProjection } from '@commercetools/platform-sdk';
 import { getAppApiRoot } from 'services/sdk/client';
-import { Product } from 'types/types';
+import { ProductProjection } from '@commercetools/platform-sdk';
+import { AttributesList, Product, SearchParams } from 'types/types';
 
 interface ISellingPrice {
   price?: number;
@@ -48,7 +48,49 @@ export const getProductDetails = async (ID: string | undefined): Promise<Product
   return getProductData(response.body);
 };
 
-export const getProducts = async (): Promise<Product[]> => {
-  const response = await getAppApiRoot().productProjections().get().execute();
+export const searchProducts = async (searchParams: SearchParams): Promise<Product[]> => {
+  const {
+    selectedAttributes = searchParams.selectedAttributes || {},
+    searchTextParameter,
+    searchQuery,
+    categoryId,
+    sortingField,
+    sortingDirection,
+  } = searchParams;
+  const filterStrings = Object.keys(selectedAttributes).map((attributeName) => {
+    const filterAttributeName = `variants.attributes.${attributeName}`;
+    const filterAttributeValue = selectedAttributes[attributeName];
+    return `${filterAttributeName}:"${filterAttributeValue}"`;
+  });
+
+  if (categoryId) {
+    filterStrings.push(`categories.id:subtree("${categoryId}")`);
+  }
+
+  const response = await getAppApiRoot()
+    .productProjections()
+    .search()
+    .get({
+      queryArgs: {
+        [searchTextParameter]: searchQuery,
+        fuzzy: true,
+        sort: `${sortingField} ${sortingDirection}`,
+        filter: filterStrings,
+      },
+    })
+    .execute();
+
   return response.body.results.map((product) => getProductData(product));
+};
+
+export const getAttributes = (products: Product[]): AttributesList => {
+  const attributes: AttributesList = {};
+  products.forEach((product) => {
+    product.attributes?.forEach((productAttribute) => {
+      if (!attributes[productAttribute.name]) attributes[productAttribute.name] = new Set();
+      attributes[productAttribute.name].add(productAttribute.value);
+    });
+  });
+
+  return attributes;
 };
