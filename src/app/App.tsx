@@ -61,7 +61,7 @@ function App() {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <Box className={styles.App}>
             <Header />
-            <Box component="main" sx={{ flex: '1 0 auto' }} px={8}>
+            <Box component="main" sx={{ flex: '1 0 auto' }} width="93%" mx="auto">
               <AppRouter />
             </Box>
             <Footer />
