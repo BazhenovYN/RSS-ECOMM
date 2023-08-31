@@ -69,7 +69,7 @@ function UserProfilePage() {
           <UserPassword user={user} setUser={setUser} />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={2}>
-          <UserAddresses user={user} />
+          <UserAddresses user={user} setUser={setUser} />
         </CustomTabPanel>
       </Box>
     </ContentLoaderWrapper>

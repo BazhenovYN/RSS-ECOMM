@@ -3,30 +3,21 @@ import { Checkbox, FormControlLabel, Grid, TextField, Typography } from '@mui/ma
 import { Controller, useFormContext } from 'react-hook-form';
 import CountrySelect from 'components/CountrySelect';
 import { isPostCodeValid } from 'utils/utils';
+import { AddressData, RegistrationFormAddress } from 'types/types';
 
 interface IAddresses {
-  shippingAddress: {
-    street: string;
-    city: string;
-    postalCode: string;
-    country: string;
-    isDefault: boolean;
-  };
-  billingAddress: {
-    street: string;
-    city: string;
-    postalCode: string;
-    country: string;
-    isDefault: boolean;
-  };
+  shippingAddress: RegistrationFormAddress;
+  billingAddress: RegistrationFormAddress;
+  address: AddressData;
 }
 
 interface IProps {
   label: string;
-  addressType: 'shippingAddress' | 'billingAddress';
+  addressType: 'shippingAddress' | 'billingAddress' | 'address';
   disabled?: boolean;
 }
 
+// eslint-disable-next-line max-lines-per-function
 function AddressFields({ label, addressType, disabled }: IProps) {
   const {
     register,
@@ -117,13 +108,75 @@ function AddressFields({ label, addressType, disabled }: IProps) {
           )}
         />
       </Grid>
-      <Grid item xs={12}>
-        <FormControlLabel
-          control={<Checkbox color="primary" />}
-          label="Set as default address"
-          {...register(`${addressType}.isDefault`)}
-        />
-      </Grid>
+      {(addressType === 'shippingAddress' || addressType === 'billingAddress') && (
+        <Grid item xs={12}>
+          <FormControlLabel
+            control={<Checkbox color="primary" />}
+            label="Set as default address"
+            {...register(`${addressType}.isDefault`)}
+          />
+        </Grid>
+      )}
+      {addressType === 'address' && (
+        <>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={
+                <Controller
+                  name={`${addressType}.isBilling`}
+                  control={control}
+                  defaultValue={false}
+                  render={({ field: { value, ref, ...field } }) => (
+                    <Checkbox {...field} inputRef={ref} checked={!!value} color="primary" />
+                  )}
+                />
+              }
+              label="Set as billing address"
+            />
+            <FormControlLabel
+              control={
+                <Controller
+                  name={`${addressType}.isShipping`}
+                  control={control}
+                  defaultValue={false}
+                  render={({ field: { value, ref, ...field } }) => (
+                    <Checkbox {...field} inputRef={ref} checked={!!value} color="primary" />
+                  )}
+                />
+              }
+              label="Set as shipping address"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={
+                <Controller
+                  name={`${addressType}.isDefaultBilling`}
+                  control={control}
+                  defaultValue={false}
+                  render={({ field: { value, ref, ...field } }) => (
+                    <Checkbox {...field} inputRef={ref} checked={!!value} color="primary" />
+                  )}
+                />
+              }
+              label="Set as default billing address"
+            />
+            <FormControlLabel
+              control={
+                <Controller
+                  name={`${addressType}.isDefaultShipping`}
+                  control={control}
+                  defaultValue={false}
+                  render={({ field: { value, ref, ...field } }) => (
+                    <Checkbox {...field} inputRef={ref} checked={!!value} color="primary" />
+                  )}
+                />
+              }
+              label="Set as default shipping address"
+            />
+          </Grid>
+        </>
+      )}
     </>
   );
 }

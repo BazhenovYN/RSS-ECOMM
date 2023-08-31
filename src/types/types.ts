@@ -12,11 +12,29 @@ export interface RegistrationFormData {
 }
 
 export interface RegistrationFormAddress {
+  key?: string;
   country: string;
   city: string;
   postalCode: string;
   street: string;
   isDefault: boolean;
+}
+
+export interface AddressData {
+  id?: string;
+  key?: string;
+  country: string;
+  city: string;
+  postalCode: string;
+  street: string;
+  isBilling: boolean;
+  isShipping: boolean;
+  isDefaultBilling: boolean;
+  isDefaultShipping: boolean;
+  isBillingBefore?: boolean;
+  isShippingBefore?: boolean;
+  isDefaultBillingBefore?: boolean;
+  isDefaultShippingBefore?: boolean;
 }
 
 export type Language = 'en-US' | 'ru';
