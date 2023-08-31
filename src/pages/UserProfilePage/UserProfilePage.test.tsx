@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import type { Customer } from '@commercetools/platform-sdk';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { AddressData } from 'types/types';
 import UserProfilePage from './UserProfilePage';
 
 jest.mock('services/sdk/customer', () => ({
@@ -20,6 +21,19 @@ jest.mock('services/sdk/customer', () => ({
       isEmailVerified: false,
       authenticationMode: 'Password',
     }),
+  getAddressesData: (): AddressData[] => [
+    {
+      id: 'test-id',
+      country: 'RU',
+      city: 'city',
+      postalCode: '110000',
+      street: 'street',
+      isBilling: true,
+      isShipping: false,
+      isDefaultBilling: true,
+      isDefaultShipping: false,
+    },
+  ],
 }));
 
 describe('UserProfilePage', () => {
@@ -38,6 +52,9 @@ describe('UserProfilePage', () => {
 
     const addressesTab = await screen.findByLabelText('Addresses');
     expect(addressesTab).toBeInTheDocument();
+
+    const form = await screen.findByTestId('change-user-information-form');
+    expect(form).toBeInTheDocument();
   });
 
   test('tab Password opened correctly', async () => {
@@ -52,5 +69,19 @@ describe('UserProfilePage', () => {
 
     const form = await screen.findByTestId('change-user-password-form');
     expect(form).toBeInTheDocument();
+  });
+
+  test('tab Addresses opened correctly', async () => {
+    render(
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <UserProfilePage />
+      </LocalizationProvider>
+    );
+
+    const addressesTab = await screen.findByRole('tab', { name: /addresses/i });
+    fireEvent.click(addressesTab);
+
+    const addresses = await screen.findByTestId('addresses');
+    expect(addresses).toBeInTheDocument();
   });
 });

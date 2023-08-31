@@ -88,7 +88,7 @@ function UserAddresses({ user, setUser }: UserAddressesProps) {
   };
 
   return (
-    <Stack gap={3} alignItems="flex-start" mt={4}>
+    <Stack gap={3} alignItems="flex-start" mt={4} data-testid="addresses">
       <Grid container spacing={3}>
         {addressesData.map((address) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={address.id}>
