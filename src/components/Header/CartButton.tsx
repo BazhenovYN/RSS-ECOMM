@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 function CartButton() {
   const navigate = useNavigate();
   return (
-    <IconButton onClick={() => navigate('/basket')}>
+    <IconButton onClick={() => navigate('/basket')} size="large">
       <ShoppingCartIcon />
     </IconButton>
   );

@@ -9,6 +9,7 @@ import NotFoundPage from 'pages/NotFoundPage';
 import RegistrationPage from 'pages/RegistrationPage';
 import BasketPage from 'pages/BasketPage';
 import ProductPage from 'pages/ProductPage';
+import UserProfilePage from 'pages/UserProfilePage';
 
 function AppRouter() {
   const appContext = useContext(AppContext);
@@ -24,6 +25,7 @@ function AppRouter() {
       <Route path="products/:productId" element={<ProductPage />} />
       <Route path="about-us" element={<AboutUsPage />} />
       <Route path="basket" element={<BasketPage />} />
+      <Route path="profile" element={isAuth ? <UserProfilePage /> : <Navigate to="/login" replace />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

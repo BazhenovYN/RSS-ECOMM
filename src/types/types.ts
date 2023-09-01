@@ -1,4 +1,5 @@
 import { Attribute, Category, Image, LocalizedString } from '@commercetools/platform-sdk';
+import dayjs from 'dayjs';
 
 export interface RegistrationFormData {
   email: string;
@@ -11,11 +12,29 @@ export interface RegistrationFormData {
 }
 
 export interface RegistrationFormAddress {
+  key?: string;
   country: string;
   city: string;
   postalCode: string;
   street: string;
   isDefault: boolean;
+}
+
+export interface AddressData {
+  id?: string;
+  key?: string;
+  country: string;
+  city: string;
+  postalCode: string;
+  street: string;
+  isBilling: boolean;
+  isShipping: boolean;
+  isDefaultBilling: boolean;
+  isDefaultShipping: boolean;
+  isBillingBefore?: boolean;
+  isShippingBefore?: boolean;
+  isDefaultBillingBefore?: boolean;
+  isDefaultShippingBefore?: boolean;
 }
 
 export type Language = 'en-US' | 'ru';
@@ -29,6 +48,19 @@ export interface Product {
   currency?: string;
   images?: Image[];
   attributes?: Attribute[];
+}
+
+export interface UserDataUpdate {
+  firstName: string;
+  lastName: string;
+  email: string;
+  dateOfBirth: dayjs.Dayjs;
+}
+
+export interface PasswordUpdate {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
 }
 
 export type AttributesList = Record<string, Set<string>>;

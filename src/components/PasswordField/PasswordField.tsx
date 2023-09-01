@@ -3,13 +3,15 @@ import { FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, Ou
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 interface IProps {
+  id?: string;
   label?: string;
+  disabled?: boolean;
   isError?: boolean;
   errorMessage?: string;
 }
 
 const PasswordField = React.forwardRef(function PasswordField(
-  { label = 'Password', isError, errorMessage, ...rest }: IProps,
+  { id = 'password', label = 'Password', disabled, isError, errorMessage, ...rest }: IProps,
   ref: React.ForwardedRef<HTMLElement>
 ) {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,10 +23,10 @@ const PasswordField = React.forwardRef(function PasswordField(
   };
 
   return (
-    <FormControl fullWidth variant="outlined" error={isError}>
-      <InputLabel htmlFor="outlined-adornment-password">{label}</InputLabel>
+    <FormControl disabled={disabled} fullWidth variant="outlined" error={isError}>
+      <InputLabel htmlFor={id}>{label}</InputLabel>
       <OutlinedInput
-        id="outlined-adornment-password"
+        id={id}
         type={showPassword ? 'text' : 'password'}
         endAdornment={
           <InputAdornment position="end">

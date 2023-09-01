@@ -47,16 +47,19 @@ function App() {
       .finally(() => setIsLoading(false));
   }, []);
 
+  if (isLoading) {
+    return (
+      <Box className={styles.loader}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
     <AppContext.Provider value={appContext}>
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <Box className={styles.App}>
-            {isLoading && (
-              <Box className={styles.loader}>
-                <CircularProgress />
-              </Box>
-            )}
             <Header />
             <Box component="main" sx={{ flex: '1 0 auto' }} width="93%" mx="auto">
               <AppRouter />
