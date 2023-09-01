@@ -13,6 +13,7 @@ import AttributesFilter from 'components/AttributesFilter';
 import CategoriesListing from 'components/CategoriesListing';
 import { useParams } from 'react-router-dom';
 import { getCategories } from 'services/sdk/category';
+import BreadcrumbNavigation from 'components/BreadcrumbNavigation';
 
 function CatalogPage() {
   const appContext = useContext(AppContext);
@@ -91,6 +92,7 @@ function CatalogPage() {
         </Grid>
         <Grid item sm={12} md={9} lg={10}>
           <ContentLoaderWrapper loadingLogic={loadingProducts}>
+            <BreadcrumbNavigation categories={categories} categoryId={categoryId} language={language} />
             <Grid container spacing={3}>
               {(isFiltered ? filteredProducts : products).map((product) => (
                 <Grid item xs={12} sm={6} lg={4} xl={3} key={product.id}>
