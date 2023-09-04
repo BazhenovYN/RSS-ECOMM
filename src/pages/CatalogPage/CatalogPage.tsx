@@ -4,7 +4,7 @@ import { Grid, Stack, Typography } from '@mui/material';
 import { getAttributes, searchProducts } from 'services/sdk/product';
 import { useContext, useMemo, useState } from 'react';
 import CatalogProductItem from 'components/CatalogProductItem';
-import { AttributesList, CategoriesList, Product, SelectedAttributesList } from 'types/types';
+import { AttributesList, CategoriesList, Product, SearchParams, SelectedAttributesList } from 'types/types';
 import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
 import AppContext from 'context';
 import CatalogSorting from 'components/CatalogSorting';
@@ -35,7 +35,7 @@ function CatalogPage() {
 
   const loadingProducts = useMemo(() => {
     return async () => {
-      const searchParams = {
+      const searchParams: SearchParams = {
         searchTextParameter,
         searchQuery,
         sortingField,
