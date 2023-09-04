@@ -16,11 +16,11 @@ function ContentLoaderWrapper({ loadingLogic, children }: ContentLoaderWrapperPr
   useEffect(() => {
     setIsLoading(true);
     loadingLogic()
-      .then(() => setIsLoading(false))
       .catch((error) => {
         if (setMessage)
           setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
-      });
+      })
+      .finally(() => setIsLoading(false));
   }, [loadingLogic, setMessage]);
 
   return isLoading ? (

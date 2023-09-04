@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import CatalogPage from 'pages/CatalogPage';
-import { CategoriesList } from 'types/types';
+import { CategoriesList, Product } from 'types/types';
 import { BrowserRouter } from 'react-router-dom';
 
 jest.mock('services/sdk/category', () => ({
@@ -15,6 +15,17 @@ jest.mock('services/sdk/category', () => ({
       ],
       subs: [],
     }),
+}));
+
+jest.mock('services/sdk/product', () => ({
+  __esModule: true,
+  searchProducts: () =>
+    Promise.resolve<Product[]>([
+      {
+        id: 'test-product-id-1',
+        name: { 'en-US': 'Product1' },
+      },
+    ]),
 }));
 
 describe('CatalogPage', () => {
@@ -33,5 +44,8 @@ describe('CatalogPage', () => {
 
     const categoryName = await screen.findByText('Category1');
     expect(categoryName).toBeInTheDocument();
+
+    const productName = await screen.findByText('Product1');
+    expect(productName).toBeInTheDocument();
   });
 });
