@@ -1,15 +1,17 @@
 import COLORS from 'constants/colors';
+import { DEFAULT_LANGUAGE } from 'constants/const';
 import { createTheme, ThemeProvider, Box, CircularProgress } from '@mui/material';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useEffect, useMemo, useState } from 'react';
-import AuthContext, { Message } from 'context';
+import AppContext, { Message } from 'context';
 import { login } from 'services/sdk/customer';
 import AppRouter from 'router';
 import PopupMessage from 'components/PopupMessage';
 import { getCookie } from 'utils/cookie';
+import { Language } from 'types/types';
 import styles from './App.module.scss';
 
 const theme = createTheme({
@@ -20,6 +22,9 @@ const theme = createTheme({
     secondary: {
       main: COLORS.SECONDARY_COLOR,
     },
+    warning: {
+      main: COLORS.WARNINGS,
+    },
   },
 });
 
@@ -27,9 +32,10 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
   const [message, setMessage] = useState<Message>({ text: null, severity: undefined });
-  const authContext = useMemo(() => {
-    return { isAuth, setIsAuth, message, setMessage };
-  }, [isAuth, setIsAuth, message, setMessage]);
+  const [language, setLanguage] = useState<Language>(DEFAULT_LANGUAGE);
+  const appContext = useMemo(() => {
+    return { isAuth, setIsAuth, message, setMessage, language, setLanguage };
+  }, [isAuth, setIsAuth, message, setMessage, language, setLanguage]);
   useEffect(() => {
     if (!getCookie('authToken') && !getCookie('refreshToken')) {
       setIsLoading(false);
@@ -41,17 +47,21 @@ function App() {
       .finally(() => setIsLoading(false));
   }, []);
 
-  return isLoading ? (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-      <CircularProgress />
-    </Box>
-  ) : (
-    <AuthContext.Provider value={authContext}>
+  if (isLoading) {
+    return (
+      <Box className={styles.loader}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  return (
+    <AppContext.Provider value={appContext}>
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <div className={styles.App}>
+          <Box className={styles.App}>
             <Header />
-            <Box component="main" sx={{ flex: '1 0 auto' }}>
+            <Box component="main" sx={{ flex: '1 0 auto' }} width="93%" mx="auto">
               <AppRouter />
             </Box>
             <Footer />
@@ -62,10 +72,10 @@ function App() {
                 setMessage({ ...message, text: null });
               }}
             />
-          </div>
+          </Box>
         </LocalizationProvider>
       </ThemeProvider>
-    </AuthContext.Provider>
+    </AppContext.Provider>
   );
 }
 

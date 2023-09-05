@@ -1,11 +1,13 @@
 import { createContext, Dispatch, SetStateAction } from 'react';
 import { AlertColor } from '@mui/material';
+import { Language } from 'types/types';
 
-interface IAppContext {
+export interface IAppContext {
   isAuth: boolean;
   setIsAuth: Dispatch<SetStateAction<boolean>>;
   message: Message;
   setMessage: Dispatch<SetStateAction<Message>>;
+  language: Language;
 }
 
 export interface Message {
@@ -13,6 +15,6 @@ export interface Message {
   severity: AlertColor | undefined;
 }
 
-const AuthContext = createContext<IAppContext | null>(null);
+const AppContext = createContext<IAppContext | null>(null);
 
-export default AuthContext;
+export default AppContext;

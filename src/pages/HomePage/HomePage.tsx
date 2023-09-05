@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 function HomePage() {
   return (
-    <Box px={3}>
+    <Box>
       <Typography component="h2" variant="h2" mb={2}>
         Home
       </Typography>

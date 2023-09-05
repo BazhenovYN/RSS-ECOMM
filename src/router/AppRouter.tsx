@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import AuthContext from 'context';
+import AppContext from 'context';
 import AboutUsPage from 'pages/AboutUsPage';
 import CatalogPage from 'pages/CatalogPage';
 import HomePage from 'pages/HomePage';
@@ -8,10 +8,12 @@ import LoginPage from 'pages/LoginPage';
 import NotFoundPage from 'pages/NotFoundPage';
 import RegistrationPage from 'pages/RegistrationPage';
 import BasketPage from 'pages/BasketPage';
+import ProductPage from 'pages/ProductPage';
+import UserProfilePage from 'pages/UserProfilePage';
 
 function AppRouter() {
-  const authContext = useContext(AuthContext);
-  const isAuth = authContext?.isAuth;
+  const appContext = useContext(AppContext);
+  const isAuth = appContext?.isAuth;
 
   return (
     <Routes>
@@ -19,8 +21,11 @@ function AppRouter() {
       <Route path="login" element={isAuth ? <Navigate to="/" replace /> : <LoginPage />} />
       <Route path="registration" element={<RegistrationPage />} />
       <Route path="catalog" element={<CatalogPage />} />
+      <Route path="catalog/:categoryId" element={<CatalogPage />} />
+      <Route path="products/:productId" element={<ProductPage />} />
       <Route path="about-us" element={<AboutUsPage />} />
       <Route path="basket" element={<BasketPage />} />
+      <Route path="profile" element={isAuth ? <UserProfilePage /> : <Navigate to="/login" replace />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
