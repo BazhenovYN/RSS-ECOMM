@@ -1,11 +1,22 @@
 import logo from 'assets/img/logo.png';
-import { useContext, useMemo } from 'react';
+import { MouseEvent, useContext, useMemo } from 'react';
 import AppContext from 'context';
-import { Box, Card, CardContent, CardHeader, CardMedia, Typography, useTheme } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { Product } from 'types/types';
 import { Link as RouterLink } from 'react-router-dom';
 import { getProductDescription, getProductName } from 'utils/utils';
 import PriceField from 'components/PriceField';
+import { addToCart } from 'services/sdk/cart';
 
 interface CatalogProductItemProps {
   product: Product;
@@ -20,6 +31,11 @@ function CatalogProductItem({ product }: CatalogProductItemProps) {
   const imgUrl = useMemo(() => product.images?.[0]?.url, [product]);
   const name = useMemo(() => getProductName(product, language), [product, language]);
   const description = useMemo(() => getProductDescription(product, language), [product, language]);
+
+  const handleAddToCart = async (event: MouseEvent) => {
+    event.preventDefault();
+    console.log(await addToCart(product.id));
+  };
 
   return (
     <Card
@@ -64,6 +80,11 @@ function CatalogProductItem({ product }: CatalogProductItemProps) {
           <PriceField product={product} />
         </CardContent>
       )}
+      <CardActions>
+        <Button variant="contained" onClick={handleAddToCart}>
+          Add to basket
+        </Button>
+      </CardActions>
     </Card>
   );
 }

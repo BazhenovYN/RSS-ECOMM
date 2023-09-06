@@ -99,7 +99,7 @@ const createCustomerApiRoot = (email: string, password: string): ByProjectKeyReq
 export const getCustomerApiRoot = async (
   email: string = 'default',
   password: string = 'default'
-): Promise<ByProjectKeyRequestBuilder | null> => {
+): Promise<ByProjectKeyRequestBuilder> => {
   customerApiRoot = createCustomerApiRoot(email, password);
 
   try {
