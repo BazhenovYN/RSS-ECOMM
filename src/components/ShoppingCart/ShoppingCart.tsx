@@ -50,7 +50,7 @@ function ShoppingCart() {
       {cart && (
         <Container maxWidth="lg">
           <TableContainer component={Paper} sx={{ borderColor: 'primary.main' }}>
-            <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+            <Table sx={{ minWidth: 650 }} size="small">
               <TableHead sx={{ backgroundColor: 'primary.main' }}>
                 <TableRow>
                   <TableCell>№</TableCell>
