@@ -1,5 +1,5 @@
 import logo from 'assets/img/logo.png';
-import { Dispatch, MouseEvent, SetStateAction, useContext, useMemo } from 'react';
+import { Dispatch, MouseEvent, SetStateAction, useContext, useEffect, useMemo, useState } from 'react';
 import AppContext from 'context';
 import {
   Box,
@@ -16,14 +16,16 @@ import { Product } from 'types/types';
 import { Link as RouterLink } from 'react-router-dom';
 import { getProductDescription, getProductName } from 'utils/utils';
 import PriceField from 'components/PriceField';
-import { addToAnonymousCart, addToCustomerCart } from 'services/sdk/cart';
+import { addToAnonymousCart, addToCustomerCart, hasItemInCart } from 'services/sdk/cart';
+import { LineItem } from '@commercetools/platform-sdk';
 
 interface CatalogProductItemProps {
   product: Product;
   setWaitForCartUpdate: Dispatch<SetStateAction<boolean>>;
+  cartItems: LineItem[];
 }
 
-function CatalogProductItem({ product, setWaitForCartUpdate }: CatalogProductItemProps) {
+function CatalogProductItem({ product, setWaitForCartUpdate, cartItems }: CatalogProductItemProps) {
   const appContext = useContext(AppContext);
   const language = appContext?.language;
   const isAuth = appContext?.isAuth;
@@ -35,6 +37,11 @@ function CatalogProductItem({ product, setWaitForCartUpdate }: CatalogProductIte
   const name = useMemo(() => getProductName(product, language), [product, language]);
   const description = useMemo(() => getProductDescription(product, language), [product, language]);
 
+  const [isInCart, setIsInCart] = useState(false);
+  useEffect(() => {
+    setIsInCart(hasItemInCart(cartItems, product.id));
+  }, [product.id, cartItems]);
+
   const handleAddToCart = async (event: MouseEvent) => {
     event.preventDefault();
     try {
@@ -44,6 +51,7 @@ function CatalogProductItem({ product, setWaitForCartUpdate }: CatalogProductIte
       } else {
         await addToAnonymousCart(product.id);
       }
+      setIsInCart(true);
     } catch (error) {
       if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
     } finally {
@@ -95,7 +103,7 @@ function CatalogProductItem({ product, setWaitForCartUpdate }: CatalogProductIte
         </CardContent>
       )}
       <CardActions>
-        <Button variant="contained" onClick={handleAddToCart}>
+        <Button variant="contained" onClick={handleAddToCart} disabled={isInCart}>
           Add to basket
         </Button>
       </CardActions>
