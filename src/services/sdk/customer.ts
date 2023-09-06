@@ -1,5 +1,4 @@
 import {
-  Address,
   AddressDraft,
   ClientResponse,
   Customer,
@@ -20,7 +19,12 @@ import type {
 import dayjs from 'dayjs';
 
 export const login = async (email: string = 'default', password: string = 'default'): Promise<void> => {
-  await getCustomerApiRoot(email, password);
+  try {
+    await getCustomerApiRoot(email, password).me().get().execute();
+  } catch (error) {
+    removeCustomerApiRoot();
+    throw error;
+  }
 };
 
 export const logout = () => {
@@ -67,10 +71,9 @@ export const createCustomer = async (registrationFormData: RegistrationFormData)
   return response.body;
 };
 
-export const getUserCustomer = async (email = 'default', password = 'default'): Promise<Customer | undefined> => {
-  const customerApiRoot = await getCustomerApiRoot(email, password);
-  const response = await customerApiRoot?.me().get().execute();
-  return response?.body;
+export const getUserCustomer = async (): Promise<Customer> => {
+  const response = await getCustomerApiRoot().me().get().execute();
+  return response.body;
 };
 
 const createCustomerUpdate = (userData: UserDataUpdate, version: number): MyCustomerUpdate => {
@@ -101,11 +104,10 @@ const createCustomerUpdate = (userData: UserDataUpdate, version: number): MyCust
   };
 };
 
-export const updateUserCustomer = async (userData: UserDataUpdate, version: number): Promise<Customer | undefined> => {
+export const updateUserCustomer = async (userData: UserDataUpdate, version: number): Promise<Customer> => {
   const customerUpdate = createCustomerUpdate(userData, version);
-  const customerApiRoot = await getCustomerApiRoot('default', 'default');
-  const response = await customerApiRoot?.me().post({ body: customerUpdate }).execute();
-  return response?.body;
+  const response = await getCustomerApiRoot().me().post({ body: customerUpdate }).execute();
+  return response.body;
 };
 
 const createPasswordUpdate = (data: PasswordUpdate, version: number): MyCustomerChangePassword => {
@@ -116,29 +118,24 @@ const createPasswordUpdate = (data: PasswordUpdate, version: number): MyCustomer
   };
 };
 
-export const updateUserPassword = async (
-  email: string,
-  data: PasswordUpdate,
-  version: number
-): Promise<Customer | undefined> => {
+export const updateUserPassword = async (email: string, data: PasswordUpdate, version: number): Promise<Customer> => {
   const passwordUpdate = createPasswordUpdate(data, version);
-  const customerApiRoot = await getCustomerApiRoot('default', 'default');
-  const response = await customerApiRoot?.me().password().post({ body: passwordUpdate }).execute();
+  const response = await getCustomerApiRoot().me().password().post({ body: passwordUpdate }).execute();
 
-  if (response?.statusCode === 200) {
+  if (response.statusCode === 200) {
     logout();
     await login(email, data.newPassword);
   }
 
-  return response?.body;
+  return response.body;
 };
 
-export const getAddressesData = (user: Customer | undefined): AddressData[] => {
-  const addresses: Address[] = user?.addresses || [];
-  const billingAddressIds: string[] = user?.billingAddressIds || [];
-  const defaultBillingAddressId: string | undefined = user?.defaultBillingAddressId;
-  const shippingAddressIds: string[] = user?.shippingAddressIds || [];
-  const defaultShippingAddressId: string | undefined = user?.defaultShippingAddressId;
+export const getAddressesData = (user: Customer): AddressData[] => {
+  const { addresses } = user;
+  const billingAddressIds: string[] = user.billingAddressIds || [];
+  const defaultBillingAddressId: string = user.defaultBillingAddressId || '';
+  const shippingAddressIds: string[] = user.shippingAddressIds || [];
+  const defaultShippingAddressId: string = user.defaultShippingAddressId || '';
 
   return addresses.map((address): AddressData => {
     const { id } = address;
@@ -202,14 +199,13 @@ const createAddAddressUpdate = (address: AddressData, version: number): MyCustom
   };
 };
 
-export const addAddress = async (address: AddressData, version: number): Promise<Customer | undefined> => {
-  const apiRoot = await getCustomerApiRoot();
-  const response = await apiRoot
-    ?.me()
+export const addAddress = async (address: AddressData, version: number): Promise<Customer> => {
+  const response = await getCustomerApiRoot()
+    .me()
     .post({ body: createAddAddressUpdate(address, version) })
     .execute();
 
-  return response?.body;
+  return response.body;
 };
 
 const createEditAddressUpdate = async (address: AddressData, version: number): Promise<MyCustomerUpdate> => {
@@ -278,14 +274,13 @@ const createEditAddressUpdate = async (address: AddressData, version: number): P
   };
 };
 
-export const editAddress = async (address: AddressData, version: number): Promise<Customer | undefined> => {
-  const apiRoot = await getCustomerApiRoot();
-  const response = await apiRoot
-    ?.me()
+export const editAddress = async (address: AddressData, version: number): Promise<Customer> => {
+  const response = await getCustomerApiRoot()
+    .me()
     .post({ body: await createEditAddressUpdate(address, version) })
     .execute();
 
-  return response?.body;
+  return response.body;
 };
 
 const createAddressDeleteUpdate = (address: AddressData, version: number): MyCustomerUpdate => {
@@ -300,12 +295,11 @@ const createAddressDeleteUpdate = (address: AddressData, version: number): MyCus
   };
 };
 
-export const deleteAddress = async (address: AddressData, version: number): Promise<Customer | undefined> => {
-  const apiRoot = await getCustomerApiRoot();
-  const response = await apiRoot
-    ?.me()
+export const deleteAddress = async (address: AddressData, version: number): Promise<Customer> => {
+  const response = await getCustomerApiRoot()
+    .me()
     .post({ body: createAddressDeleteUpdate(address, version) })
     .execute();
 
-  return response?.body;
+  return response.body;
 };

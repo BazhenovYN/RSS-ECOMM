@@ -1,6 +1,7 @@
 import { DEFAULT_CURRENCY } from 'constants/const';
-import { getCustomerApiRoot } from 'services/sdk/client';
+import { getAnonymousApiRoot, getCustomerApiRoot } from 'services/sdk/client';
 import { Cart, MyCartDraft, MyCartUpdate } from '@commercetools/platform-sdk';
+import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 
 const createCartDraft = (): MyCartDraft => {
   return {
@@ -8,21 +9,19 @@ const createCartDraft = (): MyCartDraft => {
   };
 };
 
-const createCart = async (): Promise<Cart> => {
-  const apiRoot = await getCustomerApiRoot();
-  const response = await apiRoot.me().carts().post({ body: createCartDraft() }).execute();
+const createCart = async (getRoot: () => ByProjectKeyRequestBuilder): Promise<Cart> => {
+  const response = await getRoot().me().carts().post({ body: createCartDraft() }).execute();
   return response.body;
 };
 
-export const getActiveCart = async (): Promise<Cart> => {
-  const apiRoot = await getCustomerApiRoot();
+export const getActiveCart = async (getRoot: () => ByProjectKeyRequestBuilder): Promise<Cart> => {
   let activeCart: Cart;
 
   try {
-    const response = await apiRoot.me().activeCart().get().execute();
+    const response = await getRoot().me().activeCart().get().execute();
     activeCart = response.body;
   } catch {
-    activeCart = await createCart();
+    activeCart = await createCart(getRoot);
   }
 
   return activeCart;
@@ -40,11 +39,10 @@ const createCartAddProductUpdate = (version: number, productId: string): MyCartU
   };
 };
 
-export const addToCart = async (productId: string) => {
-  const apiRoot = await getCustomerApiRoot();
-  const activeCart = await getActiveCart();
+const addToCart = async (getRoot: () => ByProjectKeyRequestBuilder, productId: string) => {
+  const activeCart = await getActiveCart(getRoot);
 
-  const response = await apiRoot
+  const response = await getRoot()
     .me()
     .carts()
     .withId({ ID: activeCart.id })
@@ -52,4 +50,12 @@ export const addToCart = async (productId: string) => {
     .execute();
 
   return response.body;
+};
+
+export const addToCustomerCart = async (productId: string) => {
+  return addToCart(getCustomerApiRoot, productId);
+};
+
+export const addToAnonymousCart = async (productId: string) => {
+  return addToCart(getAnonymousApiRoot, productId);
 };

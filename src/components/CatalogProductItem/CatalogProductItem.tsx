@@ -16,7 +16,7 @@ import { Product } from 'types/types';
 import { Link as RouterLink } from 'react-router-dom';
 import { getProductDescription, getProductName } from 'utils/utils';
 import PriceField from 'components/PriceField';
-import { addToCart } from 'services/sdk/cart';
+import { addToAnonymousCart, addToCustomerCart } from 'services/sdk/cart';
 
 interface CatalogProductItemProps {
   product: Product;
@@ -25,6 +25,7 @@ interface CatalogProductItemProps {
 function CatalogProductItem({ product }: CatalogProductItemProps) {
   const appContext = useContext(AppContext);
   const language = appContext?.language;
+  const isAuth = appContext?.isAuth;
 
   const theme = useTheme();
 
@@ -34,7 +35,11 @@ function CatalogProductItem({ product }: CatalogProductItemProps) {
 
   const handleAddToCart = async (event: MouseEvent) => {
     event.preventDefault();
-    console.log(await addToCart(product.id));
+    if (isAuth) {
+      await addToCustomerCart(product.id);
+    } else {
+      await addToAnonymousCart(product.id);
+    }
   };
 
   return (
