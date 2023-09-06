@@ -1,5 +1,5 @@
 import logo from 'assets/img/logo.png';
-import { MouseEvent, useContext, useMemo } from 'react';
+import { Dispatch, MouseEvent, SetStateAction, useContext, useMemo } from 'react';
 import AppContext from 'context';
 import {
   Box,
@@ -20,12 +20,14 @@ import { addToAnonymousCart, addToCustomerCart } from 'services/sdk/cart';
 
 interface CatalogProductItemProps {
   product: Product;
+  setWaitForCartUpdate: Dispatch<SetStateAction<boolean>>;
 }
 
-function CatalogProductItem({ product }: CatalogProductItemProps) {
+function CatalogProductItem({ product, setWaitForCartUpdate }: CatalogProductItemProps) {
   const appContext = useContext(AppContext);
   const language = appContext?.language;
   const isAuth = appContext?.isAuth;
+  const setMessage = appContext?.setMessage;
 
   const theme = useTheme();
 
@@ -35,10 +37,17 @@ function CatalogProductItem({ product }: CatalogProductItemProps) {
 
   const handleAddToCart = async (event: MouseEvent) => {
     event.preventDefault();
-    if (isAuth) {
-      await addToCustomerCart(product.id);
-    } else {
-      await addToAnonymousCart(product.id);
+    try {
+      setWaitForCartUpdate(true);
+      if (isAuth) {
+        await addToCustomerCart(product.id);
+      } else {
+        await addToAnonymousCart(product.id);
+      }
+    } catch (error) {
+      if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
+    } finally {
+      setWaitForCartUpdate(false);
     }
   };
 

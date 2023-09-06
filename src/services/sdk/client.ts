@@ -44,6 +44,25 @@ export const getAppApiRoot = (): ByProjectKeyRequestBuilder => {
   return createApiBuilderFromCtpClient(appClient).withProjectKey({ projectKey });
 };
 
+const createTokenCache = (tokenCookieName: string, refreshTokenCookieName: string) => {
+  return {
+    get: (): TokenStore => {
+      return {
+        token: getCookie(tokenCookieName) || '',
+        expirationTime: getCookieExpiration(tokenCookieName) || 0,
+        refreshToken: getCookie(refreshTokenCookieName) || undefined,
+      };
+    },
+    set: (tokenStore: TokenStore): void => {
+      const msInYear = 31536000000;
+      setCookie(tokenCookieName, tokenStore.token, tokenStore.expirationTime);
+      if (tokenStore.refreshToken) {
+        setCookie(refreshTokenCookieName, tokenStore.refreshToken, new Date().getTime() + msInYear);
+      }
+    },
+  };
+};
+
 const customerClientBuilder = (email: string, password: string): Client => {
   const passwordAuthMiddlewareOptions: PasswordAuthMiddlewareOptions = {
     ...authMiddlewareOptions,
@@ -56,22 +75,7 @@ const customerClientBuilder = (email: string, password: string): Client => {
       },
     },
     scopes: customerScopes,
-    tokenCache: {
-      get: (): TokenStore => {
-        return {
-          token: getCookie('authToken') || '',
-          expirationTime: getCookieExpiration('authToken') || 0,
-          refreshToken: getCookie('refreshToken') || undefined,
-        };
-      },
-      set: (tokenStore: TokenStore): void => {
-        const msInYear = 31536000000;
-        setCookie('authToken', tokenStore.token, tokenStore.expirationTime);
-        if (tokenStore.refreshToken) {
-          setCookie('refreshToken', tokenStore.refreshToken, new Date().getTime() + msInYear);
-        }
-      },
-    },
+    tokenCache: createTokenCache('authToken', 'refreshAuthToken'),
   };
 
   return new ClientBuilder()
@@ -97,22 +101,7 @@ const anonymousClientBuilder = (): Client => {
   const anonymousAuthMiddlewareOptions: AnonymousAuthMiddlewareOptions = {
     ...authMiddlewareOptions,
     scopes: customerScopes,
-    tokenCache: {
-      get: (): TokenStore => {
-        return {
-          token: getCookie('anonymousToken') || '',
-          expirationTime: getCookieExpiration('anonymousToken') || 0,
-          refreshToken: getCookie('refreshAnonymousToken') || undefined,
-        };
-      },
-      set: (tokenStore: TokenStore): void => {
-        const msInYear = 31536000000;
-        setCookie('anonymousToken', tokenStore.token, tokenStore.expirationTime);
-        if (tokenStore.refreshToken) {
-          setCookie('refreshAnonymousToken', tokenStore.refreshToken, new Date().getTime() + msInYear);
-        }
-      },
-    },
+    tokenCache: createTokenCache('anonymousToken', 'refreshAnonymousToken'),
   };
 
   return new ClientBuilder()

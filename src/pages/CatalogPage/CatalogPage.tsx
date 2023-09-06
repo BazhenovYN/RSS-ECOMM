@@ -14,6 +14,7 @@ import CategoriesListing from 'components/CategoriesListing';
 import { useParams } from 'react-router-dom';
 import { getCategories } from 'services/sdk/category';
 import BreadcrumbNavigation from 'components/BreadcrumbNavigation';
+import Loader from 'components/Loader';
 
 function CatalogPage() {
   const appContext = useContext(AppContext);
@@ -32,6 +33,7 @@ function CatalogPage() {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [isFiltered, setIsFiltered] = useState(false);
   const [categories, setCategories] = useState<CategoriesList>({ mains: [], subs: [] });
+  const [waitForCartUpdate, setWaitForCartUpdate] = useState(false);
 
   const loadingProducts = useMemo(() => {
     return async () => {
@@ -67,6 +69,7 @@ function CatalogPage() {
 
   return (
     <Stack gap={3} height="100%">
+      {waitForCartUpdate && <Loader transparent />}
       <Typography component="h2" variant="h2">
         Catalog
       </Typography>
@@ -96,7 +99,7 @@ function CatalogPage() {
             <Grid container spacing={3}>
               {(isFiltered ? filteredProducts : products).map((product) => (
                 <Grid item xs={12} sm={6} lg={4} xl={3} key={product.id}>
-                  <CatalogProductItem product={product} />
+                  <CatalogProductItem product={product} setWaitForCartUpdate={setWaitForCartUpdate} />
                 </Grid>
               ))}
             </Grid>
