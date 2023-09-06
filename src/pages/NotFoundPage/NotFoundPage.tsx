@@ -1,6 +1,6 @@
 import { Box, Container, Grid, Stack, Typography } from '@mui/material';
 import { orange } from '@mui/material/colors';
-import LinkButton from 'components/LinkButton/LinkButton';
+import LinkButton from 'components/LinkButton';
 import img from 'assets/img/orange.jpg';
 
 function NotFoundPage() {
