@@ -7,6 +7,13 @@ export const getActiveCart = async () => {
   return response?.body;
 };
 
+export const deleteActiveCart = async (cart: Cart) => {
+  const queryArgs = { version: cart.version };
+  const apiRoot = await getCustomerApiRoot();
+  const response = await apiRoot?.me().carts().withId({ ID: cart.id }).delete({ queryArgs }).execute();
+  return response?.body;
+};
+
 const updateCart = async (cart: Cart, actions: MyCartUpdateAction[]) => {
   const body: MyCartUpdate = {
     version: cart.version,

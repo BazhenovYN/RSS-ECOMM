@@ -1,9 +1,11 @@
 import { DEFAULT_LANGUAGE } from 'constants/const';
 import { useContext, useMemo, useState } from 'react';
+import DeleteIcon from '@mui/icons-material/Delete';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import type { Cart } from '@commercetools/platform-sdk';
 import {
   Box,
+  Button,
   Container,
   IconButton,
   Paper,
@@ -19,7 +21,7 @@ import {
 import AppContext from 'context';
 import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
 import Counter from 'components/Counter';
-import { changeLineItemQuantity, getActiveCart, removeLineItem } from 'services/sdk/cart';
+import { changeLineItemQuantity, deleteActiveCart, getActiveCart, removeLineItem } from 'services/sdk/cart';
 import EmptyCard from './EmptyCard';
 
 const getMoneyValue = (value: number, fractionDigits: number) => {
@@ -61,9 +63,17 @@ function ShoppingCart() {
     setCart(newCart);
   };
 
+  const clearCart = async () => {
+    if (!cart) return;
+    await deleteActiveCart(cart);
+    setCart(null);
+  };
+
+  const isCartEmpty = !(cart && cart.lineItems.length > 0);
+
   return (
     <ContentLoaderWrapper loadingLogic={getCart}>
-      {cart && (
+      {!isCartEmpty && (
         <Container maxWidth="lg">
           <TableContainer component={Paper} sx={{ borderColor: 'primary.main' }}>
             <Table sx={{ minWidth: 650 }} size="small">
@@ -130,15 +140,20 @@ function ShoppingCart() {
               </TableBody>
             </Table>
           </TableContainer>
-          <Stack direction="row" spacing={2} justifyContent="end" mt={2} mr={2}>
-            <Typography variant="h6">Total, {cart.totalPrice.currencyCode}:</Typography>
-            <Typography component="div" variant="h6">
-              {cart.totalPrice.centAmount / 10 ** cart.totalPrice.fractionDigits}
-            </Typography>
+          <Stack direction="row" spacing={2} justifyContent="space-between" mt={2} mr={2}>
+            <Button startIcon={<DeleteIcon />} onClick={clearCart}>
+              Clear Shopping Cart
+            </Button>
+            <Stack direction="row">
+              <Typography variant="h6">Total, {cart.totalPrice.currencyCode}:</Typography>
+              <Typography component="div" variant="h6">
+                {cart.totalPrice.centAmount / 10 ** cart.totalPrice.fractionDigits}
+              </Typography>
+            </Stack>
           </Stack>
         </Container>
       )}
-      {!cart && <EmptyCard />}
+      {isCartEmpty && <EmptyCard />}
     </ContentLoaderWrapper>
   );
 }
