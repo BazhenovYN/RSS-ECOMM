@@ -1,6 +1,6 @@
 import { DEFAULT_CURRENCY } from 'constants/const';
 import { getAnonymousApiRoot, getCustomerApiRoot } from 'services/sdk/client';
-import { Cart, LineItem, MyCartDraft, MyCartUpdate } from '@commercetools/platform-sdk';
+import { Cart, MyCartDraft, MyCartUpdate } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 
 const createCartDraft = (): MyCartDraft => {
@@ -66,8 +66,4 @@ export const addToCustomerCart = async (productId: string) => {
 
 export const addToAnonymousCart = async (productId: string) => {
   return addToCart(getAnonymousApiRoot, productId);
-};
-
-export const hasItemInCart = (cartItems: LineItem[], productId: string) => {
-  return cartItems.some((currentCartItem) => currentCartItem.productId === productId);
 };

@@ -14,9 +14,9 @@ import {
 } from '@mui/material';
 import { Product } from 'types/types';
 import { Link as RouterLink } from 'react-router-dom';
-import { getProductDescription, getProductName } from 'utils/utils';
+import { getProductDescription, getProductName, hasItemInCart } from 'utils/utils';
 import PriceField from 'components/PriceField';
-import { addToAnonymousCart, addToCustomerCart, hasItemInCart } from 'services/sdk/cart';
+import { addToAnonymousCart, addToCustomerCart } from 'services/sdk/cart';
 import { LineItem } from '@commercetools/platform-sdk';
 
 interface CatalogProductItemProps {
