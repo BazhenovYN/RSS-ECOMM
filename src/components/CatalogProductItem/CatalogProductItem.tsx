@@ -16,7 +16,7 @@ import { Product } from 'types/types';
 import { Link as RouterLink } from 'react-router-dom';
 import { getProductDescription, getProductName, hasItemInCart } from 'utils/utils';
 import PriceField from 'components/PriceField';
-import { addToAnonymousCart, addToCustomerCart } from 'services/sdk/cart';
+import { addToCart } from 'services/sdk/cart';
 import { LineItem } from '@commercetools/platform-sdk';
 
 interface CatalogProductItemProps {
@@ -46,11 +46,7 @@ function CatalogProductItem({ product, setWaitForCartUpdate, cartItems }: Catalo
     event.preventDefault();
     try {
       setWaitForCartUpdate(true);
-      if (isAuth) {
-        await addToCustomerCart(product.id);
-      } else {
-        await addToAnonymousCart(product.id);
-      }
+      await addToCart(product.id, isAuth);
       setIsInCart(true);
     } catch (error) {
       if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });

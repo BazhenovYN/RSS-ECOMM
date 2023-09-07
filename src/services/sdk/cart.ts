@@ -1,7 +1,6 @@
 import { DEFAULT_CURRENCY } from 'constants/const';
 import { getAnonymousApiRoot, getCustomerApiRoot } from 'services/sdk/client';
 import { Cart, MyCartDraft, MyCartUpdate } from '@commercetools/platform-sdk';
-import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 
 const createCartDraft = (): MyCartDraft => {
   return {
@@ -9,30 +8,22 @@ const createCartDraft = (): MyCartDraft => {
   };
 };
 
-const createCart = async (getRoot: () => ByProjectKeyRequestBuilder): Promise<Cart> => {
+const createCart = async (isAuth: boolean = false): Promise<Cart> => {
+  const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
   const response = await getRoot().me().carts().post({ body: createCartDraft() }).execute();
+
   return response.body;
 };
 
-const getActiveCart = async (getRoot: () => ByProjectKeyRequestBuilder): Promise<Cart> => {
-  let activeCart: Cart;
+export const getActiveCart = async (isAuth: boolean = false): Promise<Cart> => {
+  const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
 
   try {
     const response = await getRoot().me().activeCart().get().execute();
-    activeCart = response.body;
+    return response.body;
   } catch {
-    activeCart = await createCart(getRoot);
+    return createCart(isAuth);
   }
-
-  return activeCart;
-};
-
-export const getCustomerActiveCart = async (): Promise<Cart> => {
-  return getActiveCart(getCustomerApiRoot);
-};
-
-export const getAnonymousActiveCart = async (): Promise<Cart> => {
-  return getActiveCart(getAnonymousApiRoot);
 };
 
 const createCartAddProductUpdate = (version: number, productId: string): MyCartUpdate => {
@@ -47,8 +38,9 @@ const createCartAddProductUpdate = (version: number, productId: string): MyCartU
   };
 };
 
-const addToCart = async (getRoot: () => ByProjectKeyRequestBuilder, productId: string) => {
-  const activeCart = await getActiveCart(getRoot);
+export const addToCart = async (productId: string, isAuth: boolean = false): Promise<Cart> => {
+  const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
+  const activeCart = await getActiveCart(isAuth);
 
   const response = await getRoot()
     .me()
@@ -58,12 +50,4 @@ const addToCart = async (getRoot: () => ByProjectKeyRequestBuilder, productId: s
     .execute();
 
   return response.body;
-};
-
-export const addToCustomerCart = async (productId: string) => {
-  return addToCart(getCustomerApiRoot, productId);
-};
-
-export const addToAnonymousCart = async (productId: string) => {
-  return addToCart(getAnonymousApiRoot, productId);
 };

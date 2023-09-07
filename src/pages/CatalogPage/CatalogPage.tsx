@@ -15,7 +15,7 @@ import { useParams } from 'react-router-dom';
 import { getCategories } from 'services/sdk/category';
 import BreadcrumbNavigation from 'components/BreadcrumbNavigation';
 import Loader from 'components/Loader';
-import { getAnonymousActiveCart, getCustomerActiveCart } from 'services/sdk/cart';
+import { getActiveCart } from 'services/sdk/cart';
 import { LineItem } from '@commercetools/platform-sdk';
 
 function CatalogPage() {
@@ -54,7 +54,7 @@ function CatalogPage() {
       setProducts(searchedProducts);
       setAttributes(getAttributes(searchedProducts));
 
-      setCartItems(isAuth ? (await getCustomerActiveCart()).lineItems : (await getAnonymousActiveCart()).lineItems);
+      setCartItems((await getActiveCart(isAuth)).lineItems);
 
       if (Object.keys(selectedAttributes).length) {
         setIsFiltered(true);
