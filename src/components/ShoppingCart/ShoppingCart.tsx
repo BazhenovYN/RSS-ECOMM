@@ -16,7 +16,8 @@ import {
 } from '@mui/material';
 import AppContext from 'context';
 import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
-import { getActiveCart } from 'services/sdk/cart';
+import Counter from 'components/Counter';
+import { changeLineItemQuantity, getActiveCart } from 'services/sdk/cart';
 import EmptyCard from './EmptyCard';
 
 const getMoneyValue = (value: number, fractionDigits: number) => {
@@ -46,6 +47,12 @@ function ShoppingCart() {
     };
   }, []);
 
+  const setProductQuantity = async (lineItemId: string, quantity: number) => {
+    if (!cart) return;
+    const newCart = await changeLineItemQuantity(cart, lineItemId, quantity);
+    setCart(newCart);
+  };
+
   return (
     <ContentLoaderWrapper loadingLogic={getCart}>
       {cart && (
@@ -57,7 +64,7 @@ function ShoppingCart() {
                   <TableCell>№</TableCell>
                   <TableCell>Name</TableCell>
                   <TableCell>Image</TableCell>
-                  <TableCell align="right">Quantity</TableCell>
+                  <TableCell align="center">Quantity</TableCell>
                   <TableCell align="right">Price, {cart.totalPrice.currencyCode}</TableCell>
                   <TableCell align="right">Discounted, {cart.totalPrice.currencyCode}</TableCell>
                   <TableCell align="right">Total, {cart.totalPrice.currencyCode}</TableCell>
@@ -81,7 +88,16 @@ function ShoppingCart() {
                         }}
                       />
                     </TableCell>
-                    <TableCell align="right">{item.quantity}</TableCell>
+                    <TableCell align="center">
+                      <Box display="flex" justifyContent="center">
+                        <Counter
+                          count={item.quantity}
+                          setCount={(quantity: number) => {
+                            setProductQuantity(item.id, quantity);
+                          }}
+                        />
+                      </Box>
+                    </TableCell>
                     <TableCell align="right">
                       {getMoneyValue(item.price.value.centAmount, item.price.value.fractionDigits)}
                     </TableCell>
