@@ -76,7 +76,6 @@ function ShoppingCart() {
                   <TableCell align="right">Price, {cart.totalPrice.currencyCode}</TableCell>
                   <TableCell align="right">Discounted, {cart.totalPrice.currencyCode}</TableCell>
                   <TableCell align="right">Total, {cart.totalPrice.currencyCode}</TableCell>
-                  {/* <TableCell align="right">Remove</TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
