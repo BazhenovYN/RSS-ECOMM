@@ -69,8 +69,5 @@ export const addToAnonymousCart = async (productId: string) => {
 };
 
 export const hasItemInCart = (cartItems: LineItem[], productId: string) => {
-  return cartItems.reduce(
-    (previousValue, currentCartItem) => previousValue || currentCartItem.productId === productId,
-    false
-  );
+  return cartItems.some((currentCartItem) => currentCartItem.productId === productId);
 };

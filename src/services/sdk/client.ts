@@ -1,3 +1,4 @@
+import cookieNames from 'constants/cookieNames';
 import {
   ClientBuilder,
   type AuthMiddlewareOptions,
@@ -75,7 +76,7 @@ const customerClientBuilder = (email: string, password: string): Client => {
       },
     },
     scopes: customerScopes,
-    tokenCache: createTokenCache('authToken', 'refreshAuthToken'),
+    tokenCache: createTokenCache(cookieNames.authToken, cookieNames.refreshAuthToken),
   };
 
   return new ClientBuilder()
@@ -84,9 +85,9 @@ const customerClientBuilder = (email: string, password: string): Client => {
     .build();
 };
 
-export const removeCustomerApiRoot = (): void => {
-  deleteCookie('authToken');
-  deleteCookie('refreshToken');
+export const removeAuthTokens = (): void => {
+  deleteCookie(cookieNames.authToken);
+  deleteCookie(cookieNames.refreshAuthToken);
 };
 
 export const getCustomerApiRoot = (
@@ -101,7 +102,7 @@ const anonymousClientBuilder = (): Client => {
   const anonymousAuthMiddlewareOptions: AnonymousAuthMiddlewareOptions = {
     ...authMiddlewareOptions,
     scopes: customerScopes,
-    tokenCache: createTokenCache('anonymousToken', 'refreshAnonymousToken'),
+    tokenCache: createTokenCache(cookieNames.anonymousToken, cookieNames.refreshAnonymousToken),
   };
 
   return new ClientBuilder()

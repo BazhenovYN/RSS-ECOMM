@@ -8,7 +8,7 @@ import {
   MyCustomerUpdate,
   MyCustomerUpdateAction,
 } from '@commercetools/platform-sdk';
-import { getAppApiRoot, getCustomerApiRoot, removeCustomerApiRoot } from 'services/sdk/client';
+import { getAppApiRoot, getCustomerApiRoot, removeAuthTokens } from 'services/sdk/client';
 import type {
   AddressData,
   PasswordUpdate,
@@ -22,13 +22,13 @@ export const login = async (email: string = 'default', password: string = 'defau
   try {
     await getCustomerApiRoot(email, password).me().get().execute();
   } catch (error) {
-    removeCustomerApiRoot();
+    removeAuthTokens();
     throw error;
   }
 };
 
 export const logout = () => {
-  removeCustomerApiRoot();
+  removeAuthTokens();
 };
 
 export const createAddressDraft = (registrationFormAddress: RegistrationFormAddress | AddressData): AddressDraft => {
