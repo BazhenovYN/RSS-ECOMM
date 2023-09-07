@@ -22,3 +22,18 @@ export const changeLineItemQuantity = async (cart: Cart, lineItemId: string, qua
   const response = await apiRoot?.me().carts().withId({ ID: cart.id }).post({ body }).execute();
   return response?.body;
 };
+
+export const removeLineItem = async (cart: Cart, lineItemId: string) => {
+  const body: MyCartUpdate = {
+    version: cart.version,
+    actions: [
+      {
+        action: 'removeLineItem',
+        lineItemId,
+      },
+    ],
+  };
+  const apiRoot = await getCustomerApiRoot();
+  const response = await apiRoot?.me().carts().withId({ ID: cart.id }).post({ body }).execute();
+  return response?.body;
+};

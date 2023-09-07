@@ -1,9 +1,11 @@
 import { DEFAULT_LANGUAGE } from 'constants/const';
 import { useContext, useMemo, useState } from 'react';
+import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import type { Cart } from '@commercetools/platform-sdk';
 import {
   Box,
   Container,
+  IconButton,
   Paper,
   Stack,
   Table,
@@ -17,7 +19,7 @@ import {
 import AppContext from 'context';
 import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
 import Counter from 'components/Counter';
-import { changeLineItemQuantity, getActiveCart } from 'services/sdk/cart';
+import { changeLineItemQuantity, getActiveCart, removeLineItem } from 'services/sdk/cart';
 import EmptyCard from './EmptyCard';
 
 const getMoneyValue = (value: number, fractionDigits: number) => {
@@ -53,6 +55,12 @@ function ShoppingCart() {
     setCart(newCart);
   };
 
+  const removeProduct = async (lineItemId: string) => {
+    if (!cart) return;
+    const newCart = await removeLineItem(cart, lineItemId);
+    setCart(newCart);
+  };
+
   return (
     <ContentLoaderWrapper loadingLogic={getCart}>
       {cart && (
@@ -68,12 +76,18 @@ function ShoppingCart() {
                   <TableCell align="right">Price, {cart.totalPrice.currencyCode}</TableCell>
                   <TableCell align="right">Discounted, {cart.totalPrice.currencyCode}</TableCell>
                   <TableCell align="right">Total, {cart.totalPrice.currencyCode}</TableCell>
+                  {/* <TableCell align="right">Remove</TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {cart.lineItems.map((item, index) => (
                   <TableRow key={item.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>
+                      {index + 1}
+                      <IconButton sx={{ ml: 1 }} onClick={() => removeProduct(item.id)}>
+                        <DeleteForeverRoundedIcon />
+                      </IconButton>
+                    </TableCell>
                     <TableCell>{item.name[language]}</TableCell>
                     <TableCell>
                       <Box
