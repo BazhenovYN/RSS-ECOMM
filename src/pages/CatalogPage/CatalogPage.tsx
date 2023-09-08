@@ -14,10 +14,14 @@ import CategoriesListing from 'components/CategoriesListing';
 import { useParams } from 'react-router-dom';
 import { getCategories } from 'services/sdk/category';
 import BreadcrumbNavigation from 'components/BreadcrumbNavigation';
+import Loader from 'components/Loader';
+import { getActiveCart } from 'services/sdk/cart';
+import { LineItem } from '@commercetools/platform-sdk';
 
 function CatalogPage() {
   const appContext = useContext(AppContext);
   const language = appContext?.language;
+  const isAuth = appContext?.isAuth;
   const { categoryId } = useParams();
   const sortingNameParameter = useMemo(() => `name.${language || DEFAULT_LANGUAGE}`, [language]);
   const sortingPriceParameter = 'price';
@@ -32,6 +36,8 @@ function CatalogPage() {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [isFiltered, setIsFiltered] = useState(false);
   const [categories, setCategories] = useState<CategoriesList>({ mains: [], subs: [] });
+  const [waitForCartUpdate, setWaitForCartUpdate] = useState(false);
+  const [cartItems, setCartItems] = useState<LineItem[]>([]);
 
   const loadingProducts = useMemo(() => {
     return async () => {
@@ -48,6 +54,8 @@ function CatalogPage() {
       setProducts(searchedProducts);
       setAttributes(getAttributes(searchedProducts));
 
+      setCartItems((await getActiveCart(isAuth)).lineItems);
+
       if (Object.keys(selectedAttributes).length) {
         setIsFiltered(true);
         const searchedFilteredProducts = await searchProducts({
@@ -57,7 +65,7 @@ function CatalogPage() {
         setFilteredProducts(searchedFilteredProducts);
       }
     };
-  }, [searchTextParameter, searchQuery, sortingField, sortingDirection, selectedAttributes, categoryId]);
+  }, [searchTextParameter, searchQuery, sortingField, sortingDirection, selectedAttributes, categoryId, isAuth]);
 
   const loadingCategories = useMemo(() => {
     return async () => {
@@ -67,6 +75,7 @@ function CatalogPage() {
 
   return (
     <Stack gap={3} height="100%">
+      {waitForCartUpdate && <Loader transparent />}
       <Typography component="h2" variant="h2">
         Catalog
       </Typography>
@@ -96,7 +105,11 @@ function CatalogPage() {
             <Grid container spacing={3}>
               {(isFiltered ? filteredProducts : products).map((product) => (
                 <Grid item xs={12} sm={6} lg={4} xl={3} key={product.id}>
-                  <CatalogProductItem product={product} />
+                  <CatalogProductItem
+                    product={product}
+                    setWaitForCartUpdate={setWaitForCartUpdate}
+                    cartItems={cartItems}
+                  />
                 </Grid>
               ))}
             </Grid>
