@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { AppBar, Toolbar, Stack } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import LinkButton from 'components/LinkButton/LinkButton';
+import LinkButton from 'components/LinkButton';
 import AppContext from 'context';
 import NavMenu from './NavMenu';
 import CartButton from './CartButton';
