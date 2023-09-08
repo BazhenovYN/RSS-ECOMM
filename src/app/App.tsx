@@ -1,6 +1,6 @@
 import COLORS from 'constants/colors';
 import { DEFAULT_LANGUAGE } from 'constants/const';
-import { createTheme, ThemeProvider, Box, CircularProgress } from '@mui/material';
+import { createTheme, ThemeProvider, Box } from '@mui/material';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -12,6 +12,7 @@ import AppRouter from 'router';
 import PopupMessage from 'components/PopupMessage';
 import { getCookie } from 'utils/cookie';
 import { Language } from 'types/types';
+import Loader from 'components/Loader';
 import styles from './App.module.scss';
 
 const theme = createTheme({
@@ -48,11 +49,7 @@ function App() {
   }, []);
 
   if (isLoading) {
-    return (
-      <Box className={styles.loader}>
-        <CircularProgress />
-      </Box>
-    );
+    return <Loader />;
   }
 
   return (
