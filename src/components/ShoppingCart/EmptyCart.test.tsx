@@ -1,12 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import EmptyCard from './EmptyCard';
+import EmptyCart from './EmptyCart';
 
-describe('EmptyCard', () => {
+describe('EmptyCart', () => {
   test('renders correctly', () => {
     render(
       <MemoryRouter>
-        <EmptyCard />
+        <EmptyCart />
       </MemoryRouter>
     );
 

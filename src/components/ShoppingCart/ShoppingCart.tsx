@@ -23,7 +23,7 @@ import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
 import Counter from 'components/Counter';
 import Loader from 'components/Loader';
 import { changeLineItemQuantity, deleteActiveCart, getActiveCart, removeLineItem } from 'services/sdk/cart';
-import EmptyCard from './EmptyCard';
+import EmptyCart from './EmptyCart';
 
 const getMoneyValue = (value: number, fractionDigits: number) => {
   return value / 10 ** fractionDigits;
@@ -169,7 +169,7 @@ function ShoppingCart() {
           </Stack>
         </Container>
       )}
-      {isCartEmpty && <EmptyCard />}
+      {isCartEmpty && <EmptyCart />}
       {waitForCartUpdate && <Loader transparent />}
     </ContentLoaderWrapper>
   );

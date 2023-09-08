@@ -3,7 +3,7 @@ import { orange } from '@mui/material/colors';
 import LinkButton from 'components/LinkButton';
 import img from 'assets/img/orange-slices.jpg';
 
-function EmptyCard() {
+function EmptyCart() {
   return (
     <Box
       sx={{
@@ -21,4 +21,4 @@ function EmptyCard() {
   );
 }
 
-export default EmptyCard;
+export default EmptyCart;
