@@ -32,18 +32,8 @@ function ShoppingCart() {
 
   const getCart = useMemo(() => {
     return async () => {
-      try {
-        const data = await getActiveCart(isAuth);
-        setCart(data);
-      } catch (error) {
-        if (error instanceof Error) {
-          if (error.name === 'NotFound') {
-            setCart(null);
-            return;
-          }
-        }
-        throw error;
-      }
+      const data = await getActiveCart(isAuth);
+      setCart(data);
     };
   }, [isAuth]);
 
@@ -107,7 +97,7 @@ function ShoppingCart() {
           <Stack direction="row" spacing={2} justifyContent="end" mt={2} mr={2}>
             <Typography variant="h6">Total, {cart.totalPrice.currencyCode}:</Typography>
             <Typography component="div" variant="h6">
-              {cart.totalPrice.centAmount / 10 ** cart.totalPrice.fractionDigits}
+              {getMoneyValue(cart.totalPrice.centAmount, cart.totalPrice.fractionDigits)}
             </Typography>
           </Stack>
         </Container>
