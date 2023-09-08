@@ -17,7 +17,7 @@ import {
 import AppContext from 'context';
 import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
 import { getActiveCart } from 'services/sdk/cart';
-import EmptyCard from './EmptyCard';
+import EmptyCart from './EmptyCart';
 
 const getMoneyValue = (value: number, fractionDigits: number) => {
   return value / 10 ** fractionDigits;
@@ -102,7 +102,7 @@ function ShoppingCart() {
           </Stack>
         </Container>
       )}
-      {isCartEmpty && <EmptyCard />}
+      {isCartEmpty && <EmptyCart />}
     </ContentLoaderWrapper>
   );
 }
