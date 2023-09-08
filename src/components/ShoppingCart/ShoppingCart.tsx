@@ -30,6 +30,7 @@ const getMoneyValue = (value: number, fractionDigits: number) => {
 
 function ShoppingCart() {
   const appContext = useContext(AppContext);
+  const isAuth = appContext?.isAuth;
   const language = appContext?.language ?? DEFAULT_LANGUAGE;
 
   const [cart, setCart] = useState<Cart | null>();
@@ -37,7 +38,7 @@ function ShoppingCart() {
   const getCart = useMemo(() => {
     return async () => {
       try {
-        const data = await getActiveCart();
+        const data = await getActiveCart(isAuth);
         setCart(data);
       } catch (error) {
         if (error instanceof Error) {
@@ -49,23 +50,23 @@ function ShoppingCart() {
         throw error;
       }
     };
-  }, []);
+  }, [isAuth]);
 
   const setProductQuantity = async (lineItemId: string, quantity: number) => {
     if (!cart) return;
-    const newCart = await changeLineItemQuantity(cart, lineItemId, quantity);
+    const newCart = await changeLineItemQuantity(cart, lineItemId, quantity, isAuth);
     setCart(newCart);
   };
 
   const removeProduct = async (lineItemId: string) => {
     if (!cart) return;
-    const newCart = await removeLineItem(cart, lineItemId);
+    const newCart = await removeLineItem(cart, lineItemId, isAuth);
     setCart(newCart);
   };
 
   const clearCart = async () => {
     if (!cart) return;
-    await deleteActiveCart(cart);
+    await deleteActiveCart(cart, isAuth);
     setCart(null);
   };
 

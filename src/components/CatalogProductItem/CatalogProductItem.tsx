@@ -1,25 +1,59 @@
 import logo from 'assets/img/logo.png';
-import { useContext, useMemo } from 'react';
+import { Dispatch, MouseEvent, SetStateAction, useContext, useEffect, useMemo, useState } from 'react';
 import AppContext from 'context';
-import { Box, Card, CardContent, CardHeader, CardMedia, Typography, useTheme } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { Product } from 'types/types';
 import { Link as RouterLink } from 'react-router-dom';
-import { getProductDescription, getProductName } from 'utils/utils';
+import { getProductDescription, getProductName, hasItemInCart } from 'utils/utils';
 import PriceField from 'components/PriceField';
+import { addToCart } from 'services/sdk/cart';
+import { LineItem } from '@commercetools/platform-sdk';
 
 interface CatalogProductItemProps {
   product: Product;
+  setWaitForCartUpdate: Dispatch<SetStateAction<boolean>>;
+  cartItems: LineItem[];
 }
 
-function CatalogProductItem({ product }: CatalogProductItemProps) {
+function CatalogProductItem({ product, setWaitForCartUpdate, cartItems }: CatalogProductItemProps) {
   const appContext = useContext(AppContext);
   const language = appContext?.language;
+  const isAuth = appContext?.isAuth;
+  const setMessage = appContext?.setMessage;
 
   const theme = useTheme();
 
   const imgUrl = useMemo(() => product.images?.[0]?.url, [product]);
   const name = useMemo(() => getProductName(product, language), [product, language]);
   const description = useMemo(() => getProductDescription(product, language), [product, language]);
+
+  const [isInCart, setIsInCart] = useState(false);
+  useEffect(() => {
+    setIsInCart(hasItemInCart(cartItems, product.id));
+  }, [product.id, cartItems]);
+
+  const handleAddToCart = async (event: MouseEvent) => {
+    event.preventDefault();
+    try {
+      setWaitForCartUpdate(true);
+      await addToCart(product.id, isAuth);
+      setIsInCart(true);
+    } catch (error) {
+      if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
+    } finally {
+      setWaitForCartUpdate(false);
+    }
+  };
 
   return (
     <Card
@@ -64,6 +98,11 @@ function CatalogProductItem({ product }: CatalogProductItemProps) {
           <PriceField product={product} />
         </CardContent>
       )}
+      <CardActions>
+        <Button variant="contained" onClick={handleAddToCart} disabled={isInCart}>
+          Add to basket
+        </Button>
+      </CardActions>
     </Card>
   );
 }

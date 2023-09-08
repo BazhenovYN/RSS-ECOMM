@@ -13,6 +13,17 @@ interface ITabPanelProps {
   value: number;
 }
 
+const defaultCustomer: Customer = {
+  id: '',
+  version: 0,
+  createdAt: '',
+  lastModifiedAt: '',
+  email: '',
+  addresses: [],
+  isEmailVerified: false,
+  authenticationMode: '',
+};
+
 function CustomTabPanel({ children, value, index, ...other }: ITabPanelProps) {
   return (
     <div
@@ -40,7 +51,7 @@ function UserProfilePage() {
     setValue(newValue);
   };
 
-  const [user, setUser] = useState<Customer | undefined>();
+  const [user, setUser] = useState<Customer>(defaultCustomer);
 
   const getUser = useMemo(() => {
     return async () => {
