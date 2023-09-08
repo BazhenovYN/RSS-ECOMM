@@ -25,6 +25,7 @@ const getMoneyValue = (value: number, fractionDigits: number) => {
 
 function ShoppingCart() {
   const appContext = useContext(AppContext);
+  const isAuth = appContext?.isAuth;
   const language = appContext?.language ?? DEFAULT_LANGUAGE;
 
   const [cart, setCart] = useState<Cart | null>();
@@ -32,7 +33,7 @@ function ShoppingCart() {
   const getCart = useMemo(() => {
     return async () => {
       try {
-        const data = await getActiveCart();
+        const data = await getActiveCart(isAuth);
         setCart(data);
       } catch (error) {
         if (error instanceof Error) {
@@ -44,11 +45,13 @@ function ShoppingCart() {
         throw error;
       }
     };
-  }, []);
+  }, [isAuth]);
+
+  const isCartEmpty = !(cart && cart.lineItems.length > 0);
 
   return (
     <ContentLoaderWrapper loadingLogic={getCart}>
-      {cart && (
+      {!isCartEmpty && (
         <Container maxWidth="lg">
           <TableContainer component={Paper} sx={{ borderColor: 'primary.main' }}>
             <Table sx={{ minWidth: 650 }} size="small">
@@ -109,7 +112,7 @@ function ShoppingCart() {
           </Stack>
         </Container>
       )}
-      {!cart && <EmptyCard />}
+      {isCartEmpty && <EmptyCard />}
     </ContentLoaderWrapper>
   );
 }
