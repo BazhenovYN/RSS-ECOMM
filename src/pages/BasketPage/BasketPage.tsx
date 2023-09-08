@@ -3,7 +3,7 @@ import ShoppingCart from 'components/ShoppingCart';
 
 function BasketPage() {
   return (
-    <Box px={3}>
+    <Box>
       <Typography component="h2" variant="h2" mb={2}>
         Basket
       </Typography>
