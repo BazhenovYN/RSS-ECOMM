@@ -64,6 +64,9 @@ describe('ShoppingCart', () => {
     const totalColumn = await screen.findByText('Total, EUR');
     expect(totalColumn).toBeInTheDocument();
 
+    const clearButton = await screen.findByRole('button', { name: 'Clear Shopping Cart' });
+    expect(clearButton).toBeInTheDocument();
+
     const product = await screen.findByText('product1');
     expect(product).toBeInTheDocument();
   });
