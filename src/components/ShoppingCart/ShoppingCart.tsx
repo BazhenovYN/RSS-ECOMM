@@ -2,7 +2,8 @@ import { DEFAULT_LANGUAGE } from 'constants/const';
 import { useContext, useMemo, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
-import type { Cart } from '@commercetools/platform-sdk';
+import AddIcon from '@mui/icons-material/Add';
+import type { Cart, LineItem, TypedMoney } from '@commercetools/platform-sdk';
 import {
   Box,
   Button,
@@ -22,11 +23,30 @@ import AppContext from 'context';
 import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
 import Counter from 'components/Counter';
 import Loader from 'components/Loader';
-import { changeLineItemQuantity, deleteActiveCart, getActiveCart, removeLineItem } from 'services/sdk/cart';
+import {
+  addDiscountCode,
+  changeLineItemQuantity,
+  deleteActiveCart,
+  getActiveCart,
+  removeLineItem,
+} from 'services/sdk/cart';
 import EmptyCart from './EmptyCart';
+import PromoCode from './PromoCode';
 
-const getMoneyValue = (value: number, fractionDigits: number) => {
-  return value / 10 ** fractionDigits;
+const getMoneyValue = (price: TypedMoney) => {
+  return (price.centAmount / 10 ** price.fractionDigits).toFixed(price.fractionDigits);
+};
+
+const getDiscountedValue = (item: LineItem): string => {
+  if (item.discountedPricePerQuantity && item.discountedPricePerQuantity.length > 0) {
+    const price = item.discountedPricePerQuantity[0].discountedPrice.value;
+    return getMoneyValue(price);
+  }
+  if (item.price.discounted) {
+    const price = item.price.discounted.value;
+    return getMoneyValue(price);
+  }
+  return '--';
 };
 
 function ShoppingCart() {
@@ -85,7 +105,21 @@ function ShoppingCart() {
     }
   };
 
+  const applyPromoCode = async (code: string) => {
+    if (!cart) return;
+    try {
+      setWaitForCartUpdate(true);
+      const newCart = await addDiscountCode(cart, code, isAuth);
+      setCart(newCart);
+    } catch (error) {
+      if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
+    } finally {
+      setWaitForCartUpdate(false);
+    }
+  };
+
   const isCartEmpty = !(cart && cart.lineItems.length > 0);
+  const currency = cart?.totalPrice.currencyCode;
 
   return (
     <ContentLoaderWrapper loadingLogic={getCart}>
@@ -99,9 +133,9 @@ function ShoppingCart() {
                   <TableCell>Name</TableCell>
                   <TableCell>Image</TableCell>
                   <TableCell align="center">Quantity</TableCell>
-                  <TableCell align="right">Price, {cart.totalPrice.currencyCode}</TableCell>
-                  <TableCell align="right">Discounted, {cart.totalPrice.currencyCode}</TableCell>
-                  <TableCell align="right">Total, {cart.totalPrice.currencyCode}</TableCell>
+                  <TableCell align="right">Price, {currency}</TableCell>
+                  <TableCell align="right">Discounted, {currency}</TableCell>
+                  <TableCell align="right">Total, {currency}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -137,35 +171,30 @@ function ShoppingCart() {
                         />
                       </Box>
                     </TableCell>
-                    <TableCell align="right">
-                      {getMoneyValue(item.price.value.centAmount, item.price.value.fractionDigits)}
-                    </TableCell>
-                    <TableCell align="right">
-                      {item.price.discounted
-                        ? getMoneyValue(
-                            item.price.discounted.value.centAmount,
-                            item.price.discounted.value.fractionDigits
-                          )
-                        : '--'}
-                    </TableCell>
-                    <TableCell align="right">
-                      {getMoneyValue(item.totalPrice.centAmount, item.totalPrice.fractionDigits)}
-                    </TableCell>
+                    <TableCell align="right">{getMoneyValue(item.price.value)}</TableCell>
+                    <TableCell align="right">{getDiscountedValue(item)}</TableCell>
+                    <TableCell align="right">{getMoneyValue(item.totalPrice)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
-          <Stack direction="row" spacing={2} justifyContent="space-between" mt={2} mr={2}>
+          <Stack direction="row" spacing={2} justifyContent="space-between" mt={2} mr={2} mb={6}>
             <Button startIcon={<DeleteIcon />} onClick={clearshoppingCart}>
               Clear Shopping Cart
             </Button>
-            <Stack direction="row">
-              <Typography variant="h6">Total, {cart.totalPrice.currencyCode}:</Typography>
+            <Stack direction="row" spacing={1}>
+              <Typography variant="h6">Total, {currency}:</Typography>
               <Typography component="div" variant="h6">
-                {getMoneyValue(cart.totalPrice.centAmount, cart.totalPrice.fractionDigits)}
+                {getMoneyValue(cart.totalPrice)}
               </Typography>
             </Stack>
+          </Stack>
+          <Stack direction="row" justifyContent="space-between" flexWrap="wrap" gap={4}>
+            <PromoCode onApply={applyPromoCode} />
+            <Button variant="contained" color="primary" startIcon={<AddIcon />}>
+              Place order
+            </Button>
           </Stack>
         </Container>
       )}

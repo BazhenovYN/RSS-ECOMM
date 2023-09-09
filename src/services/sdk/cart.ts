@@ -94,3 +94,13 @@ export const removeLineItem = async (cart: Cart, lineItemId: string, isAuth: boo
   ];
   return updateCart(cart, actions, isAuth);
 };
+
+export const addDiscountCode = async (cart: Cart, code: string, isAuth: boolean = false) => {
+  const actions: MyCartUpdateAction[] = [
+    {
+      action: 'addDiscountCode',
+      code,
+    },
+  ];
+  return updateCart(cart, actions, isAuth);
+};
