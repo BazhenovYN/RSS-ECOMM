@@ -8,9 +8,10 @@ interface IFormValues {
 
 interface IProps {
   onApply: (code: string) => void;
+  disabled?: boolean;
 }
 
-function PromoCode({ onApply }: IProps) {
+function PromoCode({ onApply, disabled = false }: IProps) {
   const {
     register,
     handleSubmit,
@@ -30,8 +31,9 @@ function PromoCode({ onApply }: IProps) {
           {...register('code', validationSchemes.promoCode)}
           error={!!errors.code}
           helperText={errors.code?.message}
+          disabled={disabled}
         />
-        <Button type="submit" variant="contained" color="primary">
+        <Button type="submit" variant="contained" color="primary" disabled={disabled}>
           Apply
         </Button>
       </Stack>

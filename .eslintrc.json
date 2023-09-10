@@ -40,7 +40,7 @@
         }
       }
     ],
-    "max-lines-per-function": ["error", 200],
+    "max-lines-per-function": ["error", 150],
     "no-var": "error",
     "no-unreachable": "error",
     "react/react-in-jsx-scope": ["off"],
