@@ -1,4 +1,4 @@
-import { LineItem, TypedMoney } from '@commercetools/platform-sdk';
+import { Cart, LineItem, TypedMoney } from '@commercetools/platform-sdk';
 
 export const getMoneyValue = (price: TypedMoney) => {
   return (price.centAmount / 10 ** price.fractionDigits).toFixed(price.fractionDigits);
@@ -14,4 +14,11 @@ export const getDiscountedValue = (item: LineItem): string => {
     return getMoneyValue(price);
   }
   return '--';
+};
+
+export const getDiscountID = (cart: Pick<Cart, 'discountCodes'>) => {
+  if (cart.discountCodes.length > 0) {
+    return cart.discountCodes[0].discountCode.id;
+  }
+  return null;
 };

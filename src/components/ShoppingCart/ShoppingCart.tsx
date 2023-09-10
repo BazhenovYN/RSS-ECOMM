@@ -11,11 +11,13 @@ import {
   changeLineItemQuantity,
   deleteActiveCart,
   getActiveCart,
+  getDiscountCode,
   removeLineItem,
 } from 'services/sdk/cart';
 import EmptyCart from './EmptyCart';
 import ProductTable from './ProductTable';
 import PromoCode from './PromoCode';
+import { getDiscountID } from './utils';
 
 function ShoppingCart() {
   const appContext = useContext(AppContext);
@@ -25,12 +27,17 @@ function ShoppingCart() {
 
   const [isCartUpdate, setIsCartUpdate] = useState(false);
   const [cart, setCart] = useState<Cart | null>();
-  const [isPromoCodeApplied, setIsPromoCodeApplied] = useState(false);
+  const [promoCode, setPromoCode] = useState<string | undefined>();
 
   const getCart = useMemo(() => {
     return async () => {
       const data = await getActiveCart(isAuth);
       setCart(data);
+      const discountID = getDiscountID(data);
+      if (discountID) {
+        const discount = await getDiscountCode(discountID);
+        setPromoCode(discount.code);
+      }
     };
   }, [isAuth]);
 
@@ -79,7 +86,7 @@ function ShoppingCart() {
       setIsCartUpdate(true);
       const newCart = await addDiscountCode(cart, code, isAuth);
       setCart(newCart);
-      setIsPromoCodeApplied(true);
+      setPromoCode(code);
     } catch (error) {
       if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
     } finally {
@@ -103,7 +110,7 @@ function ShoppingCart() {
             removeProduct={removeProduct}
           />
           <Stack direction="row" justifyContent="space-between" flexWrap="wrap" gap={4}>
-            <PromoCode onApply={applyPromoCode} disabled={isPromoCodeApplied} />
+            <PromoCode onApply={applyPromoCode} code={promoCode} disabled={!!promoCode} />
             <Button variant="contained" color="primary" startIcon={<AddIcon />}>
               Place order
             </Button>
