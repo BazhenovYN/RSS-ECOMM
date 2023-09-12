@@ -1,6 +1,6 @@
 import { getAppApiRoot } from 'services/sdk/client';
 import { ProductProjection } from '@commercetools/platform-sdk';
-import { AttributesList, Product, SearchParams } from 'types/types';
+import { AttributesList, Product, SearchData, SearchParams } from 'types/types';
 
 interface ISellingPrice {
   price?: number;
@@ -48,7 +48,7 @@ export const getProductDetails = async (ID: string | undefined): Promise<Product
   return getProductData(response.body);
 };
 
-export const searchProducts = async (searchParams: SearchParams): Promise<Product[]> => {
+export const searchProducts = async (searchParams: SearchParams): Promise<SearchData> => {
   const {
     selectedAttributes = searchParams.selectedAttributes || {},
     searchTextParameter,
@@ -56,6 +56,8 @@ export const searchProducts = async (searchParams: SearchParams): Promise<Produc
     categoryId,
     sortingField,
     sortingDirection,
+    limit,
+    offset,
   } = searchParams;
   const filterStrings = Object.keys(selectedAttributes).map((attributeName) => {
     const filterAttributeName = `variants.attributes.${attributeName}`;
@@ -76,11 +78,16 @@ export const searchProducts = async (searchParams: SearchParams): Promise<Produc
         fuzzy: true,
         sort: `${sortingField} ${sortingDirection}`,
         filter: filterStrings,
+        limit,
+        offset,
       },
     })
     .execute();
 
-  return response.body.results.map((product) => getProductData(product));
+  return {
+    products: response.body.results.map((product) => getProductData(product)),
+    total: response.body.total || 0,
+  };
 };
 
 export const getAttributes = (products: Product[]): AttributesList => {

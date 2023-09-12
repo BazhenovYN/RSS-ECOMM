@@ -81,4 +81,11 @@ export interface SearchParams {
   sortingDirection: string;
   selectedAttributes?: SelectedAttributesList;
   categoryId?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export interface SearchData {
+  products: Product[];
+  total: number;
 }
