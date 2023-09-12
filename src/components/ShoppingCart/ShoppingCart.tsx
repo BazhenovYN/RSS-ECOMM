@@ -35,7 +35,7 @@ function ShoppingCart() {
   const language = appContext?.language ?? DEFAULT_LANGUAGE;
   const setMessage = appContext?.setMessage;
 
-  const [waitForCartUpdate, setWaitForCartUpdate] = useState(false);
+  const [isCartUpdate, setIsCartUpdate] = useState(false);
 
   const [cart, setCart] = useState<Cart | null>();
 
@@ -46,43 +46,32 @@ function ShoppingCart() {
     };
   }, [isAuth]);
 
-  const setProductQuantity = async (lineItemId: string, quantity: number) => {
-    if (!cart) return;
+  const handleCartOperation = async (operation: Function, ...args: (string | number | boolean)[]): Promise<boolean> => {
+    if (!cart) return false;
     try {
-      setWaitForCartUpdate(true);
-      const newCart = await changeLineItemQuantity(cart, lineItemId, quantity, isAuth);
+      setIsCartUpdate(true);
+      const newCart = await operation(cart, ...args);
       setCart(newCart);
+      return true;
     } catch (error) {
-      if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      if (setMessage) setMessage({ severity: 'error', text: errorMessage });
+      return false;
     } finally {
-      setWaitForCartUpdate(false);
+      setIsCartUpdate(false);
     }
   };
 
-  const removeProduct = async (lineItemId: string) => {
-    if (!cart) return;
-    try {
-      setWaitForCartUpdate(true);
-      const newCart = await removeLineItem(cart, lineItemId, isAuth);
-      setCart(newCart);
-    } catch (error) {
-      if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
-    } finally {
-      setWaitForCartUpdate(false);
-    }
+  const setProductQuantity = (lineItemId: string, quantity: number) => {
+    handleCartOperation(changeLineItemQuantity, lineItemId, quantity, isAuth);
   };
 
-  const clearshoppingCart = async () => {
-    if (!cart) return;
-    try {
-      setWaitForCartUpdate(true);
-      await deleteActiveCart(cart, isAuth);
-      setCart(null);
-    } catch (error) {
-      if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
-    } finally {
-      setWaitForCartUpdate(false);
-    }
+  const removeProduct = (lineItemId: string) => {
+    handleCartOperation(removeLineItem, lineItemId, isAuth);
+  };
+
+  const clearShoppingCart = () => {
+    handleCartOperation(deleteActiveCart, isAuth);
   };
 
   const isCartEmpty = !(cart && cart.lineItems.length > 0);
@@ -131,9 +120,7 @@ function ShoppingCart() {
                       <Box display="flex" justifyContent="center">
                         <Counter
                           count={item.quantity}
-                          setCount={(quantity: number) => {
-                            setProductQuantity(item.id, quantity);
-                          }}
+                          setCount={(quantity: number) => setProductQuantity(item.id, quantity)}
                         />
                       </Box>
                     </TableCell>
@@ -157,7 +144,7 @@ function ShoppingCart() {
             </Table>
           </TableContainer>
           <Stack direction="row" spacing={2} justifyContent="space-between" mt={2} mr={2}>
-            <Button startIcon={<DeleteIcon />} onClick={clearshoppingCart}>
+            <Button startIcon={<DeleteIcon />} onClick={clearShoppingCart}>
               Clear Shopping Cart
             </Button>
             <Stack direction="row">
@@ -170,7 +157,7 @@ function ShoppingCart() {
         </Container>
       )}
       {isCartEmpty && <EmptyCart />}
-      {waitForCartUpdate && <Loader transparent />}
+      {isCartUpdate && <Loader transparent />}
     </ContentLoaderWrapper>
   );
 }
