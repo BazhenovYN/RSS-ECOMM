@@ -36,23 +36,33 @@ function AttributesFilter({ attributes, onChangeSelectedAttribute }: AttributesF
   return attributesKeys.length ? (
     <Stack spacing={1}>
       <Typography variant="h5">Filters:</Typography>
-      {Object.keys(attributes).map((attributeName) => (
-        <FormControl fullWidth key={attributeName}>
-          <InputLabel id={attributeName}>{attributeName}</InputLabel>
-          <Select
-            value={selectedAttributes[attributeName] || ''}
-            labelId={attributeName}
-            label={attributeName}
-            name={attributeName}
-            onChange={changeSelectedAttribute}>
-            {[...attributes[attributeName]].map((attributeValue) => (
-              <MenuItem value={attributeValue} key={attributeValue}>
-                {attributeValue}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      ))}
+      {Object.keys(attributes)
+        .sort()
+        .map((attributeName) => {
+          const selectedAttribute = selectedAttributes[attributeName];
+          return (
+            <FormControl fullWidth key={attributeName}>
+              <InputLabel id={attributeName}>{attributeName}</InputLabel>
+              <Select
+                value={selectedAttributes[attributeName] || ''}
+                labelId={attributeName}
+                label={attributeName}
+                name={attributeName}
+                onChange={changeSelectedAttribute}>
+                {[...attributes[attributeName]].map((attributeValue) => (
+                  <MenuItem value={attributeValue} key={attributeValue}>
+                    {attributeValue}
+                  </MenuItem>
+                ))}
+                {!!selectedAttribute && !attributes[attributeName].has(selectedAttribute) && (
+                  <MenuItem value={selectedAttribute} key={selectedAttribute}>
+                    {selectedAttribute}
+                  </MenuItem>
+                )}
+              </Select>
+            </FormControl>
+          );
+        })}
       <Stack direction="row" alignItems="center" spacing={1}>
         <Typography>Reset filters:</Typography>
         <IconButton data-testid="reset-button" onClick={resetSelectedAttributes}>
