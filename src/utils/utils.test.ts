@@ -1,4 +1,4 @@
-import { hasItemInCart, isPostCodeValid } from './utils';
+import { findCartItemInCart, isPostCodeValid } from './utils';
 
 describe('util isPostCodeValid is correct', () => {
   const testData = [
@@ -21,13 +21,13 @@ describe('util isPostCodeValid is correct', () => {
 });
 
 describe('util hasItemInCart is correct', () => {
-  const cartItems = [{ productId: 'test-product-id' }];
+  const cartItems = [{ productId: 'test-product-id', id: 'test-line-item-id', quantity: 1 }];
 
   test('correct if product in cart', () => {
-    expect(hasItemInCart(cartItems, 'test-product-id')).toEqual(true);
+    expect(findCartItemInCart(cartItems, 'test-product-id')).toEqual(cartItems[0]);
   });
 
   test('correct if product not in cart', () => {
-    expect(hasItemInCart(cartItems, 'test-product-id-02')).toEqual(false);
+    expect(findCartItemInCart(cartItems, 'test-product-id-02')).toEqual(undefined);
   });
 });

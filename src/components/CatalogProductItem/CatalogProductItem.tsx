@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { Product } from 'types/types';
 import { Link as RouterLink } from 'react-router-dom';
-import { getProductDescription, getProductName, hasItemInCart } from 'utils/utils';
+import { getProductDescription, getProductName, findCartItemInCart } from 'utils/utils';
 import PriceField from 'components/PriceField';
 import { addToCart } from 'services/sdk/cart';
 import { LineItem } from '@commercetools/platform-sdk';
@@ -39,7 +39,7 @@ function CatalogProductItem({ product, setWaitForCartUpdate, cartItems }: Catalo
 
   const [isInCart, setIsInCart] = useState(false);
   useEffect(() => {
-    setIsInCart(hasItemInCart(cartItems, product.id));
+    setIsInCart(!!findCartItemInCart(cartItems, product.id));
   }, [product.id, cartItems]);
 
   const handleAddToCart = async (event: MouseEvent) => {
