@@ -44,7 +44,7 @@ function AttributesFilter({ attributes, onChangeSelectedAttribute }: AttributesF
             <FormControl fullWidth key={attributeName}>
               <InputLabel id={attributeName}>{attributeName}</InputLabel>
               <Select
-                value={selectedAttributes[attributeName] || ''}
+                value={selectedAttribute || ''}
                 labelId={attributeName}
                 label={attributeName}
                 name={attributeName}
