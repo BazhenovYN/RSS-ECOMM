@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import CatalogPage from 'pages/CatalogPage';
-import { CategoriesList, Product } from 'types/types';
+import { AttributesList, CategoriesList, SearchData } from 'types/types';
 import { BrowserRouter } from 'react-router-dom';
 
 jest.mock('services/sdk/category', () => ({
@@ -20,12 +20,16 @@ jest.mock('services/sdk/category', () => ({
 jest.mock('services/sdk/product', () => ({
   __esModule: true,
   searchProducts: () =>
-    Promise.resolve<Product[]>([
-      {
-        id: 'test-product-id-1',
-        name: { 'en-US': 'Product1' },
-      },
-    ]),
+    Promise.resolve<SearchData>({
+      products: [
+        {
+          id: 'test-product-id-1',
+          name: { 'en-US': 'Product1' },
+        },
+      ],
+      total: 1,
+    }),
+  getAttributes: (): AttributesList => ({}),
 }));
 
 describe('CatalogPage', () => {
