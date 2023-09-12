@@ -146,7 +146,7 @@ function CatalogPage() {
                 </Grid>
               ))}
             </Grid>
-            {!(pagesCount === 1) && (
+            {pagesCount !== 1 && (
               <Pagination
                 count={pagesCount}
                 color="primary"
