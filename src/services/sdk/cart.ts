@@ -109,3 +109,8 @@ export const getDiscountCode = async (ID: string) => {
   const response = await getAppApiRoot().discountCodes().withId({ ID }).get().execute();
   return response.body;
 };
+
+export const getDiscountCodes = async () => {
+  const response = await getAppApiRoot().discountCodes().get().execute();
+  return response.body.results;
+};
