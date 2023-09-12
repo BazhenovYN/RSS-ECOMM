@@ -1,8 +1,9 @@
 import { DEFAULT_LANGUAGE } from 'constants/const';
 import { useContext, useMemo, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
+import { Box, Button, Container, Stack, Typography } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import type { Cart } from '@commercetools/platform-sdk';
-import { Button, Container, Stack } from '@mui/material';
 import AppContext from 'context';
 import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
 import Loader from 'components/Loader';
@@ -15,9 +16,9 @@ import {
   removeLineItem,
 } from 'services/sdk/cart';
 import EmptyCart from './EmptyCart';
-import ProductTable from './ProductTable';
+import Products from './Products';
 import PromoCode from './PromoCode';
-import { getDiscountID } from './utils';
+import { getDiscountID, getMoneyValue } from './utils';
 
 function ShoppingCart() {
   const appContext = useContext(AppContext);
@@ -41,56 +42,38 @@ function ShoppingCart() {
     };
   }, [isAuth]);
 
-  const setProductQuantity = async (lineItemId: string, quantity: number) => {
-    if (!cart) return;
+  const handleCartOperation = async (operation: Function, ...args: (string | number | boolean)[]): Promise<boolean> => {
+    if (!cart) return false;
     try {
       setIsCartUpdate(true);
-      const newCart = await changeLineItemQuantity(cart, lineItemId, quantity, isAuth);
+      const newCart = await operation(cart, ...args);
       setCart(newCart);
+      return true;
     } catch (error) {
-      if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      if (setMessage) setMessage({ severity: 'error', text: errorMessage });
+      return false;
     } finally {
       setIsCartUpdate(false);
     }
   };
 
-  const removeProduct = async (lineItemId: string) => {
-    if (!cart) return;
-    try {
-      setIsCartUpdate(true);
-      const newCart = await removeLineItem(cart, lineItemId, isAuth);
-      setCart(newCart);
-    } catch (error) {
-      if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
-    } finally {
-      setIsCartUpdate(false);
-    }
+  const setProductQuantity = (lineItemId: string, quantity: number) => {
+    handleCartOperation(changeLineItemQuantity, lineItemId, quantity, isAuth);
   };
 
-  const clearShoppingCart = async () => {
-    if (!cart) return;
-    try {
-      setIsCartUpdate(true);
-      await deleteActiveCart(cart, isAuth);
-      setCart(null);
-    } catch (error) {
-      if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
-    } finally {
-      setIsCartUpdate(false);
-    }
+  const removeProduct = (lineItemId: string) => {
+    handleCartOperation(removeLineItem, lineItemId, isAuth);
+  };
+
+  const clearShoppingCart = () => {
+    handleCartOperation(deleteActiveCart, isAuth);
   };
 
   const applyPromoCode = async (code: string) => {
-    if (!cart) return;
-    try {
-      setIsCartUpdate(true);
-      const newCart = await addDiscountCode(cart, code, isAuth);
-      setCart(newCart);
+    const isCodeApplied = await handleCartOperation(addDiscountCode, code, isAuth);
+    if (isCodeApplied) {
       setPromoCode(code);
-    } catch (error) {
-      if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
-    } finally {
-      setIsCartUpdate(false);
     }
   };
 
@@ -101,19 +84,43 @@ function ShoppingCart() {
     <ContentLoaderWrapper loadingLogic={getCart}>
       {!isCartEmpty && (
         <Container maxWidth="lg">
-          <ProductTable
+          <Products
             cart={cart}
             currency={currency}
             language={language}
-            clearShoppingCart={clearShoppingCart}
             setProductQuantity={setProductQuantity}
             removeProduct={removeProduct}
           />
-          <Stack direction="row" justifyContent="space-between" flexWrap="wrap" gap={4}>
-            <PromoCode onApply={applyPromoCode} code={promoCode} disabled={!!promoCode} />
-            <Button variant="contained" color="primary" startIcon={<AddIcon />}>
-              Place order
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={2}
+            justifyContent="space-between"
+            mt={2}
+            mr={2}
+            mb={6}>
+            <Button startIcon={<DeleteIcon />} onClick={clearShoppingCart}>
+              Clear Shopping Cart
             </Button>
+            <Stack direction="row" spacing={1} justifyContent="center">
+              <Typography variant="h6">Total, {currency}:</Typography>
+              <Typography component="div" variant="h6">
+                {getMoneyValue(cart.totalPrice)}
+              </Typography>
+            </Stack>
+          </Stack>
+          <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={4}>
+            <Box display="flex" justifyContent="center">
+              <PromoCode onApply={applyPromoCode} code={promoCode} disabled={!!promoCode} />
+            </Box>
+            <Box display="flex" justifyContent="center">
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
+                sx={{ maxWidth: 'max-content', py: 2 }}>
+                Place order
+              </Button>
+            </Box>
           </Stack>
         </Container>
       )}

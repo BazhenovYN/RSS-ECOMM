@@ -34,7 +34,6 @@ function PromoCode({ onApply, code = '', disabled = false }: IProps) {
       <Stack spacing={2} direction="row" alignItems="baseline">
         <TextField
           label="Promo code"
-          type="text"
           {...register('code', validationSchemes.promoCode)}
           error={!!errors.code}
           helperText={errors.code?.message}

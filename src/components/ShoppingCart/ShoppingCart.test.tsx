@@ -3,6 +3,7 @@ import ShoppingCart from './ShoppingCart';
 
 jest.mock('services/sdk/cart', () => ({
   __esModule: true,
+  ...jest.requireActual('services/sdk/cart'),
   getActiveCart: () =>
     Promise.resolve({
       id: 'test-id',
@@ -43,31 +44,10 @@ jest.mock('services/sdk/cart', () => ({
 describe('ShoppingCart', () => {
   test('renders correctly', async () => {
     render(<ShoppingCart />);
-    const table = await screen.findByRole('table');
-    expect(table).toBeInTheDocument();
-
-    const nameColumn = await screen.findByText('Name');
-    expect(nameColumn).toBeInTheDocument();
-
-    const imageColumn = await screen.findByText('Image');
-    expect(imageColumn).toBeInTheDocument();
-
-    const quantityColumn = await screen.findByText('Quantity');
-    expect(quantityColumn).toBeInTheDocument();
-
-    const priceColumn = await screen.findByText('Price, EUR');
-    expect(priceColumn).toBeInTheDocument();
-
-    const discountedColumn = await screen.findByText('Discounted, EUR');
-    expect(discountedColumn).toBeInTheDocument();
-
-    const totalColumn = await screen.findByText('Total, EUR');
+    const totalColumn = await screen.findByRole('heading', { level: 6 });
     expect(totalColumn).toBeInTheDocument();
 
     const clearButton = await screen.findByRole('button', { name: 'Clear Shopping Cart' });
     expect(clearButton).toBeInTheDocument();
-
-    const product = await screen.findByText('product1');
-    expect(product).toBeInTheDocument();
   });
 });

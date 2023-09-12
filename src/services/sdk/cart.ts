@@ -55,8 +55,8 @@ export const addToCart = async (productId: string, isAuth: boolean = false): Pro
 export const deleteActiveCart = async (cart: Cart, isAuth: boolean = false) => {
   const queryArgs = { version: cart.version };
   const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
-  const response = await getRoot().me().carts().withId({ ID: cart.id }).delete({ queryArgs }).execute();
-  return response?.body;
+  await getRoot().me().carts().withId({ ID: cart.id }).delete({ queryArgs }).execute();
+  return null;
 };
 
 const updateCart = async (cart: Cart, actions: MyCartUpdateAction[], isAuth: boolean) => {
@@ -99,7 +99,7 @@ export const addDiscountCode = async (cart: Cart, code: string, isAuth: boolean 
   const actions: MyCartUpdateAction[] = [
     {
       action: 'addDiscountCode',
-      code,
+      code: code.toUpperCase(),
     },
   ];
   return updateCart(cart, actions, isAuth);

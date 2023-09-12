@@ -1,10 +1,11 @@
-import { Cart, LineItem, TypedMoney } from '@commercetools/platform-sdk';
+import { EMPTY_DISCOUNT } from 'constants/const';
+import type { Cart, LineItem, TypedMoney } from '@commercetools/platform-sdk';
 
-export const getMoneyValue = (price: TypedMoney) => {
+export const getMoneyValue = (price: Pick<TypedMoney, 'centAmount' | 'fractionDigits'>) => {
   return (price.centAmount / 10 ** price.fractionDigits).toFixed(price.fractionDigits);
 };
 
-export const getDiscountedValue = (item: LineItem): string => {
+export const getDiscountedValue = (item: Pick<LineItem, 'discountedPricePerQuantity' | 'price'>): string => {
   if (item.discountedPricePerQuantity && item.discountedPricePerQuantity.length > 0) {
     const price = item.discountedPricePerQuantity[0].discountedPrice.value;
     return getMoneyValue(price);
@@ -13,7 +14,7 @@ export const getDiscountedValue = (item: LineItem): string => {
     const price = item.price.discounted.value;
     return getMoneyValue(price);
   }
-  return '--';
+  return EMPTY_DISCOUNT;
 };
 
 export const getDiscountID = (cart: Pick<Cart, 'discountCodes'>) => {
