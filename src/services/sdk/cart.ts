@@ -26,39 +26,6 @@ export const getActiveCart = async (isAuth: boolean = false): Promise<Cart> => {
   }
 };
 
-const createCartAddProductUpdate = (version: number, productId: string): MyCartUpdate => {
-  return {
-    version,
-    actions: [
-      {
-        action: 'addLineItem',
-        productId,
-      },
-    ],
-  };
-};
-
-export const addToCart = async (productId: string, isAuth: boolean = false): Promise<Cart> => {
-  const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
-  const activeCart = await getActiveCart(isAuth);
-
-  const response = await getRoot()
-    .me()
-    .carts()
-    .withId({ ID: activeCart.id })
-    .post({ body: createCartAddProductUpdate(activeCart.version, productId) })
-    .execute();
-
-  return response.body;
-};
-
-export const deleteActiveCart = async (cart: Cart, isAuth: boolean = false) => {
-  const queryArgs = { version: cart.version };
-  const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
-  await getRoot().me().carts().withId({ ID: cart.id }).delete({ queryArgs }).execute();
-  return null;
-};
-
 const updateCart = async (cart: Cart, actions: MyCartUpdateAction[], isAuth: boolean) => {
   const body: MyCartUpdate = {
     version: cart.version,
@@ -66,7 +33,30 @@ const updateCart = async (cart: Cart, actions: MyCartUpdateAction[], isAuth: boo
   };
   const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
   const response = await getRoot().me().carts().withId({ ID: cart.id }).post({ body }).execute();
-  return response?.body;
+  return response.body;
+};
+
+export const addToCart = async (
+  cart: Cart,
+  productId: string,
+  isAuth: boolean = false,
+  count: number = 1
+): Promise<Cart> => {
+  const actions: MyCartUpdateAction[] = [
+    {
+      action: 'addLineItem',
+      productId,
+      quantity: count,
+    },
+  ];
+  return updateCart(cart, actions, isAuth);
+};
+
+export const deleteActiveCart = async (cart: Cart, isAuth: boolean = false) => {
+  const queryArgs = { version: cart.version };
+  const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
+  await getRoot().me().carts().withId({ ID: cart.id }).delete({ queryArgs }).execute();
+  return null;
 };
 
 export const changeLineItemQuantity = async (

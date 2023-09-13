@@ -16,7 +16,7 @@ import { getCategories } from 'services/sdk/category';
 import BreadcrumbNavigation from 'components/BreadcrumbNavigation';
 import Loader from 'components/Loader';
 import { getActiveCart } from 'services/sdk/cart';
-import { LineItem } from '@commercetools/platform-sdk';
+import { Cart } from '@commercetools/platform-sdk';
 
 function CatalogPage() {
   const appContext = useContext(AppContext);
@@ -35,7 +35,7 @@ function CatalogPage() {
   const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<CategoriesList>({ mains: [], subs: [] });
   const [waitForCartUpdate, setWaitForCartUpdate] = useState(false);
-  const [cartItems, setCartItems] = useState<LineItem[]>([]);
+  const [cart, setCart] = useState<Cart>();
   const [productsPerPage, setProductsPerPage] = useState(8);
   const [pagesCount, setPagesCount] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
@@ -73,7 +73,7 @@ function CatalogPage() {
       const allProducts = await searchProducts(searchParams);
       setAttributes(getAttributes(allProducts.products));
 
-      setCartItems((await getActiveCart(isAuth)).lineItems);
+      setCart(await getActiveCart(isAuth));
 
       const searchedFilteredProducts = await searchProducts({
         ...searchParams,
@@ -138,11 +138,7 @@ function CatalogPage() {
             <Grid container spacing={3}>
               {displayedProducts.map((product) => (
                 <Grid item xs={12} sm={6} lg={4} xl={3} key={product.id}>
-                  <CatalogProductItem
-                    product={product}
-                    setWaitForCartUpdate={setWaitForCartUpdate}
-                    cartItems={cartItems}
-                  />
+                  <CatalogProductItem product={product} setWaitForCartUpdate={setWaitForCartUpdate} cart={cart} />
                 </Grid>
               ))}
             </Grid>
