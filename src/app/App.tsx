@@ -1,5 +1,6 @@
 import COLORS from 'constants/colors';
 import { DEFAULT_LANGUAGE } from 'constants/const';
+import CookieNames from 'constants/cookieNames';
 import { createTheme, ThemeProvider, Box } from '@mui/material';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
@@ -38,14 +39,14 @@ function App() {
     return { isAuth, setIsAuth, message, setMessage, language, setLanguage };
   }, [isAuth, setIsAuth, message, setMessage, language, setLanguage]);
   useEffect(() => {
-    if (!getCookie('authToken') && !getCookie('refreshToken')) {
+    if (getCookie(CookieNames.authToken) || getCookie(CookieNames.refreshAuthToken)) {
+      login()
+        .then(() => setIsAuth(true))
+        .catch(() => {})
+        .finally(() => setIsLoading(false));
+    } else {
       setIsLoading(false);
-      return;
     }
-    login()
-      .then(() => setIsAuth(true))
-      .catch(() => {})
-      .finally(() => setIsLoading(false));
   }, []);
 
   if (isLoading) {

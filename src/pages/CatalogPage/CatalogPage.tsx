@@ -16,7 +16,7 @@ import { getCategories } from 'services/sdk/category';
 import BreadcrumbNavigation from 'components/BreadcrumbNavigation';
 import Loader from 'components/Loader';
 import { getActiveCart } from 'services/sdk/cart';
-import { LineItem } from '@commercetools/platform-sdk';
+import { Cart } from '@commercetools/platform-sdk';
 
 function CatalogPage() {
   const appContext = useContext(AppContext);
@@ -37,7 +37,7 @@ function CatalogPage() {
   const [isFiltered, setIsFiltered] = useState(false);
   const [categories, setCategories] = useState<CategoriesList>({ mains: [], subs: [] });
   const [waitForCartUpdate, setWaitForCartUpdate] = useState(false);
-  const [cartItems, setCartItems] = useState<LineItem[]>([]);
+  const [cart, setCart] = useState<Cart>();
 
   const loadingProducts = useMemo(() => {
     return async () => {
@@ -54,7 +54,7 @@ function CatalogPage() {
       setProducts(searchedProducts);
       setAttributes(getAttributes(searchedProducts));
 
-      setCartItems((await getActiveCart(isAuth)).lineItems);
+      setCart(await getActiveCart(isAuth));
 
       if (Object.keys(selectedAttributes).length) {
         setIsFiltered(true);
@@ -105,11 +105,7 @@ function CatalogPage() {
             <Grid container spacing={3}>
               {(isFiltered ? filteredProducts : products).map((product) => (
                 <Grid item xs={12} sm={6} lg={4} xl={3} key={product.id}>
-                  <CatalogProductItem
-                    product={product}
-                    setWaitForCartUpdate={setWaitForCartUpdate}
-                    cartItems={cartItems}
-                  />
+                  <CatalogProductItem product={product} setWaitForCartUpdate={setWaitForCartUpdate} cart={cart} />
                 </Grid>
               ))}
             </Grid>

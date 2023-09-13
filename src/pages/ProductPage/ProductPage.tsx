@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Button, Grid, Stack, Typography } from '@mui/material';
 import AppContext from 'context';
@@ -17,11 +17,11 @@ import Loader from 'components/Loader';
 function ProductPage() {
   const appContext = useContext(AppContext);
   const language = appContext?.language;
-  const isAuth = appContext?.isAuth;
+  const isAuth = appContext?.isAuth ?? false;
   const setMessage = appContext?.setMessage;
 
   const [product, setProduct] = useState<Product | undefined>();
-  const { productId } = useParams();
+  const productId = useParams().productId ?? '';
 
   const [openModal, setOpenModal] = useState(false);
   const handleOpenModal = () => setOpenModal(true);
@@ -33,6 +33,7 @@ function ProductPage() {
   const [cart, setCart] = useState<Cart | null>(null);
   const [isInCart, setIsInCart] = useState(false);
   const [waitForCartUpdate, setWaitForCartUpdate] = useState(false);
+  const lineItemId = useMemo(() => findCartItemInCart(cart?.lineItems || [], productId)?.id ?? '', [cart, productId]);
 
   const updateProductFromNewCart = useCallback(
     (newCart: Cart | null) => {
@@ -64,51 +65,34 @@ function ProductPage() {
     updateProductFromNewCart(newCart);
   }, [productId, isAuth, updateProductFromNewCart]);
 
-  const handleAddToBasket = async () => {
-    if (!productId) {
-      if (setMessage) setMessage({ severity: 'error', text: 'Product not found' });
-      return;
-    }
-
-    try {
-      setWaitForCartUpdate(true);
-      const newCart = await addToCart(productId, isAuth, count);
-      setCart(newCart);
-    } catch (error) {
-      if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
-    } finally {
-      setWaitForCartUpdate(false);
-    }
-  };
-
-  const handleDeleteFromBasket = async () => {
-    if (!productId) {
-      if (setMessage) setMessage({ severity: 'error', text: 'Product not found' });
-      return;
-    }
-
+  const handleCartOperation = async (
+    operation: Function,
+    successMessage: string,
+    ...args: (string | number | boolean)[]
+  ) => {
     if (!cart) {
       if (setMessage) setMessage({ severity: 'error', text: 'Cart not found' });
       return;
     }
 
-    const lineItemId = findCartItemInCart(cart.lineItems, productId)?.id;
-    if (!lineItemId) {
-      if (setMessage) setMessage({ severity: 'error', text: 'Product not found in cart' });
-      return;
-    }
-
     try {
       setWaitForCartUpdate(true);
-      const newCart = await removeLineItem(cart, lineItemId, isAuth);
+      const newCart = await operation(cart, ...args);
       setCart(newCart);
-      if (setMessage) setMessage({ severity: 'success', text: 'Product has been successfully removed from cart' });
+      if (setMessage) setMessage({ severity: 'success', text: successMessage });
     } catch (error) {
-      if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      if (setMessage) setMessage({ severity: 'error', text: errorMessage });
     } finally {
       setWaitForCartUpdate(false);
     }
   };
+
+  const handleAddToBasket = async () =>
+    handleCartOperation(addToCart, 'Product has been successfully added to cart', productId, isAuth, count);
+
+  const handleDeleteFromBasket = async () =>
+    handleCartOperation(removeLineItem, 'Product has been successfully removed from cart', lineItemId, isAuth);
 
   return (
     <ContentLoaderWrapper loadingLogic={getProduct}>

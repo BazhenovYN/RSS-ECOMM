@@ -40,7 +40,7 @@ describe('CatalogProductItem', () => {
     render(
       <AppContext.Provider value={appContext}>
         <BrowserRouter>
-          <CatalogProductItem product={product} setWaitForCartUpdate={jest.fn} cartItems={[]} />
+          <CatalogProductItem product={product} setWaitForCartUpdate={jest.fn} />
         </BrowserRouter>
       </AppContext.Provider>
     );
@@ -59,7 +59,7 @@ describe('CatalogProductItem', () => {
     render(
       <AppContext.Provider value={{ ...appContext, language: 'ru' }}>
         <BrowserRouter>
-          <CatalogProductItem product={product} setWaitForCartUpdate={jest.fn} cartItems={[]} />
+          <CatalogProductItem product={product} setWaitForCartUpdate={jest.fn} />
         </BrowserRouter>
       </AppContext.Provider>
     );
@@ -81,7 +81,6 @@ describe('CatalogProductItem', () => {
               images: undefined,
             }}
             setWaitForCartUpdate={jest.fn}
-            cartItems={[]}
           />
         </BrowserRouter>
       </AppContext.Provider>

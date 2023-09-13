@@ -17,15 +17,15 @@ import { Link as RouterLink } from 'react-router-dom';
 import { getProductDescription, getProductName, findCartItemInCart } from 'utils/utils';
 import PriceField from 'components/PriceField';
 import { addToCart } from 'services/sdk/cart';
-import { LineItem } from '@commercetools/platform-sdk';
+import { Cart } from '@commercetools/platform-sdk';
 
 interface CatalogProductItemProps {
   product: Product;
   setWaitForCartUpdate: Dispatch<SetStateAction<boolean>>;
-  cartItems: LineItem[];
+  cart?: Cart;
 }
 
-function CatalogProductItem({ product, setWaitForCartUpdate, cartItems }: CatalogProductItemProps) {
+function CatalogProductItem({ product, setWaitForCartUpdate, cart }: CatalogProductItemProps) {
   const appContext = useContext(AppContext);
   const language = appContext?.language;
   const isAuth = appContext?.isAuth;
@@ -37,6 +37,7 @@ function CatalogProductItem({ product, setWaitForCartUpdate, cartItems }: Catalo
   const name = useMemo(() => getProductName(product, language), [product, language]);
   const description = useMemo(() => getProductDescription(product, language), [product, language]);
 
+  const cartItems = useMemo(() => cart?.lineItems || [], [cart]);
   const [isInCart, setIsInCart] = useState(false);
   useEffect(() => {
     setIsInCart(!!findCartItemInCart(cartItems, product.id));
@@ -44,9 +45,14 @@ function CatalogProductItem({ product, setWaitForCartUpdate, cartItems }: Catalo
 
   const handleAddToCart = async (event: MouseEvent) => {
     event.preventDefault();
+    if (!cart) {
+      if (setMessage) setMessage({ severity: 'error', text: 'Cart not found' });
+      return;
+    }
+
     try {
       setWaitForCartUpdate(true);
-      await addToCart(product.id, isAuth);
+      await addToCart(cart, product.id, isAuth);
       setIsInCart(true);
     } catch (error) {
       if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
