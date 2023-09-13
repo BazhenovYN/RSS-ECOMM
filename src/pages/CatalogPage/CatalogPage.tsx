@@ -1,8 +1,8 @@
 import { DEFAULT_LANGUAGE } from 'constants/const';
 import sortingDirections from 'constants/sortingDirections';
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Pagination, Stack, Typography, useMediaQuery } from '@mui/material';
 import { getAttributes, searchProducts } from 'services/sdk/product';
-import { useContext, useMemo, useState } from 'react';
+import { ChangeEvent, useContext, useEffect, useMemo, useState } from 'react';
 import CatalogProductItem from 'components/CatalogProductItem';
 import { AttributesList, CategoriesList, Product, SearchParams, SelectedAttributesList } from 'types/types';
 import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
@@ -27,17 +27,38 @@ function CatalogPage() {
   const sortingPriceParameter = 'price';
   const searchTextParameter = useMemo(() => `text.${language || DEFAULT_LANGUAGE}`, [language]);
 
-  const [products, setProducts] = useState<Product[]>([]);
   const [sortingField, setSortingField] = useState(sortingNameParameter);
   const [sortingDirection, setSortingDirection] = useState(sortingDirections.ASC);
   const [searchQuery, setSearchQuery] = useState('');
   const [attributes, setAttributes] = useState<AttributesList>({});
   const [selectedAttributes, setSelectedAttributes] = useState<SelectedAttributesList>({});
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [isFiltered, setIsFiltered] = useState(false);
+  const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<CategoriesList>({ mains: [], subs: [] });
   const [waitForCartUpdate, setWaitForCartUpdate] = useState(false);
   const [cart, setCart] = useState<Cart>();
+  const [productsPerPage, setProductsPerPage] = useState(8);
+  const [pagesCount, setPagesCount] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const isXs = useMediaQuery('(max-width:599px)');
+  const isSm = useMediaQuery('(max-width:1199px)');
+  const isLg = useMediaQuery('(max-width:1535px)');
+
+  useEffect(() => {
+    if (isXs) {
+      setProductsPerPage(2);
+    } else if (isSm) {
+      setProductsPerPage(4);
+    } else if (isLg) {
+      setProductsPerPage(6);
+    } else {
+      setProductsPerPage(8);
+    }
+  }, [isXs, isSm, isLg]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [isXs, isSm, isLg, searchQuery, categoryId, selectedAttributes]);
 
   const loadingProducts = useMemo(() => {
     return async () => {
@@ -49,29 +70,41 @@ function CatalogPage() {
         categoryId,
       };
 
-      setIsFiltered(false);
-      const searchedProducts = await searchProducts(searchParams);
-      setProducts(searchedProducts);
-      setAttributes(getAttributes(searchedProducts));
+      const allProducts = await searchProducts(searchParams);
+      setAttributes(getAttributes(allProducts.products));
 
       setCart(await getActiveCart(isAuth));
 
-      if (Object.keys(selectedAttributes).length) {
-        setIsFiltered(true);
-        const searchedFilteredProducts = await searchProducts({
-          ...searchParams,
-          selectedAttributes,
-        });
-        setFilteredProducts(searchedFilteredProducts);
-      }
+      const searchedFilteredProducts = await searchProducts({
+        ...searchParams,
+        selectedAttributes,
+        limit: productsPerPage,
+        offset: (currentPage - 1) * productsPerPage,
+      });
+      setDisplayedProducts(searchedFilteredProducts.products);
+      setPagesCount(Math.ceil(searchedFilteredProducts.total / productsPerPage) || 1);
     };
-  }, [searchTextParameter, searchQuery, sortingField, sortingDirection, selectedAttributes, categoryId, isAuth]);
+  }, [
+    searchTextParameter,
+    searchQuery,
+    sortingField,
+    sortingDirection,
+    selectedAttributes,
+    categoryId,
+    isAuth,
+    currentPage,
+    productsPerPage,
+  ]);
 
   const loadingCategories = useMemo(() => {
     return async () => {
       setCategories(await getCategories());
     };
   }, []);
+
+  const handleChangePage = (_event: ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+  };
 
   return (
     <Stack gap={3} height="100%">
@@ -103,12 +136,21 @@ function CatalogPage() {
           <ContentLoaderWrapper loadingLogic={loadingProducts}>
             <BreadcrumbNavigation categories={categories} categoryId={categoryId} language={language} />
             <Grid container spacing={3}>
-              {(isFiltered ? filteredProducts : products).map((product) => (
+              {displayedProducts.map((product) => (
                 <Grid item xs={12} sm={6} lg={4} xl={3} key={product.id}>
                   <CatalogProductItem product={product} setWaitForCartUpdate={setWaitForCartUpdate} cart={cart} />
                 </Grid>
               ))}
             </Grid>
+            {pagesCount !== 1 && (
+              <Pagination
+                count={pagesCount}
+                color="primary"
+                onChange={handleChangePage}
+                sx={{ marginTop: 3 }}
+                page={currentPage}
+              />
+            )}
           </ContentLoaderWrapper>
         </Grid>
       </Grid>
