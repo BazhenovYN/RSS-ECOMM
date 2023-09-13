@@ -9,7 +9,7 @@ import fishImage from 'assets/img/grilled-salmon-fish.jpg';
 import orangeImage from 'assets/img/many-round-orange-slices.jpg';
 
 interface IProps {
-  discountCode: DiscountCode;
+  discountCode: Pick<DiscountCode, 'description' | 'code'>;
 }
 
 const getPromoCodeLogo = (code: string): string => {
@@ -29,7 +29,7 @@ function PromoCodeCard({ discountCode }: IProps) {
   const appContext = useContext(AppContext);
   const language = appContext?.language ?? DEFAULT_LANGUAGE;
   return (
-    <Card sx={{ position: 'relative' }}>
+    <Card sx={{ position: 'relative' }} data-testid="promo-code-card">
       <Box
         sx={{
           position: 'absolute',

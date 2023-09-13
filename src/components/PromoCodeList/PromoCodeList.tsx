@@ -17,7 +17,7 @@ function PromoCodeList() {
 
   return (
     <ContentLoaderWrapper loadingLogic={getPromoCodes}>
-      <Grid container spacing={3} data-testid="product-card-list" sx={{ mb: 4 }}>
+      <Grid container spacing={3} data-testid="promo-code-list" sx={{ mb: 4 }}>
         {discountCodes.map((discountCode) => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={discountCode.id}>
             <PromoCodeCard discountCode={discountCode} />
