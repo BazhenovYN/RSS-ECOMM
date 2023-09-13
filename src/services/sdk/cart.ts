@@ -52,6 +52,29 @@ export const addToCart = async (
   return updateCart(cart, actions, isAuth);
 };
 
+export const deleteActiveCart = async (cart: Cart, isAuth: boolean = false) => {
+  const queryArgs = { version: cart.version };
+  const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
+  await getRoot().me().carts().withId({ ID: cart.id }).delete({ queryArgs }).execute();
+  return null;
+};
+
+export const changeLineItemQuantity = async (
+  cart: Cart,
+  lineItemId: string,
+  quantity: number,
+  isAuth: boolean = false
+) => {
+  const actions: MyCartUpdateAction[] = [
+    {
+      action: 'changeLineItemQuantity',
+      lineItemId,
+      quantity,
+    },
+  ];
+  return updateCart(cart, actions, isAuth);
+};
+
 export const removeLineItem = async (cart: Cart, lineItemId: string, isAuth: boolean = false) => {
   const actions: MyCartUpdateAction[] = [
     {
