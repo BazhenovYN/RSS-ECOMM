@@ -1,0 +1,18 @@
+.card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.card-image {
+  height: 530px;
+  min-height: 530px;
+}
+
+.card-github {
+  color: #000000;
+  transition: transform 0.2s ease-in-out;
+  &:hover {
+    transform: scale(1.1);
+  }
+}
