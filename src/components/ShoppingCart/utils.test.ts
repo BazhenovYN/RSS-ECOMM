@@ -1,6 +1,7 @@
 import { EMPTY_DISCOUNT } from 'constants/const';
 import type { Cart, LineItem } from '@commercetools/platform-sdk';
-import { getDiscountID, getDiscountedValue, getMoneyValue } from './utils';
+import { getDiscountID, getDiscountedValue, getMoneyValue, getTotalPriceWithoutDiscount } from './utils';
+import { cart } from './mock';
 
 describe('util getMoneyValue is correct', () => {
   const testData = [
@@ -118,5 +119,12 @@ describe('util getDiscountedValue is correct', () => {
     test(`test: ${data.expected}`, () => {
       expect(getDiscountedValue(data.item)).toEqual(data.expected);
     });
+  });
+});
+
+describe('util getTotalPriceWithoutDiscount is correct', () => {
+  test('test: price 30.90', () => {
+    const fullPrice = getTotalPriceWithoutDiscount(cart);
+    expect(fullPrice).toEqual('30.90');
   });
 });

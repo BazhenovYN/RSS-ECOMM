@@ -18,7 +18,7 @@ import {
 import EmptyCart from './EmptyCart';
 import Products from './Products';
 import PromoCode from './PromoCode';
-import { getDiscountID, getMoneyValue } from './utils';
+import { getDiscountID, getMoneyValue, getTotalPriceWithoutDiscount } from './utils';
 
 function ShoppingCart() {
   const appContext = useContext(AppContext);
@@ -78,6 +78,8 @@ function ShoppingCart() {
   };
 
   const isCartEmpty = !(cart && cart.lineItems.length > 0);
+  const totalPrice = cart ? getMoneyValue(cart.totalPrice) : null;
+  const totalPriceWithoutDiscount = cart ? getTotalPriceWithoutDiscount(cart) : null;
   const currency = cart?.totalPrice.currencyCode ?? '';
 
   return (
@@ -101,12 +103,23 @@ function ShoppingCart() {
             <Button startIcon={<DeleteIcon />} onClick={clearShoppingCart}>
               Clear Shopping Cart
             </Button>
-            <Stack direction="row" spacing={1} justifyContent="center">
-              <Typography variant="h6">Total, {currency}:</Typography>
-              <Typography component="div" variant="h6">
-                {getMoneyValue(cart.totalPrice)}
-              </Typography>
-            </Stack>
+            <Box>
+              {totalPriceWithoutDiscount !== totalPrice && (
+                <Typography textAlign={{ xs: 'center', sm: 'right' }} color="grey.600">
+                  <s>
+                    {currency} {totalPriceWithoutDiscount}
+                  </s>
+                </Typography>
+              )}
+              {totalPrice && (
+                <Stack direction="row" spacing={1} justifyContent="center">
+                  <Typography variant="h6">Total, {currency}:</Typography>
+                  <Typography component="div" variant="h6">
+                    {totalPrice}
+                  </Typography>
+                </Stack>
+              )}
+            </Box>
           </Stack>
           <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={4}>
             <Box display="flex" justifyContent="center">

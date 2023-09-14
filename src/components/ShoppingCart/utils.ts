@@ -23,3 +23,17 @@ export const getDiscountID = (cart: Pick<Cart, 'discountCodes'>) => {
   }
   return null;
 };
+
+export const getTotalPriceWithoutDiscount = (cart: Pick<Cart, 'lineItems' | 'totalPrice'>) => {
+  /* eslint-disable no-param-reassign */
+  const fullPrice = cart.lineItems.reduce((acc, item) => {
+    const price = item.price.value;
+    acc += (item.quantity * price.centAmount) / 10 ** price.fractionDigits;
+    return acc;
+  }, 0);
+  /* eslint-enable no-param-reassign */
+  if (fullPrice > 0) {
+    return fullPrice.toFixed(cart.totalPrice.fractionDigits);
+  }
+  return null;
+};
