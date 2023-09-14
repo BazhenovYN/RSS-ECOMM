@@ -1,6 +1,6 @@
 import { Box, Card, CardActions, CardContent, CardHeader, CardMedia, Link, Stack, Typography } from '@mui/material';
-import photoBazhenov from 'assets/img/Iurii_Bazhenov - Copy.jpg';
-import photoFatkullin from 'assets/img/Vitaly_Fatkullin - Copy.jpg';
+import photoBazhenov from 'assets/img/Iurii_Bazhenov.jpg';
+import photoFatkullin from 'assets/img/Vitaly_Fatkullin.jpg';
 import styles from 'pages/AboutUsPage/AboutUsPage.module.scss';
 import GitHubIcon from '@mui/icons-material/GitHub';
 
