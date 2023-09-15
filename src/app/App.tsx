@@ -8,7 +8,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useEffect, useMemo, useState } from 'react';
 import AppContext, { Message } from 'context';
-import { login } from 'services/sdk/customer';
+import { login, logout } from 'services/sdk/customer';
 import AppRouter from 'router';
 import PopupMessage from 'components/PopupMessage';
 import { getCookie } from 'utils/cookie';
@@ -45,8 +45,11 @@ function App() {
     if (getCookie(CookieNames.authToken) || getCookie(CookieNames.refreshAuthToken)) {
       login()
         .then(() => setIsAuth(true))
-        .then(() => getActiveCart(true).then((foundCart) => setCart(foundCart)))
-        .finally(() => setIsLoading(() => false));
+        .catch(() => logout())
+        .finally(() => {
+          getActiveCart(true).then((foundCart) => setCart(foundCart));
+          setIsLoading(() => false);
+        });
     } else {
       getActiveCart(false)
         .then((foundCart) => setCart(foundCart))

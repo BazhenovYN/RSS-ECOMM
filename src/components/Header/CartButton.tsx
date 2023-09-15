@@ -1,12 +1,18 @@
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { IconButton } from '@mui/material';
+import { Badge, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import AppContext from 'context';
 
 function CartButton() {
   const navigate = useNavigate();
+  const appContext = useContext(AppContext);
+  const cartCount = appContext?.cart?.totalLineItemQuantity;
   return (
     <IconButton onClick={() => navigate('/basket')} size="large">
-      <ShoppingCartIcon />
+      <Badge badgeContent={cartCount} color="primary">
+        <ShoppingCartIcon />
+      </Badge>
     </IconButton>
   );
 }
