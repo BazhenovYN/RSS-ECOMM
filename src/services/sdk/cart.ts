@@ -56,7 +56,6 @@ export const deleteActiveCart = async (cart: Cart, isAuth: boolean = false) => {
   const queryArgs = { version: cart.version };
   const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
   await getRoot().me().carts().withId({ ID: cart.id }).delete({ queryArgs }).execute();
-  return null;
 };
 
 export const changeLineItemQuantity = async (

@@ -1,8 +1,7 @@
 import { DEFAULT_LANGUAGE } from 'constants/const';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
-import type { Cart } from '@commercetools/platform-sdk';
 import {
   Box,
   Button,
@@ -19,10 +18,9 @@ import {
   Typography,
 } from '@mui/material';
 import AppContext from 'context';
-import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
 import Counter from 'components/Counter';
 import Loader from 'components/Loader';
-import { changeLineItemQuantity, deleteActiveCart, getActiveCart, removeLineItem } from 'services/sdk/cart';
+import { changeLineItemQuantity, deleteActiveCart, removeLineItem } from 'services/sdk/cart';
 import EmptyCart from './EmptyCart';
 
 const getMoneyValue = (value: number, fractionDigits: number) => {
@@ -34,24 +32,17 @@ function ShoppingCart() {
   const isAuth = appContext?.isAuth ?? false;
   const language = appContext?.language ?? DEFAULT_LANGUAGE;
   const setMessage = appContext?.setMessage;
+  const cart = appContext?.cart;
+  const setCart = appContext?.setCart;
 
   const [isCartUpdate, setIsCartUpdate] = useState(false);
-
-  const [cart, setCart] = useState<Cart | null>();
-
-  const getCart = useMemo(() => {
-    return async () => {
-      const data = await getActiveCart(isAuth);
-      setCart(data);
-    };
-  }, [isAuth]);
 
   const handleCartOperation = async (operation: Function, ...args: (string | number | boolean)[]): Promise<boolean> => {
     if (!cart) return false;
     try {
       setIsCartUpdate(true);
       const newCart = await operation(cart, ...args);
-      setCart(newCart);
+      if (setCart) setCart(newCart);
       return true;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -62,22 +53,17 @@ function ShoppingCart() {
     }
   };
 
-  const setProductQuantity = (lineItemId: string, quantity: number) => {
+  const setProductQuantity = (lineItemId: string, quantity: number) =>
     handleCartOperation(changeLineItemQuantity, lineItemId, quantity, isAuth);
-  };
 
-  const removeProduct = (lineItemId: string) => {
-    handleCartOperation(removeLineItem, lineItemId, isAuth);
-  };
+  const removeProduct = (lineItemId: string) => handleCartOperation(removeLineItem, lineItemId, isAuth);
 
-  const clearShoppingCart = () => {
-    handleCartOperation(deleteActiveCart, isAuth);
-  };
+  const clearShoppingCart = () => handleCartOperation(deleteActiveCart, isAuth);
 
   const isCartEmpty = !(cart && cart.lineItems.length > 0);
 
   return (
-    <ContentLoaderWrapper loadingLogic={getCart}>
+    <>
       {!isCartEmpty && (
         <Container maxWidth="lg">
           <TableContainer component={Paper} sx={{ borderColor: 'primary.main' }}>
@@ -158,7 +144,7 @@ function ShoppingCart() {
       )}
       {isCartEmpty && <EmptyCart />}
       {isCartUpdate && <Loader transparent />}
-    </ContentLoaderWrapper>
+    </>
   );
 }
 

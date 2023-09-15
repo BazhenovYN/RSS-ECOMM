@@ -30,13 +30,14 @@ function ProductPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [count, setCount] = useState(1);
 
-  const [cart, setCart] = useState<Cart | null>(null);
+  const cart = appContext?.cart;
+  const setCart = appContext?.setCart;
   const [isInCart, setIsInCart] = useState(false);
   const [waitForCartUpdate, setWaitForCartUpdate] = useState(false);
   const lineItemId = useMemo(() => findCartItemInCart(cart?.lineItems || [], productId)?.id ?? '', [cart, productId]);
 
   const updateProductFromNewCart = useCallback(
-    (newCart: Cart | null) => {
+    (newCart: Cart | undefined) => {
       if (!productId) {
         if (setMessage) setMessage({ severity: 'error', text: 'Product not found' });
         return;
@@ -60,25 +61,18 @@ function ProductPage() {
   const getProduct = useCallback(async () => {
     const data = await getProductDetails(productId);
     setProduct(data);
-    const newCart = await getActiveCart(isAuth);
-    setCart(newCart);
-    updateProductFromNewCart(newCart);
-  }, [productId, isAuth, updateProductFromNewCart]);
+  }, [productId]);
 
   const handleCartOperation = async (
     operation: Function,
     successMessage: string,
     ...args: (string | number | boolean)[]
   ) => {
-    if (!cart) {
-      if (setMessage) setMessage({ severity: 'error', text: 'Cart not found' });
-      return;
-    }
-
+    setWaitForCartUpdate(true);
     try {
-      setWaitForCartUpdate(true);
-      const newCart = await operation(cart, ...args);
-      setCart(newCart);
+      let newCart = cart || (await getActiveCart(isAuth));
+      newCart = await operation(newCart, ...args);
+      if (setCart) setCart(newCart);
       if (setMessage) setMessage({ severity: 'success', text: successMessage });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';

@@ -5,18 +5,19 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AppContext from 'context';
 import { logout } from 'services/sdk/customer';
+import { getActiveCart } from 'services/sdk/cart';
 
 function UserProfileButton() {
   const appContext = useContext(AppContext);
   const setIsAuth = appContext?.setIsAuth;
+  const setCart = appContext?.setCart;
 
   const navigate = useNavigate();
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     logout();
-    if (setIsAuth) {
-      setIsAuth(false);
-    }
+    if (setIsAuth) setIsAuth(false);
+    if (setCart) setCart(await getActiveCart(false));
     navigate('/');
   };
 
