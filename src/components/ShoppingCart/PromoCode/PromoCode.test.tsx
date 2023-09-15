@@ -3,7 +3,7 @@ import PromoCode from './PromoCode';
 
 describe('PromoCode', () => {
   test('renders correctly', () => {
-    render(<PromoCode onApply={jest.fn()} />);
+    render(<PromoCode onApply={jest.fn()} onReset={jest.fn()} />);
 
     const promo = screen.getByTestId('promoCode');
     expect(promo).toBeInTheDocument();
@@ -17,7 +17,7 @@ describe('PromoCode', () => {
 
   test('promo code applied correctly', async () => {
     const onApply = jest.fn();
-    render(<PromoCode onApply={onApply} />);
+    render(<PromoCode onApply={onApply} onReset={jest.fn()} />);
 
     const input = screen.getByLabelText('Promo code');
     fireEvent.change(input, { target: { value: 'PROMO' } });
@@ -30,6 +30,18 @@ describe('PromoCode', () => {
     });
     await waitFor(() => {
       expect(onApply).toBeCalledWith('PROMO');
+    });
+  });
+
+  test('promo code reset correctly', async () => {
+    const onReset = jest.fn();
+    render(<PromoCode onApply={jest.fn()} onReset={onReset} code="PROMO" />);
+
+    const resetButton = screen.getByRole('button', { name: 'Reset' });
+    fireEvent.click(resetButton);
+
+    await waitFor(() => {
+      expect(onReset).toHaveBeenCalledTimes(1);
     });
   });
 });

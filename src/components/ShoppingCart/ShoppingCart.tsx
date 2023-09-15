@@ -13,6 +13,7 @@ import {
   deleteActiveCart,
   getActiveCart,
   getDiscountCode,
+  removeDiscountCode,
   removeLineItem,
 } from 'services/sdk/cart';
 import EmptyCart from './EmptyCart';
@@ -77,6 +78,15 @@ function ShoppingCart() {
     }
   };
 
+  const resetPromoCode = async () => {
+    if (!cart) return;
+    const discountID = getDiscountID(cart);
+    if (discountID) {
+      handleCartOperation(removeDiscountCode, discountID, isAuth);
+    }
+    setPromoCode(undefined);
+  };
+
   const isCartEmpty = !(cart && cart.lineItems.length > 0);
   const totalPrice = cart ? getMoneyValue(cart.totalPrice) : null;
   const totalPriceWithoutDiscount = cart ? getTotalPriceWithoutDiscount(cart) : null;
@@ -123,7 +133,7 @@ function ShoppingCart() {
           </Stack>
           <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={4}>
             <Box display="flex" justifyContent="center">
-              <PromoCode onApply={applyPromoCode} code={promoCode} disabled={!!promoCode} />
+              <PromoCode onApply={applyPromoCode} onReset={resetPromoCode} code={promoCode} disabled={!!promoCode} />
             </Box>
             <Box display="flex" justifyContent="center">
               <Button

@@ -9,11 +9,12 @@ interface IFormValues {
 
 interface IProps {
   onApply: (code: string) => void;
+  onReset: () => void;
   code?: string;
   disabled?: boolean;
 }
 
-function PromoCode({ onApply, code = '', disabled = false }: IProps) {
+function PromoCode({ onApply, onReset, code = '', disabled = false }: IProps) {
   const {
     register,
     handleSubmit,
@@ -39,9 +40,16 @@ function PromoCode({ onApply, code = '', disabled = false }: IProps) {
           helperText={errors.code?.message}
           disabled={disabled}
         />
-        <Button type="submit" variant="contained" color="primary" disabled={disabled}>
-          Apply
-        </Button>
+        {!code && (
+          <Button type="submit" variant="contained" color="primary">
+            Apply
+          </Button>
+        )}
+        {code && (
+          <Button type="button" variant="contained" color="primary" onClick={onReset}>
+            Reset
+          </Button>
+        )}
       </Stack>
     </Box>
   );

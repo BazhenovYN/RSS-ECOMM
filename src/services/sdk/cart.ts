@@ -95,6 +95,19 @@ export const addDiscountCode = async (cart: Cart, code: string, isAuth: boolean 
   return updateCart(cart, actions, isAuth);
 };
 
+export const removeDiscountCode = async (cart: Cart, discountID: string, isAuth: boolean = false) => {
+  const actions: MyCartUpdateAction[] = [
+    {
+      action: 'removeDiscountCode',
+      discountCode: {
+        typeId: 'discount-code',
+        id: discountID,
+      },
+    },
+  ];
+  return updateCart(cart, actions, isAuth);
+};
+
 export const getDiscountCode = async (ID: string) => {
   const response = await getAppApiRoot().discountCodes().withId({ ID }).get().execute();
   return response.body;
