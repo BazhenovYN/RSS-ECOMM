@@ -1,31 +1,22 @@
 import { DEFAULT_LANGUAGE } from 'constants/const';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import AddIcon from '@mui/icons-material/Add';
+import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
-import {
-  Box,
-  Button,
-  Container,
-  IconButton,
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from '@mui/material';
 import AppContext from 'context';
-import Counter from 'components/Counter';
 import Loader from 'components/Loader';
-import { changeLineItemQuantity, deleteActiveCart, removeLineItem } from 'services/sdk/cart';
+import {
+  addDiscountCode,
+  changeLineItemQuantity,
+  deleteActiveCart,
+  getDiscountCode,
+  removeDiscountCode,
+  removeLineItem,
+} from 'services/sdk/cart';
 import EmptyCart from './EmptyCart';
-
-const getMoneyValue = (value: number, fractionDigits: number) => {
-  return value / 10 ** fractionDigits;
-};
+import Products from './Products';
+import PromoCode from './PromoCode';
+import { getDiscountID, getMoneyValue, getTotalPriceWithoutDiscount } from './utils';
 
 function ShoppingCart() {
   const appContext = useContext(AppContext);
@@ -35,7 +26,18 @@ function ShoppingCart() {
   const cart = appContext?.cart;
   const setCart = appContext?.setCart;
 
+  const [isMounted, setIsMounted] = useState(false);
   const [isCartUpdate, setIsCartUpdate] = useState(false);
+  const [promoCode, setPromoCode] = useState<string | undefined>();
+
+  useEffect(() => {
+    if (!cart || isMounted) {
+      return;
+    }
+    const discountID = getDiscountID(cart);
+    if (discountID) getDiscountCode(discountID).then((discount) => setPromoCode(discount.code));
+    setIsMounted(true);
+  }, [cart, isMounted]);
 
   const handleCartOperation = async (operation: Function, ...args: (string | number | boolean)[]): Promise<boolean> => {
     if (!cart) return false;
@@ -60,85 +62,79 @@ function ShoppingCart() {
 
   const clearShoppingCart = () => handleCartOperation(deleteActiveCart, isAuth);
 
+  const applyPromoCode = async (code: string) => {
+    const isCodeApplied = await handleCartOperation(addDiscountCode, code, isAuth);
+    if (isCodeApplied) {
+      setPromoCode(code);
+    }
+  };
+
+  const resetPromoCode = async () => {
+    if (!cart) return;
+    const discountID = getDiscountID(cart);
+    if (discountID) {
+      await handleCartOperation(removeDiscountCode, discountID, isAuth);
+    }
+    setPromoCode(undefined);
+  };
+
   const isCartEmpty = !(cart && cart.lineItems.length > 0);
+  const totalPrice = cart ? getMoneyValue(cart.totalPrice) : null;
+  const totalPriceWithoutDiscount = cart ? getTotalPriceWithoutDiscount(cart) : null;
+  const currency = cart?.totalPrice.currencyCode ?? '';
 
   return (
     <>
       {!isCartEmpty && (
         <Container maxWidth="lg">
-          <TableContainer component={Paper} sx={{ borderColor: 'primary.main' }}>
-            <Table sx={{ minWidth: 650 }} size="small">
-              <TableHead sx={{ backgroundColor: 'primary.main' }}>
-                <TableRow>
-                  <TableCell>№</TableCell>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Image</TableCell>
-                  <TableCell align="center">Quantity</TableCell>
-                  <TableCell align="right">Price, {cart.totalPrice.currencyCode}</TableCell>
-                  <TableCell align="right">Discounted, {cart.totalPrice.currencyCode}</TableCell>
-                  <TableCell align="right">Total, {cart.totalPrice.currencyCode}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {cart.lineItems.map((item, index) => (
-                  <TableRow key={item.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <TableCell>
-                      {index + 1}
-                      <IconButton sx={{ ml: 1 }} onClick={() => removeProduct(item.id)}>
-                        <DeleteForeverRoundedIcon />
-                      </IconButton>
-                    </TableCell>
-                    <TableCell>{item.name[language]}</TableCell>
-                    <TableCell>
-                      <Box
-                        sx={{
-                          width: '100px',
-                          height: '70px',
-                          backgroundColor: 'black',
-                          backgroundRepeat: 'no-repeat',
-                          backgroundPosition: 'center',
-                          backgroundImage: `url(${item.variant.images ? item.variant.images[0].url : ''})`,
-                          backgroundSize: 'cover',
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell align="center">
-                      <Box display="flex" justifyContent="center">
-                        <Counter
-                          count={item.quantity}
-                          setCount={(quantity: number) => setProductQuantity(item.id, quantity)}
-                        />
-                      </Box>
-                    </TableCell>
-                    <TableCell align="right">
-                      {getMoneyValue(item.price.value.centAmount, item.price.value.fractionDigits)}
-                    </TableCell>
-                    <TableCell align="right">
-                      {item.price.discounted
-                        ? getMoneyValue(
-                            item.price.discounted.value.centAmount,
-                            item.price.discounted.value.fractionDigits
-                          )
-                        : '--'}
-                    </TableCell>
-                    <TableCell align="right">
-                      {getMoneyValue(item.totalPrice.centAmount, item.totalPrice.fractionDigits)}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <Stack direction="row" spacing={2} justifyContent="space-between" mt={2} mr={2}>
+          <Products
+            cart={cart}
+            currency={currency}
+            language={language}
+            setProductQuantity={setProductQuantity}
+            removeProduct={removeProduct}
+          />
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={2}
+            justifyContent="space-between"
+            mt={2}
+            mr={2}
+            mb={6}>
             <Button startIcon={<DeleteIcon />} onClick={clearShoppingCart}>
               Clear Shopping Cart
             </Button>
-            <Stack direction="row">
-              <Typography variant="h6">Total, {cart.totalPrice.currencyCode}:</Typography>
-              <Typography component="div" variant="h6">
-                {getMoneyValue(cart.totalPrice.centAmount, cart.totalPrice.fractionDigits)}
-              </Typography>
-            </Stack>
+            <Box>
+              {totalPriceWithoutDiscount !== totalPrice && (
+                <Typography textAlign={{ xs: 'center', sm: 'right' }} color="grey.600">
+                  <s>
+                    {currency} {totalPriceWithoutDiscount}
+                  </s>
+                </Typography>
+              )}
+              {totalPrice && (
+                <Stack direction="row" spacing={1} justifyContent="center">
+                  <Typography variant="h6">Total, {currency}:</Typography>
+                  <Typography component="div" variant="h6">
+                    {totalPrice}
+                  </Typography>
+                </Stack>
+              )}
+            </Box>
+          </Stack>
+          <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={4}>
+            <Box display="flex" justifyContent="center">
+              <PromoCode onApply={applyPromoCode} onReset={resetPromoCode} code={promoCode} disabled={!!promoCode} />
+            </Box>
+            <Box display="flex" justifyContent="center">
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
+                sx={{ maxWidth: 'max-content', py: 2 }}>
+                Place order
+              </Button>
+            </Box>
           </Stack>
         </Container>
       )}

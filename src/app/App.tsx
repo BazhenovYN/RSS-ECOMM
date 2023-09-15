@@ -44,11 +44,17 @@ function App() {
   useEffect(() => {
     if (getCookie(CookieNames.authToken) || getCookie(CookieNames.refreshAuthToken)) {
       login()
-        .then(() => setIsAuth(true))
-        .catch(() => logout())
-        .finally(() => {
-          getActiveCart(true).then((foundCart) => setCart(foundCart));
-          setIsLoading(() => false);
+        .then(() => {
+          setIsAuth(true);
+          getActiveCart(true)
+            .then((foundCart) => setCart(foundCart))
+            .finally(() => setIsLoading(false));
+        })
+        .catch(() => {
+          logout();
+          getActiveCart(false)
+            .then((foundCart) => setCart(foundCart))
+            .finally(() => setIsLoading(false));
         });
     } else {
       getActiveCart(false)

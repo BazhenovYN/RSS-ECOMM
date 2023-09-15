@@ -1,5 +1,5 @@
 import { DEFAULT_CURRENCY } from 'constants/const';
-import { getAnonymousApiRoot, getCustomerApiRoot } from 'services/sdk/client';
+import { getAnonymousApiRoot, getAppApiRoot, getCustomerApiRoot } from 'services/sdk/client';
 import { Cart, MyCartDraft, MyCartUpdate, MyCartUpdateAction } from '@commercetools/platform-sdk';
 
 const createCartDraft = (): MyCartDraft => {
@@ -82,4 +82,37 @@ export const removeLineItem = async (cart: Cart, lineItemId: string, isAuth: boo
     },
   ];
   return updateCart(cart, actions, isAuth);
+};
+
+export const addDiscountCode = async (cart: Cart, code: string, isAuth: boolean = false) => {
+  const actions: MyCartUpdateAction[] = [
+    {
+      action: 'addDiscountCode',
+      code: code.toUpperCase(),
+    },
+  ];
+  return updateCart(cart, actions, isAuth);
+};
+
+export const removeDiscountCode = async (cart: Cart, discountID: string, isAuth: boolean = false) => {
+  const actions: MyCartUpdateAction[] = [
+    {
+      action: 'removeDiscountCode',
+      discountCode: {
+        typeId: 'discount-code',
+        id: discountID,
+      },
+    },
+  ];
+  return updateCart(cart, actions, isAuth);
+};
+
+export const getDiscountCode = async (ID: string) => {
+  const response = await getAppApiRoot().discountCodes().withId({ ID }).get().execute();
+  return response.body;
+};
+
+export const getDiscountCodes = async () => {
+  const response = await getAppApiRoot().discountCodes().get().execute();
+  return response.body.results;
 };
