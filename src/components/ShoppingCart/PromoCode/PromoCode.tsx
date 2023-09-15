@@ -1,6 +1,7 @@
 import validationSchemes from 'constants/validationSchemes';
 import { useForm } from 'react-hook-form';
 import { Box, Button, Stack, TextField } from '@mui/material';
+import { useEffect } from 'react';
 
 interface IFormValues {
   code: string;
@@ -18,7 +19,12 @@ function PromoCode({ onApply, onReset, code = '', disabled = false }: IProps) {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<IFormValues>();
+
+  useEffect(() => {
+    setValue('code', code);
+  }, [code, setValue]);
 
   const onSubmit = async (data: IFormValues): Promise<void> => {
     onApply(data.code);
@@ -33,7 +39,7 @@ function PromoCode({ onApply, onReset, code = '', disabled = false }: IProps) {
           error={!!errors.code}
           helperText={errors.code?.message}
           disabled={disabled}
-          value={code}
+          name="code"
         />
         {!code && (
           <Button type="submit" variant="contained" color="primary">

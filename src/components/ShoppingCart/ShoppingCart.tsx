@@ -1,5 +1,5 @@
 import { DEFAULT_LANGUAGE } from 'constants/const';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -13,6 +13,7 @@ import {
   removeDiscountCode,
   removeLineItem,
 } from 'services/sdk/cart';
+import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
 import EmptyCart from './EmptyCart';
 import Products from './Products';
 import PromoCode from './PromoCode';
@@ -30,12 +31,15 @@ function ShoppingCart() {
   const [isCartUpdate, setIsCartUpdate] = useState(false);
   const [promoCode, setPromoCode] = useState<string | undefined>();
 
-  useEffect(() => {
+  const getDiscount = useCallback(async () => {
     if (!cart || isMounted) {
       return;
     }
     const discountID = getDiscountID(cart);
-    if (discountID) getDiscountCode(discountID).then((discount) => setPromoCode(discount.code));
+    if (discountID) {
+      const discount = await getDiscountCode(discountID);
+      setPromoCode(discount.code);
+    }
     setIsMounted(true);
   }, [cart, isMounted]);
 
@@ -123,9 +127,11 @@ function ShoppingCart() {
             </Box>
           </Stack>
           <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={4}>
-            <Box display="flex" justifyContent="center">
-              <PromoCode onApply={applyPromoCode} onReset={resetPromoCode} code={promoCode} disabled={!!promoCode} />
-            </Box>
+            <ContentLoaderWrapper loadingLogic={getDiscount}>
+              <Box display="flex" justifyContent="center">
+                <PromoCode onApply={applyPromoCode} onReset={resetPromoCode} code={promoCode} disabled={!!promoCode} />
+              </Box>
+            </ContentLoaderWrapper>
             <Box display="flex" justifyContent="center">
               <Button
                 variant="contained"
