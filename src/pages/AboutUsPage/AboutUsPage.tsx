@@ -17,7 +17,7 @@ import photoBazhenov from 'assets/img/Iurii_Bazhenov.jpg';
 import photoFatkullin from 'assets/img/Vitaly_Fatkullin.jpg';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { Diversity3, QuestionAnswer, Sms, Star, Task } from '@mui/icons-material';
-import styles from 'pages/AboutUsPage/AboutUsPage.module.scss';
+import styles from './AboutUsPage.module.scss';
 
 // eslint-disable-next-line max-lines-per-function
 function AboutUsPage() {
