@@ -8,11 +8,12 @@ import ImageSlider from 'components/ImageSlider';
 import FullScreenImageSlider from 'components/FullScreenImageSlider';
 import PriceField from 'components/PriceField';
 import { getProductDetails } from 'services/sdk/product';
-import { getProductDescription, getProductName, findCartItemInCart } from 'utils/utils';
+import { getProductDescription, getProductName, findLineItemInList } from 'utils/utils';
 import type { Product } from 'types/types';
 import { addToCart, getActiveCart, removeLineItem } from 'services/sdk/cart';
 import { Cart } from '@commercetools/platform-sdk';
 import Loader from 'components/Loader';
+import WishListToggle from 'components/WishListToggle';
 
 function ProductPage() {
   const appContext = useContext(AppContext);
@@ -32,8 +33,8 @@ function ProductPage() {
 
   const [cart, setCart] = useState<Cart | null>(null);
   const [isInCart, setIsInCart] = useState(false);
-  const [waitForCartUpdate, setWaitForCartUpdate] = useState(false);
-  const lineItemId = useMemo(() => findCartItemInCart(cart?.lineItems || [], productId)?.id ?? '', [cart, productId]);
+  const [isLoading, setIsLoading] = useState(false);
+  const lineItemId = useMemo(() => findLineItemInList(cart?.lineItems || [], productId)?.id ?? '', [cart, productId]);
 
   const updateProductFromNewCart = useCallback(
     (newCart: Cart | null) => {
@@ -42,7 +43,7 @@ function ProductPage() {
         return;
       }
 
-      const lineItem = findCartItemInCart(newCart?.lineItems || [], productId);
+      const lineItem = findLineItemInList(newCart?.lineItems || [], productId);
       if (lineItem) {
         setIsInCart(true);
         setCount(lineItem.quantity);
@@ -76,7 +77,7 @@ function ProductPage() {
     }
 
     try {
-      setWaitForCartUpdate(true);
+      setIsLoading(true);
       const newCart = await operation(cart, ...args);
       setCart(newCart);
       if (setMessage) setMessage({ severity: 'success', text: successMessage });
@@ -84,7 +85,7 @@ function ProductPage() {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       if (setMessage) setMessage({ severity: 'error', text: errorMessage });
     } finally {
-      setWaitForCartUpdate(false);
+      setIsLoading(false);
     }
   };
 
@@ -96,7 +97,7 @@ function ProductPage() {
 
   return (
     <ContentLoaderWrapper loadingLogic={getProduct}>
-      {waitForCartUpdate && <Loader transparent />}
+      {isLoading && <Loader transparent />}
       <Box>
         <Typography component="h2" variant="h2" mb={2}>
           Product
@@ -120,6 +121,7 @@ function ProductPage() {
                 <Button variant="contained" onClick={handleDeleteFromBasket} disabled={!isInCart}>
                   Remove from basket
                 </Button>
+                {product && <WishListToggle productId={product.id} setLoading={setIsLoading} />}
               </Stack>
             </Stack>
           </Grid>

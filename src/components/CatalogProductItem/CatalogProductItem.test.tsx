@@ -33,6 +33,8 @@ const appContext: IAppContext = {
   },
   setMessage: () => {},
   language: DEFAULT_LANGUAGE,
+  wishList: undefined,
+  setWishList: () => {},
 };
 
 describe('CatalogProductItem', () => {

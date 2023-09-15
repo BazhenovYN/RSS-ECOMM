@@ -14,10 +14,11 @@ import {
 } from '@mui/material';
 import { Product } from 'types/types';
 import { Link as RouterLink } from 'react-router-dom';
-import { getProductDescription, getProductName, findCartItemInCart } from 'utils/utils';
+import { getProductDescription, getProductName, findLineItemInList } from 'utils/utils';
 import PriceField from 'components/PriceField';
 import { addToCart } from 'services/sdk/cart';
 import { Cart } from '@commercetools/platform-sdk';
+import WishListToggle from 'components/WishListToggle';
 
 interface CatalogProductItemProps {
   product: Product;
@@ -39,8 +40,9 @@ function CatalogProductItem({ product, setWaitForCartUpdate, cart }: CatalogProd
 
   const cartItems = useMemo(() => cart?.lineItems || [], [cart]);
   const [isInCart, setIsInCart] = useState(false);
+
   useEffect(() => {
-    setIsInCart(!!findCartItemInCart(cartItems, product.id));
+    setIsInCart(!!findLineItemInList(cartItems, product.id));
   }, [product.id, cartItems]);
 
   const handleAddToCart = async (event: MouseEvent) => {
@@ -104,10 +106,11 @@ function CatalogProductItem({ product, setWaitForCartUpdate, cart }: CatalogProd
           <PriceField product={product} />
         </CardContent>
       )}
-      <CardActions>
+      <CardActions sx={{ justifyContent: 'space-between', padding: 2 }}>
         <Button variant="contained" onClick={handleAddToCart} disabled={isInCart}>
           Add to basket
         </Button>
+        <WishListToggle productId={product.id} setLoading={setWaitForCartUpdate} />
       </CardActions>
     </Card>
   );

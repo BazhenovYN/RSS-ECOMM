@@ -28,6 +28,8 @@ describe('AddressCard', () => {
           setIsAuth: jest.fn,
           message: { text: null, severity: undefined },
           language: DEFAULT_LANGUAGE,
+          wishList: undefined,
+          setWishList: () => {},
         }}>
         <AddressCard
           address={address}
