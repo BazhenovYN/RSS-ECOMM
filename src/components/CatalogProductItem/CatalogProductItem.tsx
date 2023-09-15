@@ -49,7 +49,7 @@ function CatalogProductItem({ product, setWaitForCartUpdate }: CatalogProductIte
     try {
       setWaitForCartUpdate(true);
 
-      let newCart = cart || (await getActiveCart());
+      let newCart = cart || (await getActiveCart(isAuth));
       newCart = await addToCart(newCart, product.id, isAuth);
       if (setCart) setCart(newCart);
       setIsInCart(true);

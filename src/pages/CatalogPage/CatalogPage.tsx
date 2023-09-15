@@ -42,7 +42,7 @@ function CatalogPage() {
     if (isXs) return 2;
     if (isSm) return 4;
     if (isLg) return 6;
-    return 4;
+    return 8;
   });
 
   useEffect(() => {
