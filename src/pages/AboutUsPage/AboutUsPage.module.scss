@@ -1,15 +1,32 @@
-.card {
+.about .title {
+  @media screen and (max-width: 800px) {
+    text-align: start;
+  }
+}
+
+.about .members {
+  @media screen and (max-width: 800px) {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+.about .card {
   display: flex;
   flex: 1;
   flex-direction: column;
+
+  @media screen and (max-width: 800px) {
+    margin: 0;
+  }
 }
 
-.card-image {
+.about .card-image {
   height: 530px;
   min-height: 530px;
 }
 
-.card-github {
+.about .card-github {
   color: #000000;
   transition: transform 0.2s ease-in-out;
   &:hover {
@@ -17,12 +34,16 @@
   }
 }
 
-.list {
+.about .list {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @media screen and (max-width: 800px) {
+    align-items: flex-start;
+  }
 }
 
-.list-item {
+.about .list-item {
   width: auto;
 }

@@ -15,21 +15,21 @@ import {
 } from '@mui/material';
 import photoBazhenov from 'assets/img/Iurii_Bazhenov.jpg';
 import photoFatkullin from 'assets/img/Vitaly_Fatkullin.jpg';
-import styles from 'pages/AboutUsPage/AboutUsPage.module.scss';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { Diversity3, QuestionAnswer, Sms, Star, Task } from '@mui/icons-material';
+import styles from 'pages/AboutUsPage/AboutUsPage.module.scss';
 
 // eslint-disable-next-line max-lines-per-function
 function AboutUsPage() {
   return (
-    <Box>
+    <Box className={styles.about}>
       <Typography component="h2" variant="h2" mb={2}>
         About Us
       </Typography>
-      <Typography component="h3" variant="h3" textAlign="center" mb={3}>
+      <Typography className={styles.title} component="h3" variant="h3" textAlign="center" mb={3}>
         Team Members
       </Typography>
-      <Stack direction="row" spacing={3} maxWidth="1084px" ml="auto" mr="auto" mb={6}>
+      <Stack className={styles.members} direction="row" spacing={3} maxWidth="1084px" ml="auto" mr="auto" mb={6}>
         <Card className={styles.card}>
           <CardMedia className={styles['card-image']} component="img" image={photoBazhenov} alt="Iurii Bazhenov" />
           <CardHeader title="Iurii Bazhenov" titleTypographyProps={{ fontWeight: '700' }} />
@@ -69,25 +69,23 @@ function AboutUsPage() {
             <Typography component="h6" variant="h6">
               Contribution:
             </Typography>
-            <Typography>
-              <List>
-                <ListItem>
-                  <ListItemText primary="Participated in analyzing and selecting technical solutions, tools and libraries used in the project" />
-                </ListItem>
-                <ListItem>
-                  <ListItemText primary="Conducted prioritization and distribution of tasks" />
-                </ListItem>
-                <ListItem>
-                  <ListItemText primary="Ensured communication and collaboration within the team" />
-                </ListItem>
-                <ListItem>
-                  <ListItemText primary="Implemented a number of key mechanisms such as a personal user account, shopping cart and many others" />
-                </ListItem>
-                <ListItem>
-                  <ListItemText primary="Performed testing of new functionality, user interface and overall performance of the application" />
-                </ListItem>
-              </List>
-            </Typography>
+            <List>
+              <ListItem>
+                <ListItemText primary="Participated in analyzing and selecting technical solutions, tools and libraries used in the project" />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Conducted prioritization and distribution of tasks" />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Ensured communication and collaboration within the team" />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Implemented a number of key mechanisms such as a personal user account, shopping cart and many others" />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Performed testing of new functionality, user interface and overall performance of the application" />
+              </ListItem>
+            </List>
           </CardContent>
           <CardActions sx={{ marginTop: 'auto' }}>
             <Link href="https://github.com/BazhenovYN" target="_blank">
@@ -156,10 +154,10 @@ function AboutUsPage() {
         </Card>
       </Stack>
       <Stack maxWidth="1084px" mr="auto" ml="auto" mb={3}>
-        <Typography component="h3" variant="h3" textAlign="center" mb={3}>
+        <Typography component="h3" variant="h3" textAlign="center" mb={3} className={styles.title}>
           Collaboration
         </Typography>
-        <Typography component="h5" variant="h5" textAlign="center" mb={2}>
+        <Typography component="h5" variant="h5" textAlign="center" mb={2} className={styles.title}>
           To achieve a successful outcome, we adhered to the following principles:
         </Typography>
         <List className={styles.list}>
