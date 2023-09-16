@@ -26,10 +26,14 @@ describe('AddressCard', () => {
           setMessage: jest.fn,
           isAuth: true,
           setIsAuth: jest.fn,
+          signInUser: () => Promise.resolve(true),
+          signOutUser: () => Promise.resolve(true),
           message: { text: null, severity: undefined },
           language: DEFAULT_LANGUAGE,
+          cart: undefined,
+          setCart: jest.fn,
           wishList: undefined,
-          setWishList: () => {},
+          setWishList: jest.fn,
         }}>
         <AddressCard
           address={address}

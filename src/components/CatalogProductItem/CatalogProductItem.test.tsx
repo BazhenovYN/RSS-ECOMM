@@ -27,14 +27,18 @@ const product: Product = {
 const appContext: IAppContext = {
   isAuth: false,
   setIsAuth: () => {},
+  signInUser: () => Promise.resolve(true),
+  signOutUser: () => Promise.resolve(true),
   message: {
     text: null,
     severity: undefined,
   },
   setMessage: () => {},
   language: DEFAULT_LANGUAGE,
+  cart: undefined,
+  setCart: jest.fn,
   wishList: undefined,
-  setWishList: () => {},
+  setWishList: jest.fn,
 };
 
 describe('CatalogProductItem', () => {
