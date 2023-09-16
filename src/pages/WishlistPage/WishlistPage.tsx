@@ -8,7 +8,6 @@ import type { Product } from 'types/types';
 
 function WishlistPage() {
   const appContext = useContext(AppContext);
-  const cart = appContext?.cart;
   const wishlist = appContext?.wishList;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +29,7 @@ function WishlistPage() {
       <Typography component="h2" variant="h2" mb={2}>
         Wishlist
       </Typography>
-      <ProductList cart={cart} products={products} setIsLoading={setIsLoading} />
+      <ProductList products={products} setIsLoading={setIsLoading} />
     </Box>
   );
 }

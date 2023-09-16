@@ -2,7 +2,7 @@ import { DEFAULT_LANGUAGE } from 'constants/const';
 import sortingDirections from 'constants/sortingDirections';
 import { Grid, Pagination, Stack, Typography, useMediaQuery } from '@mui/material';
 import { getAttributes, searchProducts } from 'services/sdk/product';
-import { ChangeEvent, useContext, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import CatalogProductItem from 'components/CatalogProductItem';
 import { AttributesList, CategoriesList, Product, SearchParams, SelectedAttributesList } from 'types/types';
 import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
@@ -15,13 +15,10 @@ import { useParams } from 'react-router-dom';
 import { getCategories } from 'services/sdk/category';
 import BreadcrumbNavigation from 'components/BreadcrumbNavigation';
 import Loader from 'components/Loader';
-import { getActiveCart } from 'services/sdk/cart';
-import { Cart } from '@commercetools/platform-sdk';
 
 function CatalogPage() {
   const appContext = useContext(AppContext);
   const language = appContext?.language;
-  const isAuth = appContext?.isAuth;
   const { categoryId } = useParams();
   const sortingNameParameter = useMemo(() => `name.${language || DEFAULT_LANGUAGE}`, [language]);
   const sortingPriceParameter = 'price';
@@ -35,14 +32,18 @@ function CatalogPage() {
   const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<CategoriesList>({ mains: [], subs: [] });
   const [waitForCartUpdate, setWaitForCartUpdate] = useState(false);
-  const [cart, setCart] = useState<Cart>();
-  const [productsPerPage, setProductsPerPage] = useState(8);
   const [pagesCount, setPagesCount] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
 
   const isXs = useMediaQuery('(max-width:599px)');
   const isSm = useMediaQuery('(max-width:1199px)');
   const isLg = useMediaQuery('(max-width:1535px)');
+  const [productsPerPage, setProductsPerPage] = useState(() => {
+    if (isXs) return 2;
+    if (isSm) return 4;
+    if (isLg) return 6;
+    return 8;
+  });
 
   useEffect(() => {
     if (isXs) {
@@ -60,30 +61,26 @@ function CatalogPage() {
     setCurrentPage(1);
   }, [isXs, isSm, isLg, searchQuery, categoryId, selectedAttributes]);
 
-  const loadingProducts = useMemo(() => {
-    return async () => {
-      const searchParams: SearchParams = {
-        searchTextParameter,
-        searchQuery,
-        sortingField,
-        sortingDirection,
-        categoryId,
-      };
-
-      const allProducts = await searchProducts(searchParams);
-      setAttributes(getAttributes(allProducts.products));
-
-      setCart(await getActiveCart(isAuth));
-
-      const searchedFilteredProducts = await searchProducts({
-        ...searchParams,
-        selectedAttributes,
-        limit: productsPerPage,
-        offset: (currentPage - 1) * productsPerPage,
-      });
-      setDisplayedProducts(searchedFilteredProducts.products);
-      setPagesCount(Math.ceil(searchedFilteredProducts.total / productsPerPage) || 1);
+  const loadingProducts = useCallback(async () => {
+    const searchParams: SearchParams = {
+      searchTextParameter,
+      searchQuery,
+      sortingField,
+      sortingDirection,
+      categoryId,
     };
+
+    const allProducts = await searchProducts(searchParams);
+    setAttributes(getAttributes(allProducts.products));
+
+    const searchedFilteredProducts = await searchProducts({
+      ...searchParams,
+      selectedAttributes,
+      limit: productsPerPage,
+      offset: (currentPage - 1) * productsPerPage,
+    });
+    setDisplayedProducts(searchedFilteredProducts.products);
+    setPagesCount(Math.ceil(searchedFilteredProducts.total / productsPerPage) || 1);
   }, [
     searchTextParameter,
     searchQuery,
@@ -91,20 +88,15 @@ function CatalogPage() {
     sortingDirection,
     selectedAttributes,
     categoryId,
-    isAuth,
     currentPage,
     productsPerPage,
   ]);
 
-  const loadingCategories = useMemo(() => {
-    return async () => {
-      setCategories(await getCategories());
-    };
+  const loadingCategories = useCallback(async () => {
+    setCategories(await getCategories());
   }, []);
 
-  const handleChangePage = (_event: ChangeEvent<unknown>, value: number) => {
-    setCurrentPage(value);
-  };
+  const handleChangePage = (_event: ChangeEvent<unknown>, value: number) => setCurrentPage(value);
 
   return (
     <Stack gap={3} height="100%">
@@ -138,7 +130,7 @@ function CatalogPage() {
             <Grid container spacing={3}>
               {displayedProducts.map((product) => (
                 <Grid item xs={12} sm={6} lg={4} xl={3} key={product.id}>
-                  <CatalogProductItem product={product} setWaitForCartUpdate={setWaitForCartUpdate} cart={cart} />
+                  <CatalogProductItem product={product} setWaitForCartUpdate={setWaitForCartUpdate} />
                 </Grid>
               ))}
             </Grid>

@@ -16,20 +16,20 @@ import { Product } from 'types/types';
 import { Link as RouterLink } from 'react-router-dom';
 import { getProductDescription, getProductName, findLineItemInList } from 'utils/utils';
 import PriceField from 'components/PriceField';
-import { addToCart } from 'services/sdk/cart';
-import { Cart } from '@commercetools/platform-sdk';
 import WishListToggle from 'components/WishListToggle';
+import { addToCart, getActiveCart } from 'services/sdk/cart';
 
 interface CatalogProductItemProps {
   product: Product;
   setWaitForCartUpdate: Dispatch<SetStateAction<boolean>>;
-  cart?: Cart;
 }
 
-function CatalogProductItem({ product, setWaitForCartUpdate, cart }: CatalogProductItemProps) {
+function CatalogProductItem({ product, setWaitForCartUpdate }: CatalogProductItemProps) {
   const appContext = useContext(AppContext);
   const language = appContext?.language;
   const isAuth = appContext?.isAuth;
+  const cart = appContext?.cart;
+  const setCart = appContext?.setCart;
   const setMessage = appContext?.setMessage;
 
   const theme = useTheme();
@@ -38,7 +38,7 @@ function CatalogProductItem({ product, setWaitForCartUpdate, cart }: CatalogProd
   const name = useMemo(() => getProductName(product, language), [product, language]);
   const description = useMemo(() => getProductDescription(product, language), [product, language]);
 
-  const cartItems = useMemo(() => cart?.lineItems || [], [cart]);
+  const cartItems = useMemo(() => cart?.lineItems || [], [cart?.lineItems]);
   const [isInCart, setIsInCart] = useState(false);
 
   useEffect(() => {
@@ -47,14 +47,13 @@ function CatalogProductItem({ product, setWaitForCartUpdate, cart }: CatalogProd
 
   const handleAddToCart = async (event: MouseEvent) => {
     event.preventDefault();
-    if (!cart) {
-      if (setMessage) setMessage({ severity: 'error', text: 'Cart not found' });
-      return;
-    }
 
     try {
       setWaitForCartUpdate(true);
-      await addToCart(cart, product.id, isAuth);
+
+      let newCart = cart || (await getActiveCart(isAuth));
+      newCart = await addToCart(newCart, product.id, isAuth);
+      if (setCart) setCart(newCart);
       setIsInCart(true);
     } catch (error) {
       if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });

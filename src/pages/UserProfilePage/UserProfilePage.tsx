@@ -1,4 +1,4 @@
-import { useState, ReactNode, SyntheticEvent, useMemo } from 'react';
+import { useState, ReactNode, SyntheticEvent, useCallback } from 'react';
 import { Box, Tab, Tabs, Typography } from '@mui/material';
 import type { Customer } from '@commercetools/platform-sdk';
 import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
@@ -53,11 +53,9 @@ function UserProfilePage() {
 
   const [user, setUser] = useState<Customer>(defaultCustomer);
 
-  const getUser = useMemo(() => {
-    return async () => {
-      const data = await getUserCustomer();
-      setUser(data);
-    };
+  const getUser = useCallback(async () => {
+    const data = await getUserCustomer();
+    setUser(data);
   }, []);
 
   return (

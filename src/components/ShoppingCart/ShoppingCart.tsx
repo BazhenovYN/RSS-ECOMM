@@ -1,21 +1,19 @@
 import { DEFAULT_LANGUAGE } from 'constants/const';
-import { useContext, useMemo, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import type { Cart } from '@commercetools/platform-sdk';
 import AppContext from 'context';
-import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
 import Loader from 'components/Loader';
 import {
   addDiscountCode,
   changeLineItemQuantity,
   deleteActiveCart,
-  getActiveCart,
   getDiscountCode,
   removeDiscountCode,
   removeLineItem,
 } from 'services/sdk/cart';
+import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
 import EmptyCart from './EmptyCart';
 import Products from './Products';
 import PromoCode from './PromoCode';
@@ -26,29 +24,31 @@ function ShoppingCart() {
   const isAuth = appContext?.isAuth ?? false;
   const language = appContext?.language ?? DEFAULT_LANGUAGE;
   const setMessage = appContext?.setMessage;
+  const cart = appContext?.cart;
+  const setCart = appContext?.setCart;
 
+  const [isMounted, setIsMounted] = useState(false);
   const [isCartUpdate, setIsCartUpdate] = useState(false);
-  const [cart, setCart] = useState<Cart | null>();
   const [promoCode, setPromoCode] = useState<string | undefined>();
 
-  const getCart = useMemo(() => {
-    return async () => {
-      const data = await getActiveCart(isAuth);
-      setCart(data);
-      const discountID = getDiscountID(data);
-      if (discountID) {
-        const discount = await getDiscountCode(discountID);
-        setPromoCode(discount.code);
-      }
-    };
-  }, [isAuth]);
+  const getDiscount = useCallback(async () => {
+    if (!cart || isMounted) {
+      return;
+    }
+    const discountID = getDiscountID(cart);
+    if (discountID) {
+      const discount = await getDiscountCode(discountID);
+      setPromoCode(discount.code);
+    }
+    setIsMounted(true);
+  }, [cart, isMounted]);
 
   const handleCartOperation = async (operation: Function, ...args: (string | number | boolean)[]): Promise<boolean> => {
     if (!cart) return false;
     try {
       setIsCartUpdate(true);
       const newCart = await operation(cart, ...args);
-      setCart(newCart);
+      if (setCart) setCart(newCart);
       return true;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -59,17 +59,12 @@ function ShoppingCart() {
     }
   };
 
-  const setProductQuantity = (lineItemId: string, quantity: number) => {
+  const setProductQuantity = (lineItemId: string, quantity: number) =>
     handleCartOperation(changeLineItemQuantity, lineItemId, quantity, isAuth);
-  };
 
-  const removeProduct = (lineItemId: string) => {
-    handleCartOperation(removeLineItem, lineItemId, isAuth);
-  };
+  const removeProduct = (lineItemId: string) => handleCartOperation(removeLineItem, lineItemId, isAuth);
 
-  const clearShoppingCart = () => {
-    handleCartOperation(deleteActiveCart, isAuth);
-  };
+  const clearShoppingCart = () => handleCartOperation(deleteActiveCart, isAuth);
 
   const applyPromoCode = async (code: string) => {
     const isCodeApplied = await handleCartOperation(addDiscountCode, code, isAuth);
@@ -82,7 +77,7 @@ function ShoppingCart() {
     if (!cart) return;
     const discountID = getDiscountID(cart);
     if (discountID) {
-      handleCartOperation(removeDiscountCode, discountID, isAuth);
+      await handleCartOperation(removeDiscountCode, discountID, isAuth);
     }
     setPromoCode(undefined);
   };
@@ -93,7 +88,7 @@ function ShoppingCart() {
   const currency = cart?.totalPrice.currencyCode ?? '';
 
   return (
-    <ContentLoaderWrapper loadingLogic={getCart}>
+    <>
       {!isCartEmpty && (
         <Container maxWidth="lg">
           <Products
@@ -132,9 +127,11 @@ function ShoppingCart() {
             </Box>
           </Stack>
           <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" gap={4}>
-            <Box display="flex" justifyContent="center">
-              <PromoCode onApply={applyPromoCode} onReset={resetPromoCode} code={promoCode} disabled={!!promoCode} />
-            </Box>
+            <ContentLoaderWrapper loadingLogic={getDiscount}>
+              <Box display="flex" justifyContent="center">
+                <PromoCode onApply={applyPromoCode} onReset={resetPromoCode} code={promoCode} disabled={!!promoCode} />
+              </Box>
+            </ContentLoaderWrapper>
             <Box display="flex" justifyContent="center">
               <Button
                 variant="contained"
@@ -149,7 +146,7 @@ function ShoppingCart() {
       )}
       {isCartEmpty && <EmptyCart />}
       {isCartUpdate && <Loader transparent />}
-    </ContentLoaderWrapper>
+    </>
   );
 }
 

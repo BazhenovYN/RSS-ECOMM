@@ -1,7 +1,7 @@
-import { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Badge, IconButton } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
 import AppContext from 'context';
 
 function CartButton() {
