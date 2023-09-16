@@ -8,12 +8,14 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useEffect, useMemo, useState } from 'react';
 import AppContext, { Message } from 'context';
-import { login } from 'services/sdk/customer';
+import { login, logout } from 'services/sdk/customer';
 import AppRouter from 'router';
 import PopupMessage from 'components/PopupMessage';
 import { getCookie } from 'utils/cookie';
 import { Language } from 'types/types';
 import Loader from 'components/Loader';
+import { Cart } from '@commercetools/platform-sdk';
+import { getActiveCart } from 'services/sdk/cart';
 import styles from './App.module.scss';
 
 const theme = createTheme({
@@ -35,17 +37,29 @@ function App() {
   const [isAuth, setIsAuth] = useState(false);
   const [message, setMessage] = useState<Message>({ text: null, severity: undefined });
   const [language, setLanguage] = useState<Language>(DEFAULT_LANGUAGE);
+  const [cart, setCart] = useState<Cart>();
   const appContext = useMemo(() => {
-    return { isAuth, setIsAuth, message, setMessage, language, setLanguage };
-  }, [isAuth, setIsAuth, message, setMessage, language, setLanguage]);
+    return { isAuth, setIsAuth, message, setMessage, language, setLanguage, cart, setCart };
+  }, [isAuth, setIsAuth, message, setMessage, language, setLanguage, cart, setCart]);
   useEffect(() => {
     if (getCookie(CookieNames.authToken) || getCookie(CookieNames.refreshAuthToken)) {
       login()
-        .then(() => setIsAuth(true))
-        .catch(() => {})
-        .finally(() => setIsLoading(false));
+        .then(() => {
+          setIsAuth(true);
+          getActiveCart(true)
+            .then((foundCart) => setCart(foundCart))
+            .finally(() => setIsLoading(false));
+        })
+        .catch(() => {
+          logout();
+          getActiveCart(false)
+            .then((foundCart) => setCart(foundCart))
+            .finally(() => setIsLoading(false));
+        });
     } else {
-      setIsLoading(false);
+      getActiveCart(false)
+        .then((foundCart) => setCart(foundCart))
+        .finally(() => setIsLoading(() => false));
     }
   }, []);
 

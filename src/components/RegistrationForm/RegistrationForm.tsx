@@ -9,6 +9,7 @@ import { createCustomer, login } from 'services/sdk/customer';
 import { RegistrationFormData } from 'types/types';
 import { useNavigate } from 'react-router-dom';
 import AppContext from 'context';
+import { getActiveCart } from 'services/sdk/cart';
 
 const defaultValues: Partial<RegistrationFormData> = {
   email: '',
@@ -44,6 +45,7 @@ function RegistrationForm() {
   const appContext = useContext(AppContext);
   const setIsAuth = appContext?.setIsAuth;
   const setMessage = appContext?.setMessage;
+  const setCart = appContext?.setCart;
 
   const [disabledAddress, setDisabledAddress] = useState(false);
 
@@ -61,6 +63,7 @@ function RegistrationForm() {
       await createCustomer(data);
       await login(data.email, data.password);
       if (setIsAuth) setIsAuth(true);
+      if (setCart) setCart(await getActiveCart(true));
       navigate('/');
       if (setMessage) setMessage({ severity: 'success', text: 'The account was successfully created' });
     } catch (error) {

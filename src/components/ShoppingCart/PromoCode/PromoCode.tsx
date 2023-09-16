@@ -18,13 +18,13 @@ function PromoCode({ onApply, onReset, code = '', disabled = false }: IProps) {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
+    setValue,
   } = useForm<IFormValues>();
 
   useEffect(() => {
     setValue('code', code);
-  }, [setValue, code]);
+  }, [code, setValue]);
 
   const onSubmit = async (data: IFormValues): Promise<void> => {
     onApply(data.code);
@@ -39,6 +39,7 @@ function PromoCode({ onApply, onReset, code = '', disabled = false }: IProps) {
           error={!!errors.code}
           helperText={errors.code?.message}
           disabled={disabled}
+          name="code"
         />
         {!code && (
           <Button type="submit" variant="contained" color="primary">

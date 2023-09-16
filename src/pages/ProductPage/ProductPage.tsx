@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Button, Grid, Stack, Typography } from '@mui/material';
 import AppContext from 'context';
@@ -11,7 +11,6 @@ import { getProductDetails } from 'services/sdk/product';
 import { getProductDescription, getProductName, findCartItemInCart } from 'utils/utils';
 import type { Product } from 'types/types';
 import { addToCart, getActiveCart, removeLineItem } from 'services/sdk/cart';
-import { Cart } from '@commercetools/platform-sdk';
 import Loader from 'components/Loader';
 
 function ProductPage() {
@@ -28,57 +27,28 @@ function ProductPage() {
   const handleCloseModal = () => setOpenModal(false);
 
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [count, setCount] = useState(1);
 
-  const [cart, setCart] = useState<Cart | null>(null);
-  const [isInCart, setIsInCart] = useState(false);
+  const cart = appContext?.cart;
+  const setCart = appContext?.setCart;
   const [waitForCartUpdate, setWaitForCartUpdate] = useState(false);
-  const lineItemId = useMemo(() => findCartItemInCart(cart?.lineItems || [], productId)?.id ?? '', [cart, productId]);
-
-  const updateProductFromNewCart = useCallback(
-    (newCart: Cart | null) => {
-      if (!productId) {
-        if (setMessage) setMessage({ severity: 'error', text: 'Product not found' });
-        return;
-      }
-
-      const lineItem = findCartItemInCart(newCart?.lineItems || [], productId);
-      if (lineItem) {
-        setIsInCart(true);
-        setCount(lineItem.quantity);
-      } else {
-        setIsInCart(false);
-      }
-    },
-    [productId, setMessage]
-  );
-
-  useEffect(() => {
-    updateProductFromNewCart(cart);
-  }, [cart, updateProductFromNewCart]);
+  const lineItem = useMemo(() => findCartItemInCart(cart?.lineItems || [], productId), [cart, productId]);
+  const [count, setCount] = useState(() => lineItem?.quantity || 1);
 
   const getProduct = useCallback(async () => {
     const data = await getProductDetails(productId);
     setProduct(data);
-    const newCart = await getActiveCart(isAuth);
-    setCart(newCart);
-    updateProductFromNewCart(newCart);
-  }, [productId, isAuth, updateProductFromNewCart]);
+  }, [productId]);
 
   const handleCartOperation = async (
     operation: Function,
     successMessage: string,
     ...args: (string | number | boolean)[]
   ) => {
-    if (!cart) {
-      if (setMessage) setMessage({ severity: 'error', text: 'Cart not found' });
-      return;
-    }
-
+    setWaitForCartUpdate(true);
     try {
-      setWaitForCartUpdate(true);
-      const newCart = await operation(cart, ...args);
-      setCart(newCart);
+      let newCart = cart || (await getActiveCart(isAuth));
+      newCart = await operation(newCart, ...args);
+      if (setCart) setCart(newCart);
       if (setMessage) setMessage({ severity: 'success', text: successMessage });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -92,7 +62,7 @@ function ProductPage() {
     handleCartOperation(addToCart, 'Product has been successfully added to cart', productId, isAuth, count);
 
   const handleDeleteFromBasket = async () =>
-    handleCartOperation(removeLineItem, 'Product has been successfully removed from cart', lineItemId, isAuth);
+    handleCartOperation(removeLineItem, 'Product has been successfully removed from cart', lineItem?.id || '', isAuth);
 
   return (
     <ContentLoaderWrapper loadingLogic={getProduct}>
@@ -113,11 +83,11 @@ function ProductPage() {
               <PriceField product={product} />
               <Typography variant="body1">{getProductDescription(product, language)}</Typography>
               <Stack direction="row" spacing={2}>
-                <Counter count={count} setCount={setCount} disabled={isInCart} />
-                <Button variant="contained" onClick={handleAddToBasket} disabled={isInCart}>
+                <Counter count={count} setCount={setCount} disabled={!!lineItem} />
+                <Button variant="contained" onClick={handleAddToBasket} disabled={!!lineItem}>
                   Add to basket
                 </Button>
-                <Button variant="contained" onClick={handleDeleteFromBasket} disabled={!isInCart}>
+                <Button variant="contained" onClick={handleDeleteFromBasket} disabled={!lineItem}>
                   Remove from basket
                 </Button>
               </Stack>

@@ -33,6 +33,8 @@ const appContext: IAppContext = {
   },
   setMessage: () => {},
   language: DEFAULT_LANGUAGE,
+  cart: undefined,
+  setCart: jest.fn,
 };
 
 describe('CatalogProductItem', () => {
