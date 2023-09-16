@@ -26,12 +26,13 @@ function LoginForm() {
   const setIsAuth = appContext?.setIsAuth;
   const setMessage = appContext?.setMessage;
   const setCart = appContext?.setCart;
+  const setUser = appContext?.setUser;
 
   const navigate = useNavigate();
 
   const onSubmit = async (data: IFormValues): Promise<void> => {
     try {
-      await login(data.email, data.password);
+      if (setUser) setUser(await login(data.email, data.password));
       if (setIsAuth) setIsAuth(true);
       if (setCart) setCart(await getActiveCart(true));
       navigate('/');

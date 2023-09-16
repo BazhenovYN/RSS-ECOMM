@@ -42,7 +42,10 @@ export const createAddressDraft = (registrationFormAddress: RegistrationFormAddr
   };
 };
 
-export const createCustomerDraft = (registrationFormData: RegistrationFormData): CustomerDraft => {
+export const createCustomerDraft = (
+  registrationFormData: RegistrationFormData,
+  anonymousId?: string
+): CustomerDraft => {
   const shippingAddress: AddressDraft = createAddressDraft(registrationFormData.shippingAddress);
   const billingAddress: AddressDraft = createAddressDraft(registrationFormData.billingAddress);
 
@@ -60,11 +63,15 @@ export const createCustomerDraft = (registrationFormData: RegistrationFormData):
     defaultShippingAddress: registrationFormData.shippingAddress.isDefault ? 0 : undefined,
     billingAddresses: [1],
     defaultBillingAddress: registrationFormData.billingAddress.isDefault ? 1 : undefined,
+    anonymousId,
   };
 };
 
-export const createCustomer = async (registrationFormData: RegistrationFormData): Promise<CustomerSignInResult> => {
-  const customerDraft: CustomerDraft = createCustomerDraft(registrationFormData);
+export const createCustomer = async (
+  registrationFormData: RegistrationFormData,
+  anonymousId?: string
+): Promise<CustomerSignInResult> => {
+  const customerDraft: CustomerDraft = createCustomerDraft(registrationFormData, anonymousId);
   const response: ClientResponse<CustomerSignInResult> = await getAppApiRoot()
     .customers()
     .post({ body: customerDraft })
