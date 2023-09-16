@@ -8,7 +8,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useEffect, useMemo, useState } from 'react';
 import AppContext, { Message } from 'context';
-import { login, logout } from 'services/sdk/customer';
+import { login } from 'services/sdk/customer';
 import AppRouter from 'router';
 import PopupMessage from 'components/PopupMessage';
 import { getCookie } from 'utils/cookie';
@@ -49,17 +49,20 @@ function App() {
 
   useEffect(() => {
     const authenticate = async () => {
-      let authResult: boolean;
+      const setCartAndAuth = async (authResult: boolean) => {
+        setIsAuth(authResult);
+        if (authResult || hasAnonymousTokenInCookie) {
+          setCart(await getActiveCart(authResult));
+        }
+      };
+
       try {
-        const loginResult = hasAuthTokenInCookie && (await login());
-        authResult = loginResult || false;
-      } catch {
-        logout();
-        authResult = false;
-      }
-      setIsAuth(authResult);
-      if (authResult || hasAnonymousTokenInCookie) {
-        setCart(await getActiveCart(authResult));
+        const authResult = hasAuthTokenInCookie && !!(await login());
+        await setCartAndAuth(authResult);
+      } catch (error) {
+        await setCartAndAuth(false);
+        if (setMessage)
+          setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
       }
     };
 

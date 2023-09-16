@@ -18,14 +18,14 @@ import type {
 } from 'types/types';
 import dayjs from 'dayjs';
 
-export const login = async (email: string = 'default', password: string = 'default') => {
+export const login = async (email?: string, password?: string) => {
   try {
-    await getCustomerApiRoot(email, password).me().get().execute();
+    const response = await getCustomerApiRoot(email, password).me().get().execute();
+    return response.body;
   } catch (error) {
     removeAuthTokens();
     throw error;
   }
-  return true;
 };
 
 export const logout = () => {

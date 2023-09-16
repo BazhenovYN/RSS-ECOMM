@@ -6,7 +6,6 @@ import {
   Client,
   PasswordAuthMiddlewareOptions,
   TokenStore,
-  AnonymousAuthMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import getEnvironmentVariable from 'utils/getEnvironmentVariable';
@@ -90,7 +89,16 @@ export const removeAuthTokens = (): void => {
   deleteCookie(cookieNames.refreshAuthToken);
 };
 
-export const getCustomerApiRoot = (
+export const getApiRootByToken = (token: string) => {
+  const client = new ClientBuilder()
+    .withExistingTokenFlow(`Bearer ${token}`, { force: false })
+    .withHttpMiddleware(httpMiddlewareOptions)
+    .build();
+
+  return createApiBuilderFromCtpClient(client).withProjectKey({ projectKey });
+};
+
+export const getCustomerApiRootByAuthorization = (
   email: string = 'default',
   password: string = 'default'
 ): ByProjectKeyRequestBuilder => {
@@ -98,20 +106,24 @@ export const getCustomerApiRoot = (
   return createApiBuilderFromCtpClient(customerClient).withProjectKey({ projectKey });
 };
 
-const anonymousClientBuilder = (): Client => {
-  const anonymousAuthMiddlewareOptions: AnonymousAuthMiddlewareOptions = {
-    ...authMiddlewareOptions,
-    scopes: customerScopes,
-    tokenCache: createTokenCache(cookieNames.anonymousToken, cookieNames.refreshAnonymousToken),
-  };
+export const getCustomerApiRoot = (email?: string, password?: string): ByProjectKeyRequestBuilder => {
+  const token = getCookie(cookieNames.authToken);
+  return token ? getApiRootByToken(token) : getCustomerApiRootByAuthorization(email, password);
+};
 
-  return new ClientBuilder()
-    .withAnonymousSessionFlow(anonymousAuthMiddlewareOptions)
+export const getAnonymousApiRootByAuthorization = (): ByProjectKeyRequestBuilder => {
+  const anonymousClient = new ClientBuilder()
+    .withAnonymousSessionFlow({
+      ...authMiddlewareOptions,
+      scopes: customerScopes,
+      tokenCache: createTokenCache(cookieNames.anonymousToken, cookieNames.refreshAnonymousToken),
+    })
     .withHttpMiddleware(httpMiddlewareOptions)
     .build();
+  return createApiBuilderFromCtpClient(anonymousClient).withProjectKey({ projectKey });
 };
 
 export const getAnonymousApiRoot = (): ByProjectKeyRequestBuilder => {
-  const anonymousClient: Client = anonymousClientBuilder();
-  return createApiBuilderFromCtpClient(anonymousClient).withProjectKey({ projectKey });
+  const token = getCookie(cookieNames.anonymousToken);
+  return token ? getApiRootByToken(token) : getAnonymousApiRootByAuthorization();
 };
