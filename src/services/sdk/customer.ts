@@ -72,11 +72,6 @@ export const createCustomer = async (registrationFormData: RegistrationFormData)
   return response.body;
 };
 
-export const getUserCustomer = async (): Promise<Customer> => {
-  const response = await getCustomerApiRoot().me().get().execute();
-  return response.body;
-};
-
 const createCustomerUpdate = (userData: UserDataUpdate, version: number): MyCustomerUpdate => {
   const dateOfBirth: string = userData.dateOfBirth
     .add(userData.dateOfBirth.utcOffset(), 'minute')

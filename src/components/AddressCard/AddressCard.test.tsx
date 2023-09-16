@@ -1,8 +1,6 @@
-import { DEFAULT_LANGUAGE } from 'constants/const';
 import { fireEvent, render, screen } from '@testing-library/react';
 import AddressCard from 'components/AddressCard';
 import { AddressData } from 'types/types';
-import AppContext from 'context';
 
 const address: AddressData = {
   id: '1',
@@ -21,24 +19,13 @@ const setRedactedAddress = jest.fn();
 describe('AddressCard', () => {
   test('render correctly', () => {
     render(
-      <AppContext.Provider
-        value={{
-          setMessage: jest.fn,
-          isAuth: true,
-          setIsAuth: jest.fn,
-          message: { text: null, severity: undefined },
-          language: DEFAULT_LANGUAGE,
-          cart: undefined,
-          setCart: jest.fn,
-        }}>
-        <AddressCard
-          address={address}
-          userVersion={1}
-          setUser={jest.fn}
-          setRedactedAddress={setRedactedAddress}
-          handleEdit={jest.fn}
-        />
-      </AppContext.Provider>
+      <AddressCard
+        address={address}
+        userVersion={1}
+        setUser={jest.fn}
+        setRedactedAddress={setRedactedAddress}
+        handleEdit={jest.fn}
+      />
     );
 
     const country = screen.getByText(/United Kingdom/i);

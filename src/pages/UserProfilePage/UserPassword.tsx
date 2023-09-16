@@ -10,7 +10,7 @@ import { PasswordUpdate } from 'types/types';
 
 interface IProps {
   user: Customer;
-  setUser: Dispatch<SetStateAction<Customer>>;
+  setUser: Dispatch<SetStateAction<Customer | undefined>>;
 }
 
 function UserPassword({ user, setUser }: IProps) {

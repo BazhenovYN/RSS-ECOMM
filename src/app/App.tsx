@@ -14,7 +14,7 @@ import PopupMessage from 'components/PopupMessage';
 import { getCookie } from 'utils/cookie';
 import { Language } from 'types/types';
 import Loader from 'components/Loader';
-import { Cart } from '@commercetools/platform-sdk';
+import { Cart, Customer } from '@commercetools/platform-sdk';
 import { getActiveCart } from 'services/sdk/cart';
 import styles from './App.module.scss';
 
@@ -43,9 +43,10 @@ function App() {
   const [message, setMessage] = useState<Message>({ text: null, severity: undefined });
   const [language, setLanguage] = useState<Language>(DEFAULT_LANGUAGE);
   const [cart, setCart] = useState<Cart>();
+  const [user, setUser] = useState<Customer>();
   const appContext = useMemo(() => {
-    return { isAuth, setIsAuth, message, setMessage, language, setLanguage, cart, setCart };
-  }, [isAuth, setIsAuth, message, setMessage, language, setLanguage, cart, setCart]);
+    return { isAuth, setIsAuth, message, setMessage, language, setLanguage, cart, setCart, user, setUser };
+  }, [isAuth, setIsAuth, message, setMessage, language, setLanguage, cart, setCart, user, setUser]);
 
   useEffect(() => {
     const authenticate = async () => {
@@ -57,7 +58,11 @@ function App() {
       };
 
       try {
-        const authResult = hasAuthTokenInCookie && !!(await login());
+        let authResult = false;
+        if (hasAuthTokenInCookie) {
+          setUser(await login());
+          authResult = true;
+        }
         await setCartAndAuth(authResult);
       } catch (error) {
         await setCartAndAuth(false);

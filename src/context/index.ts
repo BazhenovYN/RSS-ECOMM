@@ -1,7 +1,7 @@
 import { createContext, Dispatch, SetStateAction } from 'react';
 import { AlertColor } from '@mui/material';
 import { Language } from 'types/types';
-import { Cart } from '@commercetools/platform-sdk';
+import { Cart, Customer } from '@commercetools/platform-sdk';
 
 export interface IAppContext {
   isAuth: boolean;
@@ -11,6 +11,8 @@ export interface IAppContext {
   language: Language;
   cart: Cart | undefined;
   setCart: Dispatch<Cart | undefined>;
+  user: Customer | undefined;
+  setUser: Dispatch<SetStateAction<Customer | undefined>>;
 }
 
 export interface Message {

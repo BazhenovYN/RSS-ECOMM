@@ -10,7 +10,7 @@ import { AddressData } from 'types/types';
 interface AddressCardProps {
   address: AddressData;
   userVersion: number;
-  setUser: Dispatch<SetStateAction<Customer>>;
+  setUser: Dispatch<SetStateAction<Customer | undefined>>;
   setRedactedAddress: Dispatch<SetStateAction<AddressData>>;
   handleEdit: () => void;
 }
