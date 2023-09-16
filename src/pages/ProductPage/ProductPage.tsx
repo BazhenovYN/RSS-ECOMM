@@ -10,7 +10,7 @@ import PriceField from 'components/PriceField';
 import { getProductDetails } from 'services/sdk/product';
 import { getProductDescription, getProductName, findCartItemInCart } from 'utils/utils';
 import type { Product } from 'types/types';
-import { addToCart, getActiveCart, removeLineItem } from 'services/sdk/cart';
+import { addToCart, createCart, removeLineItem } from 'services/sdk/cart';
 import Loader from 'components/Loader';
 
 function ProductPage() {
@@ -46,7 +46,7 @@ function ProductPage() {
   ) => {
     setWaitForCartUpdate(true);
     try {
-      let newCart = cart || (await getActiveCart(isAuth));
+      let newCart = cart || (await createCart(isAuth));
       newCart = await operation(newCart, ...args);
       if (setCart) setCart(newCart);
       if (setMessage) setMessage({ severity: 'success', text: successMessage });

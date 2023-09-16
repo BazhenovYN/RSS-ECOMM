@@ -32,6 +32,11 @@ const theme = createTheme({
   },
 });
 
+const hasAuthTokenInCookie = !!(getCookie(CookieNames.authToken) || getCookie(CookieNames.refreshAuthToken));
+const hasAnonymousTokenInCookie = !!(
+  getCookie(CookieNames.anonymousToken) || getCookie(CookieNames.refreshAnonymousToken)
+);
+
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
@@ -41,26 +46,24 @@ function App() {
   const appContext = useMemo(() => {
     return { isAuth, setIsAuth, message, setMessage, language, setLanguage, cart, setCart };
   }, [isAuth, setIsAuth, message, setMessage, language, setLanguage, cart, setCart]);
+
   useEffect(() => {
-    if (getCookie(CookieNames.authToken) || getCookie(CookieNames.refreshAuthToken)) {
-      login()
-        .then(() => {
-          setIsAuth(true);
-          getActiveCart(true)
-            .then((foundCart) => setCart(foundCart))
-            .finally(() => setIsLoading(false));
-        })
-        .catch(() => {
-          logout();
-          getActiveCart(false)
-            .then((foundCart) => setCart(foundCart))
-            .finally(() => setIsLoading(false));
-        });
-    } else {
-      getActiveCart(false)
-        .then((foundCart) => setCart(foundCart))
-        .finally(() => setIsLoading(() => false));
-    }
+    const authenticate = async () => {
+      let authResult: boolean;
+      try {
+        const loginResult = hasAuthTokenInCookie && (await login());
+        authResult = loginResult || false;
+      } catch {
+        logout();
+        authResult = false;
+      }
+      setIsAuth(authResult);
+      if (authResult || hasAnonymousTokenInCookie) {
+        setCart(await getActiveCart(authResult));
+      }
+    };
+
+    authenticate().finally(() => setIsLoading(false));
   }, []);
 
   if (isLoading) {

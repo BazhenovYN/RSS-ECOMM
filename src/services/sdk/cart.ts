@@ -8,21 +8,20 @@ const createCartDraft = (): MyCartDraft => {
   };
 };
 
-const createCart = async (isAuth: boolean = false): Promise<Cart> => {
+export const createCart = async (isAuth: boolean = false): Promise<Cart> => {
   const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
   const response = await getRoot().me().carts().post({ body: createCartDraft() }).execute();
 
   return response.body;
 };
 
-export const getActiveCart = async (isAuth: boolean = false): Promise<Cart> => {
+export const getActiveCart = async (isAuth: boolean = false): Promise<Cart | undefined> => {
   const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
-
   try {
     const response = await getRoot().me().activeCart().get().execute();
     return response.body;
   } catch {
-    return createCart(isAuth);
+    return undefined;
   }
 };
 
