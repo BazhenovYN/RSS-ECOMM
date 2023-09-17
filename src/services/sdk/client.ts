@@ -127,3 +127,8 @@ export const getAnonymousApiRoot = (): ByProjectKeyRequestBuilder => {
   const token = getCookie(cookieNames.anonymousToken);
   return token ? getApiRootByToken(token) : getAnonymousApiRootByAuthorization();
 };
+
+export const removeAnonymousTokens = (): void => {
+  deleteCookie(cookieNames.anonymousToken);
+  deleteCookie(cookieNames.refreshAnonymousToken);
+};
