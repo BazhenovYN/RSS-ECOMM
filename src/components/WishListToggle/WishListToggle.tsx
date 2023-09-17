@@ -5,13 +5,14 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import AppContext from 'context';
 import { addToWishlist, removeFromWishlist } from 'services/sdk/wishlist';
 import { findLineItemInList } from 'utils/utils';
+import type { Product } from 'types/types';
 
 interface IProps {
-  productId: string;
+  product: Product;
   setLoading: (isLoading: boolean) => void;
 }
 
-function WishListToggle({ productId, setLoading }: IProps) {
+function WishListToggle({ product, setLoading }: IProps) {
   const appContext = useContext(AppContext);
   const isAuth = appContext?.isAuth ?? false;
   const setMessage = appContext?.setMessage;
@@ -23,8 +24,8 @@ function WishListToggle({ productId, setLoading }: IProps) {
   const wishListItems = useMemo(() => wishlist?.shoppingList?.lineItems || [], [wishlist]);
 
   useEffect(() => {
-    setIsInWishList(!!findLineItemInList(wishListItems, productId));
-  }, [productId, wishListItems]);
+    setIsInWishList(!!findLineItemInList(wishListItems, product.id));
+  }, [product, wishListItems]);
 
   const handleOperation = async (operation: Function) => {
     if (!wishlist) {
@@ -34,7 +35,7 @@ function WishListToggle({ productId, setLoading }: IProps) {
 
     try {
       setLoading(true);
-      const newWishList = await operation(wishlist, productId, isAuth);
+      const newWishList = await operation(wishlist, product, isAuth);
       if (setWishList) setWishList(newWishList);
       setIsInWishList(false);
     } catch (error) {

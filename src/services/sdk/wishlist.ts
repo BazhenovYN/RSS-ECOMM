@@ -1,8 +1,13 @@
 import { DEFAULT_LANGUAGE } from 'constants/const';
-import { MyShoppingListDraft, MyShoppingListUpdate, MyShoppingListUpdateAction } from '@commercetools/platform-sdk';
+import {
+  MyShoppingListDraft,
+  MyShoppingListUpdate,
+  MyShoppingListUpdateAction,
+  ShoppingList,
+} from '@commercetools/platform-sdk';
 import { getAnonymousApiRoot, getCustomerApiRoot } from 'services/sdk/client';
 import { findLineItemInList } from 'utils/utils';
-import { WishList } from 'types/types';
+import { Product, WishList } from 'types/types';
 import { getProductDetails } from './product';
 
 const createShoppingListDraft = (): MyShoppingListDraft => {
@@ -13,30 +18,27 @@ const createShoppingListDraft = (): MyShoppingListDraft => {
   };
 };
 
-const createWishlist = async (isAuth: boolean = false) => {
+const createShoppingList = async (isAuth: boolean = false) => {
   const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
   const response = await getRoot().me().shoppingLists().post({ body: createShoppingListDraft() }).execute();
   return response.body;
 };
 
-const updateWishlist = async (wishList: WishList, actions: MyShoppingListUpdateAction[], isAuth: boolean) => {
-  if (!wishList.shoppingList) {
-    return wishList;
+const updateShoppingList = async (
+  shoppingList: ShoppingList | undefined,
+  actions: MyShoppingListUpdateAction[],
+  isAuth: boolean
+) => {
+  if (!shoppingList) {
+    return shoppingList;
   }
   const body: MyShoppingListUpdate = {
-    version: wishList.shoppingList.version,
+    version: shoppingList.version,
     actions,
   };
   const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
-  const response = await getRoot()
-    .me()
-    .shoppingLists()
-    .withId({ ID: wishList.shoppingList.id })
-    .post({ body })
-    .execute();
-  const shoppingList = response.body;
-  const products = await Promise.all(shoppingList.lineItems.map((item) => getProductDetails(item.productId)));
-  return { products, shoppingList };
+  const response = await getRoot().me().shoppingLists().withId({ ID: shoppingList.id }).post({ body }).execute();
+  return response.body;
 };
 
 export const getWishList = async (isAuth: boolean = false): Promise<WishList> => {
@@ -48,23 +50,30 @@ export const getWishList = async (isAuth: boolean = false): Promise<WishList> =>
     const products = await Promise.all(shoppingList.lineItems.map((item) => getProductDetails(item.productId)));
     return { products, shoppingList };
   }
-  const shoppingList = await createWishlist(isAuth);
+  const shoppingList = await createShoppingList(isAuth);
   return { products: [], shoppingList };
 };
 
-export const addToWishlist = async (wishList: WishList, productId: string, isAuth: boolean, quantity = 1) => {
+export const addToWishlist = async (
+  wishList: WishList,
+  product: Product,
+  isAuth: boolean,
+  quantity = 1
+): Promise<WishList> => {
   const actions: MyShoppingListUpdateAction[] = [
     {
       action: 'addLineItem',
-      productId,
+      productId: product.id,
       quantity,
     },
   ];
-  return updateWishlist(wishList, actions, isAuth);
+  const shoppingList = await updateShoppingList(wishList.shoppingList, actions, isAuth);
+  const products = [...wishList.products, product];
+  return { products, shoppingList };
 };
 
-export const removeFromWishlist = (wishList: WishList, productId: string, isAuth: boolean) => {
-  const lineItemId = findLineItemInList(wishList.shoppingList?.lineItems ?? [], productId)?.id;
+export const removeFromWishlist = async (wishList: WishList, product: Product, isAuth: boolean): Promise<WishList> => {
+  const lineItemId = findLineItemInList(wishList.shoppingList?.lineItems ?? [], product.id)?.id;
   if (!lineItemId) {
     return wishList; // the product is not on the list
   }
@@ -74,5 +83,7 @@ export const removeFromWishlist = (wishList: WishList, productId: string, isAuth
       lineItemId,
     },
   ];
-  return updateWishlist(wishList, actions, isAuth);
+  const shoppingList = await updateShoppingList(wishList.shoppingList, actions, isAuth);
+  const products = wishList.products.filter((item) => item.id !== product.id);
+  return { products, shoppingList };
 };

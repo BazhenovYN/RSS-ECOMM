@@ -91,7 +91,7 @@ function ProductPage() {
                 <Button variant="contained" onClick={handleDeleteFromBasket} disabled={!lineItem}>
                   Remove from basket
                 </Button>
-                {product && <WishListToggle productId={product.id} setLoading={setIsLoading} />}
+                {product && <WishListToggle product={product} setLoading={setIsLoading} />}
               </Stack>
             </Stack>
           </Grid>

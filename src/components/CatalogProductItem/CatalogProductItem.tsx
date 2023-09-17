@@ -109,7 +109,7 @@ function CatalogProductItem({ product, setWaitForCartUpdate }: CatalogProductIte
         <Button variant="contained" onClick={handleAddToCart} disabled={isInCart}>
           Add to basket
         </Button>
-        <WishListToggle productId={product.id} setLoading={setWaitForCartUpdate} />
+        <WishListToggle product={product} setLoading={setWaitForCartUpdate} />
       </CardActions>
     </Card>
   );
