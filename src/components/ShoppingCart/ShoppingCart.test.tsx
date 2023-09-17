@@ -16,6 +16,8 @@ describe('ShoppingCart', () => {
           message: { text: null, severity: 'error' },
           setMessage: jest.fn,
           language: DEFAULT_LANGUAGE,
+          wishList: undefined,
+          setWishList: jest.fn,
           user: undefined,
           setUser: jest.fn,
         }}>

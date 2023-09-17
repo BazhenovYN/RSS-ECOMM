@@ -8,6 +8,7 @@ import NavMenu from './NavMenu';
 import CartButton from './CartButton';
 import Logo from './Logo';
 import UserAvatar from './UserAvatar';
+import WishlistButton from './WishlistButton';
 
 import './Header.scss';
 
@@ -23,6 +24,7 @@ function Header() {
           <NavMenu />
         </Stack>
         <Stack direction="row" spacing={2}>
+          <WishlistButton />
           <CartButton />
           {!isAuth && <LinkButton title="Sign in" link="/login" icon={<PersonIcon />} />}
           {!isAuth && <LinkButton title="Sign up" link="/registration" icon={<PersonAddIcon />} />}

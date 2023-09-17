@@ -22,6 +22,6 @@ export const getProductDescription = (product?: Product, language = DEFAULT_LANG
   return product.description?.[language] ? product.description[language] : '';
 };
 
-export const findCartItemInCart = (cartItems: Pick<LineItem, 'productId' | 'id' | 'quantity'>[], productId: string) => {
-  return cartItems.find((currentCartItem) => currentCartItem.productId === productId);
+export const findLineItemInList = (lineItems: Pick<LineItem, 'productId' | 'id' | 'quantity'>[], productId: string) => {
+  return lineItems.find((currentItem) => currentItem.productId === productId);
 };

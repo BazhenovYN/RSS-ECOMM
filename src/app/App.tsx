@@ -12,9 +12,10 @@ import { authenticate } from 'services/sdk/customer';
 import AppRouter from 'router';
 import PopupMessage from 'components/PopupMessage';
 import { getCookie } from 'utils/cookie';
-import { Language } from 'types/types';
+import { Language, WishList } from 'types/types';
 import Loader from 'components/Loader';
 import { Cart, Customer } from '@commercetools/platform-sdk';
+import { getWishList } from 'services/sdk/wishlist';
 import { getActiveCart } from 'services/sdk/cart';
 import styles from './App.module.scss';
 
@@ -41,9 +42,37 @@ function App() {
   const [language, setLanguage] = useState<Language>(DEFAULT_LANGUAGE);
   const [cart, setCart] = useState<Cart>();
   const [user, setUser] = useState<Customer>();
+  const [wishList, setWishList] = useState<WishList>();
+
   const appContext = useMemo(() => {
-    return { isAuth, setIsAuth, message, setMessage, language, setLanguage, cart, setCart, user, setUser };
-  }, [isAuth, setIsAuth, message, setMessage, language, setLanguage, cart, setCart, user, setUser]);
+    return {
+      isAuth,
+      setIsAuth,
+      message,
+      setMessage,
+      language,
+      setLanguage,
+      cart,
+      setCart,
+      wishList,
+      setWishList,
+      user,
+      setUser,
+    };
+  }, [
+    isAuth,
+    setIsAuth,
+    message,
+    setMessage,
+    language,
+    setLanguage,
+    cart,
+    setCart,
+    wishList,
+    setWishList,
+    user,
+    setUser,
+  ]);
 
   useEffect(() => {
     const authenticateToApp = async () => {
@@ -53,9 +82,11 @@ function App() {
           setUser(obtainedUser);
           setIsAuth(true);
           setCart(await getActiveCart());
+          setWishList(await getWishList());
         } catch (error) {
           setIsAuth(false);
           setCart(await getActiveCart());
+          setWishList(await getWishList());
         }
       }
     };
