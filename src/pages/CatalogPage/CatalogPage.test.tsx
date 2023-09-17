@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import CatalogPage from 'pages/CatalogPage';
-import { AttributesList, CategoriesList, SearchData } from 'types/types';
+import { CategoriesList, SearchData } from 'types/types';
 import { BrowserRouter } from 'react-router-dom';
+import { AttributeDefinition } from '@commercetools/platform-sdk';
 
 jest.mock('services/sdk/category', () => ({
   __esModule: true,
@@ -29,7 +30,23 @@ jest.mock('services/sdk/product', () => ({
       ],
       total: 1,
     }),
-  getAttributes: (): AttributesList => ({}),
+  getAttributes: (): AttributeDefinition[] => [
+    {
+      type: {
+        name: 'enum',
+        values: [
+          { key: 'black', label: 'black' },
+          { key: 'white', label: 'white' },
+        ],
+      },
+      name: 'color',
+      label: { 'en-US': 'color' },
+      isRequired: false,
+      attributeConstraint: 'None',
+      inputHint: 'SingleLine',
+      isSearchable: true,
+    },
+  ],
 }));
 
 describe('CatalogPage', () => {
