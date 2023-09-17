@@ -6,15 +6,16 @@ import Header from 'components/Header';
 import Footer from 'components/Footer';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import AppContext, { Message } from 'context';
 import { login, logout } from 'services/sdk/customer';
 import AppRouter from 'router';
 import PopupMessage from 'components/PopupMessage';
 import { getCookie } from 'utils/cookie';
-import { Language } from 'types/types';
+import { Language, WishList } from 'types/types';
 import Loader from 'components/Loader';
 import { Cart } from '@commercetools/platform-sdk';
+import { getWishList } from 'services/sdk/wishlist';
 import { getActiveCart } from 'services/sdk/cart';
 import styles from './App.module.scss';
 
@@ -38,30 +39,89 @@ function App() {
   const [message, setMessage] = useState<Message>({ text: null, severity: undefined });
   const [language, setLanguage] = useState<Language>(DEFAULT_LANGUAGE);
   const [cart, setCart] = useState<Cart>();
-  const appContext = useMemo(() => {
-    return { isAuth, setIsAuth, message, setMessage, language, setLanguage, cart, setCart };
-  }, [isAuth, setIsAuth, message, setMessage, language, setLanguage, cart, setCart]);
-  useEffect(() => {
-    if (getCookie(CookieNames.authToken) || getCookie(CookieNames.refreshAuthToken)) {
-      login()
-        .then(() => {
-          setIsAuth(true);
-          getActiveCart(true)
-            .then((foundCart) => setCart(foundCart))
-            .finally(() => setIsLoading(false));
-        })
-        .catch(() => {
-          logout();
-          getActiveCart(false)
-            .then((foundCart) => setCart(foundCart))
-            .finally(() => setIsLoading(false));
-        });
-    } else {
-      getActiveCart(false)
-        .then((foundCart) => setCart(foundCart))
-        .finally(() => setIsLoading(() => false));
+  const [wishList, setWishList] = useState<WishList>();
+
+  const signOutUser = useCallback(async () => {
+    try {
+      logout();
+      setIsAuth(false);
+      setCart(await getActiveCart(false));
+      setWishList(await getWishList(false));
+      return true;
+    } catch (error) {
+      setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
+      return false;
+    } finally {
+      setIsLoading(false);
     }
   }, []);
+
+  const signInUser = useCallback(async (email?: string, passwors?: string) => {
+    try {
+      await login(email, passwors);
+      setIsAuth(true);
+      setCart(await getActiveCart(true));
+      setWishList(await getWishList(true));
+      return true;
+    } catch (error) {
+      setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
+      setIsAuth(false);
+      setCart(undefined);
+      setWishList(undefined);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const appContext = useMemo(() => {
+    return {
+      isAuth,
+      setIsAuth,
+      signInUser,
+      signOutUser,
+      message,
+      setMessage,
+      language,
+      setLanguage,
+      cart,
+      setCart,
+      wishList,
+      setWishList,
+    };
+  }, [
+    isAuth,
+    setIsAuth,
+    signInUser,
+    signOutUser,
+    message,
+    setMessage,
+    language,
+    setLanguage,
+    cart,
+    setCart,
+    wishList,
+    setWishList,
+  ]);
+
+  useEffect(() => {
+    const anonymousSession = async () => {
+      try {
+        setCart(await getActiveCart(false));
+        setWishList(await getWishList(false));
+      } catch (error) {
+        setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (getCookie(CookieNames.authToken) || getCookie(CookieNames.refreshAuthToken)) {
+      signInUser();
+    } else {
+      anonymousSession();
+    }
+  }, [signInUser]);
 
   if (isLoading) {
     return <Loader />;

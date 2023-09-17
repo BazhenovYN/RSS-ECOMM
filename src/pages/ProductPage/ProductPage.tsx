@@ -8,10 +8,11 @@ import ImageSlider from 'components/ImageSlider';
 import FullScreenImageSlider from 'components/FullScreenImageSlider';
 import PriceField from 'components/PriceField';
 import { getProductDetails } from 'services/sdk/product';
-import { getProductDescription, getProductName, findCartItemInCart } from 'utils/utils';
+import { getProductDescription, getProductName, findLineItemInList } from 'utils/utils';
 import type { Product } from 'types/types';
 import { addToCart, getActiveCart, removeLineItem } from 'services/sdk/cart';
 import Loader from 'components/Loader';
+import WishListToggle from 'components/WishListToggle';
 
 function ProductPage() {
   const appContext = useContext(AppContext);
@@ -30,8 +31,8 @@ function ProductPage() {
 
   const cart = appContext?.cart;
   const setCart = appContext?.setCart;
-  const [waitForCartUpdate, setWaitForCartUpdate] = useState(false);
-  const lineItem = useMemo(() => findCartItemInCart(cart?.lineItems || [], productId), [cart, productId]);
+  const [isLoading, setIsLoading] = useState(false);
+  const lineItem = useMemo(() => findLineItemInList(cart?.lineItems || [], productId), [cart, productId]);
   const [count, setCount] = useState(() => lineItem?.quantity || 1);
 
   const getProduct = useCallback(async () => {
@@ -44,7 +45,7 @@ function ProductPage() {
     successMessage: string,
     ...args: (string | number | boolean)[]
   ) => {
-    setWaitForCartUpdate(true);
+    setIsLoading(true);
     try {
       let newCart = cart || (await getActiveCart(isAuth));
       newCart = await operation(newCart, ...args);
@@ -54,7 +55,7 @@ function ProductPage() {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       if (setMessage) setMessage({ severity: 'error', text: errorMessage });
     } finally {
-      setWaitForCartUpdate(false);
+      setIsLoading(false);
     }
   };
 
@@ -66,7 +67,7 @@ function ProductPage() {
 
   return (
     <ContentLoaderWrapper loadingLogic={getProduct}>
-      {waitForCartUpdate && <Loader transparent />}
+      {isLoading && <Loader transparent />}
       <Box>
         <Typography component="h2" variant="h2" mb={2}>
           Product
@@ -90,6 +91,7 @@ function ProductPage() {
                 <Button variant="contained" onClick={handleDeleteFromBasket} disabled={!lineItem}>
                   Remove from basket
                 </Button>
+                {product && <WishListToggle product={product} setLoading={setIsLoading} />}
               </Stack>
             </Stack>
           </Grid>

@@ -4,21 +4,19 @@ import { Avatar, Box, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/mate
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AppContext from 'context';
-import { logout } from 'services/sdk/customer';
-import { getActiveCart } from 'services/sdk/cart';
 
 function UserProfileButton() {
   const appContext = useContext(AppContext);
-  const setIsAuth = appContext?.setIsAuth;
-  const setCart = appContext?.setCart;
+  const signOutUser = appContext?.signOutUser;
 
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
-    logout();
-    if (setIsAuth) setIsAuth(false);
-    if (setCart) setCart(await getActiveCart(false));
-    navigate('/');
+    if (!signOutUser) return;
+    const successfulLogout = await signOutUser();
+    if (successfulLogout) {
+      navigate('/');
+    }
   };
 
   const handleUserProfile = () => navigate('/profile');

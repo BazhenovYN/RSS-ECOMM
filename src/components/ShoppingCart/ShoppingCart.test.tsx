@@ -12,10 +12,14 @@ describe('ShoppingCart', () => {
           cart,
           setCart: jest.fn,
           isAuth: false,
+          signInUser: () => Promise.resolve(true),
+          signOutUser: () => Promise.resolve(true),
           setIsAuth: jest.fn,
           message: { text: null, severity: 'error' },
           setMessage: jest.fn,
           language: DEFAULT_LANGUAGE,
+          wishList: undefined,
+          setWishList: jest.fn,
         }}>
         <ShoppingCart />
       </AppContext.Provider>
