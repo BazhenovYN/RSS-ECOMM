@@ -12,9 +12,9 @@ import { login, logout } from 'services/sdk/customer';
 import AppRouter from 'router';
 import PopupMessage from 'components/PopupMessage';
 import { getCookie } from 'utils/cookie';
-import { Language } from 'types/types';
+import { Language, WishList } from 'types/types';
 import Loader from 'components/Loader';
-import { Cart, ShoppingList } from '@commercetools/platform-sdk';
+import { Cart } from '@commercetools/platform-sdk';
 import { getWishList } from 'services/sdk/wishlist';
 import { getActiveCart } from 'services/sdk/cart';
 import styles from './App.module.scss';
@@ -39,7 +39,7 @@ function App() {
   const [message, setMessage] = useState<Message>({ text: null, severity: undefined });
   const [language, setLanguage] = useState<Language>(DEFAULT_LANGUAGE);
   const [cart, setCart] = useState<Cart>();
-  const [wishList, setWishList] = useState<ShoppingList>();
+  const [wishList, setWishList] = useState<WishList>();
 
   const signOutUser = useCallback(async () => {
     try {

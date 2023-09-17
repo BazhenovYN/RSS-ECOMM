@@ -20,7 +20,7 @@ function WishListToggle({ productId, setLoading }: IProps) {
 
   const [isInWishList, setIsInWishList] = useState(false);
 
-  const wishListItems = useMemo(() => wishlist?.lineItems || [], [wishlist]);
+  const wishListItems = useMemo(() => wishlist?.shoppingList?.lineItems || [], [wishlist]);
 
   useEffect(() => {
     setIsInWishList(!!findLineItemInList(wishListItems, productId));
@@ -34,8 +34,8 @@ function WishListToggle({ productId, setLoading }: IProps) {
 
     try {
       setLoading(true);
-      const newList = await operation(wishlist, productId, isAuth);
-      if (setWishList) setWishList(newList);
+      const newWishList = await operation(wishlist, productId, isAuth);
+      if (setWishList) setWishList(newWishList);
       setIsInWishList(false);
     } catch (error) {
       if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });

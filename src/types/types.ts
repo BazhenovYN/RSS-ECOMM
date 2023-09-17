@@ -1,4 +1,4 @@
-import { Attribute, Category, Image, LocalizedString } from '@commercetools/platform-sdk';
+import { Attribute, Category, Image, LocalizedString, ShoppingList } from '@commercetools/platform-sdk';
 import dayjs from 'dayjs';
 
 export interface RegistrationFormData {
@@ -88,4 +88,9 @@ export interface SearchParams {
 export interface SearchData {
   products: Product[];
   total: number;
+}
+
+export interface WishList {
+  products: Product[];
+  shoppingList?: ShoppingList;
 }

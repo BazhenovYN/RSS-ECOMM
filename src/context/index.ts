@@ -1,7 +1,7 @@
 import { createContext, Dispatch, SetStateAction } from 'react';
 import { AlertColor } from '@mui/material';
-import { Cart, ShoppingList } from '@commercetools/platform-sdk';
-import { Language } from 'types/types';
+import { Cart } from '@commercetools/platform-sdk';
+import { Language, WishList } from 'types/types';
 
 export interface IAppContext {
   isAuth: boolean;
@@ -13,8 +13,8 @@ export interface IAppContext {
   language: Language;
   cart: Cart | undefined;
   setCart: Dispatch<Cart | undefined>;
-  wishList: ShoppingList | undefined;
-  setWishList: Dispatch<SetStateAction<ShoppingList | undefined>>;
+  wishList: WishList | undefined;
+  setWishList: Dispatch<SetStateAction<WishList | undefined>>;
 }
 
 export interface Message {

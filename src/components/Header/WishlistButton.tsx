@@ -7,7 +7,7 @@ import AppContext from 'context';
 function WishlistButton() {
   const navigate = useNavigate();
   const appContext = useContext(AppContext);
-  const count = appContext?.wishList?.lineItems.length;
+  const count = appContext?.wishList?.products.length;
   return (
     <IconButton onClick={() => navigate('/wishlist')} size="large">
       <Badge badgeContent={count} color="primary">
