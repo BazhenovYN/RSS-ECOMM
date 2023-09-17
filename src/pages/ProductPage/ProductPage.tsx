@@ -46,7 +46,7 @@ function ProductPage() {
   ) => {
     setWaitForCartUpdate(true);
     try {
-      let newCart = cart || (await createCart(isAuth));
+      let newCart = cart || (await createCart());
       newCart = await operation(newCart, ...args);
       if (setCart) setCart(newCart);
       if (setMessage) setMessage({ severity: 'success', text: successMessage });

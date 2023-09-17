@@ -8,7 +8,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useEffect, useMemo, useState } from 'react';
 import AppContext, { Message } from 'context';
-import { login } from 'services/sdk/customer';
+import { authenticate } from 'services/sdk/customer';
 import AppRouter from 'router';
 import PopupMessage from 'components/PopupMessage';
 import { getCookie } from 'utils/cookie';
@@ -33,9 +33,6 @@ const theme = createTheme({
 });
 
 const hasAuthTokenInCookie = !!(getCookie(CookieNames.authToken) || getCookie(CookieNames.refreshAuthToken));
-const hasAnonymousTokenInCookie = !!(
-  getCookie(CookieNames.anonymousToken) || getCookie(CookieNames.refreshAnonymousToken)
-);
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -49,29 +46,21 @@ function App() {
   }, [isAuth, setIsAuth, message, setMessage, language, setLanguage, cart, setCart, user, setUser]);
 
   useEffect(() => {
-    const authenticate = async () => {
-      const setCartAndAuth = async (authResult: boolean) => {
-        setIsAuth(authResult);
-        if (authResult || hasAnonymousTokenInCookie) {
-          setCart(await getActiveCart(authResult));
+    const authenticateToApp = async () => {
+      if (hasAuthTokenInCookie) {
+        try {
+          const obtainedUser = await authenticate();
+          setUser(obtainedUser);
+          setIsAuth(true);
+          setCart(await getActiveCart());
+        } catch (error) {
+          setIsAuth(false);
+          setCart(await getActiveCart());
         }
-      };
-
-      try {
-        let authResult = false;
-        if (hasAuthTokenInCookie) {
-          setUser(await login());
-          authResult = true;
-        }
-        await setCartAndAuth(authResult);
-      } catch (error) {
-        await setCartAndAuth(false);
-        if (setMessage)
-          setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
       }
     };
 
-    authenticate().finally(() => setIsLoading(false));
+    authenticateToApp().finally(() => setIsLoading(false));
   }, []);
 
   if (isLoading) {

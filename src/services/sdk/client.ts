@@ -89,6 +89,22 @@ export const removeAuthTokens = (): void => {
   deleteCookie(cookieNames.refreshAuthToken);
 };
 
+export const getApiRootByRefreshToken = (refreshToken: string) => {
+  const client = new ClientBuilder()
+    .withRefreshTokenFlow({
+      ...authMiddlewareOptions,
+      credentials: {
+        clientId,
+        clientSecret,
+      },
+      refreshToken,
+    })
+    .withHttpMiddleware(httpMiddlewareOptions)
+    .build();
+
+  return createApiBuilderFromCtpClient(client).withProjectKey({ projectKey });
+};
+
 export const getApiRootByToken = (token: string) => {
   const client = new ClientBuilder()
     .withExistingTokenFlow(`Bearer ${token}`, { force: false })
@@ -106,29 +122,26 @@ export const getCustomerApiRootByAuthorization = (
   return createApiBuilderFromCtpClient(customerClient).withProjectKey({ projectKey });
 };
 
-export const getCustomerApiRoot = (email?: string, password?: string): ByProjectKeyRequestBuilder => {
-  const token = getCookie(cookieNames.authToken);
-  return token ? getApiRootByToken(token) : getCustomerApiRootByAuthorization(email, password);
-};
-
-export const getAnonymousApiRootByAuthorization = (): ByProjectKeyRequestBuilder => {
+export const getAnonymousApiRoot = (): ByProjectKeyRequestBuilder => {
   const anonymousClient = new ClientBuilder()
     .withAnonymousSessionFlow({
       ...authMiddlewareOptions,
       scopes: customerScopes,
-      tokenCache: createTokenCache(cookieNames.anonymousToken, cookieNames.refreshAnonymousToken),
+      tokenCache: createTokenCache(cookieNames.authToken, cookieNames.refreshAuthToken),
     })
     .withHttpMiddleware(httpMiddlewareOptions)
     .build();
   return createApiBuilderFromCtpClient(anonymousClient).withProjectKey({ projectKey });
 };
 
-export const getAnonymousApiRoot = (): ByProjectKeyRequestBuilder => {
-  const token = getCookie(cookieNames.anonymousToken);
-  return token ? getApiRootByToken(token) : getAnonymousApiRootByAuthorization();
-};
+export const getCustomerApiRoot = (email?: string, password?: string): ByProjectKeyRequestBuilder => {
+  if (email && password) return getCustomerApiRootByAuthorization(email, password);
 
-export const removeAnonymousTokens = (): void => {
-  deleteCookie(cookieNames.anonymousToken);
-  deleteCookie(cookieNames.refreshAnonymousToken);
+  const token = getCookie(cookieNames.authToken);
+  if (token) return getApiRootByToken(token);
+
+  const refreshToken = getCookie(cookieNames.refreshAuthToken);
+  if (refreshToken) return getApiRootByRefreshToken(refreshToken);
+
+  return getAnonymousApiRoot();
 };

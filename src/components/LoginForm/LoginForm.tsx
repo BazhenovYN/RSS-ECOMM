@@ -34,7 +34,7 @@ function LoginForm() {
     try {
       if (setUser) setUser(await login(data.email, data.password));
       if (setIsAuth) setIsAuth(true);
-      if (setCart) setCart(await getActiveCart(true));
+      if (setCart) setCart(await getActiveCart());
       navigate('/');
     } catch (error) {
       if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });

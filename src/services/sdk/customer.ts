@@ -18,18 +18,19 @@ import type {
 } from 'types/types';
 import dayjs from 'dayjs';
 
-export const login = async (email?: string, password?: string) => {
-  try {
-    const response = await getCustomerApiRoot(email, password).me().get().execute();
-    return response.body;
-  } catch (error) {
-    removeAuthTokens();
-    throw error;
-  }
-};
-
 export const logout = () => {
   removeAuthTokens();
+};
+
+export const login = async (email: string, password: string) => {
+  logout();
+  const response = await getCustomerApiRoot(email, password).me().get().execute();
+  return response.body;
+};
+
+export const authenticate = async () => {
+  const response = await getCustomerApiRoot().me().get().execute();
+  return response.body;
 };
 
 export const createAddressDraft = (registrationFormAddress: RegistrationFormAddress | AddressData): AddressDraft => {

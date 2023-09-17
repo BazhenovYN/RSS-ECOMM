@@ -9,7 +9,7 @@ import { createCustomer, login } from 'services/sdk/customer';
 import { RegistrationFormData } from 'types/types';
 import { useNavigate } from 'react-router-dom';
 import AppContext from 'context';
-import { removeAnonymousTokens } from 'services/sdk/client';
+import { removeAuthTokens } from 'services/sdk/client';
 
 const defaultValues: Partial<RegistrationFormData> = {
   email: '',
@@ -62,7 +62,7 @@ function RegistrationForm() {
   const onSubmit = async (data: RegistrationFormData) => {
     try {
       await createCustomer(data, cart?.anonymousId);
-      removeAnonymousTokens();
+      removeAuthTokens();
       if (setUser) setUser(await login(data.email, data.password));
       if (setIsAuth) setIsAuth(true);
       navigate('/');

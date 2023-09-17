@@ -5,7 +5,6 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AppContext from 'context';
 import { logout } from 'services/sdk/customer';
-import { getActiveCart } from 'services/sdk/cart';
 
 function UserProfileButton() {
   const appContext = useContext(AppContext);
@@ -19,7 +18,7 @@ function UserProfileButton() {
     logout();
     if (setUser) setUser(undefined);
     if (setIsAuth) setIsAuth(false);
-    if (setCart) setCart(await getActiveCart(false));
+    if (setCart) setCart(undefined);
     navigate('/');
   };
 

@@ -1,5 +1,5 @@
 import { DEFAULT_CURRENCY } from 'constants/const';
-import { getAnonymousApiRoot, getAppApiRoot, getCustomerApiRoot } from 'services/sdk/client';
+import { getAppApiRoot, getCustomerApiRoot } from 'services/sdk/client';
 import { Cart, MyCartDraft, MyCartUpdate, MyCartUpdateAction } from '@commercetools/platform-sdk';
 
 const createCartDraft = (): MyCartDraft => {
@@ -8,39 +8,31 @@ const createCartDraft = (): MyCartDraft => {
   };
 };
 
-export const createCart = async (isAuth: boolean = false): Promise<Cart> => {
-  const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
-  const response = await getRoot().me().carts().post({ body: createCartDraft() }).execute();
+export const createCart = async (): Promise<Cart> => {
+  const response = await getCustomerApiRoot().me().carts().post({ body: createCartDraft() }).execute();
 
   return response.body;
 };
 
-export const getActiveCart = async (isAuth: boolean = false): Promise<Cart | undefined> => {
-  const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
+export const getActiveCart = async (): Promise<Cart | undefined> => {
   try {
-    const response = await getRoot().me().activeCart().get().execute();
+    const response = await getCustomerApiRoot().me().activeCart().get().execute();
     return response.body;
   } catch {
     return undefined;
   }
 };
 
-const updateCart = async (cart: Cart, actions: MyCartUpdateAction[], isAuth: boolean) => {
+const updateCart = async (cart: Cart, actions: MyCartUpdateAction[]) => {
   const body: MyCartUpdate = {
     version: cart.version,
     actions,
   };
-  const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
-  const response = await getRoot().me().carts().withId({ ID: cart.id }).post({ body }).execute();
+  const response = await getCustomerApiRoot().me().carts().withId({ ID: cart.id }).post({ body }).execute();
   return response.body;
 };
 
-export const addToCart = async (
-  cart: Cart,
-  productId: string,
-  isAuth: boolean = false,
-  count: number = 1
-): Promise<Cart> => {
+export const addToCart = async (cart: Cart, productId: string, count: number = 1): Promise<Cart> => {
   const actions: MyCartUpdateAction[] = [
     {
       action: 'addLineItem',
@@ -48,21 +40,15 @@ export const addToCart = async (
       quantity: count,
     },
   ];
-  return updateCart(cart, actions, isAuth);
+  return updateCart(cart, actions);
 };
 
-export const deleteActiveCart = async (cart: Cart, isAuth: boolean = false) => {
+export const deleteActiveCart = async (cart: Cart) => {
   const queryArgs = { version: cart.version };
-  const getRoot = isAuth ? getCustomerApiRoot : getAnonymousApiRoot;
-  await getRoot().me().carts().withId({ ID: cart.id }).delete({ queryArgs }).execute();
+  await getCustomerApiRoot().me().carts().withId({ ID: cart.id }).delete({ queryArgs }).execute();
 };
 
-export const changeLineItemQuantity = async (
-  cart: Cart,
-  lineItemId: string,
-  quantity: number,
-  isAuth: boolean = false
-) => {
+export const changeLineItemQuantity = async (cart: Cart, lineItemId: string, quantity: number) => {
   const actions: MyCartUpdateAction[] = [
     {
       action: 'changeLineItemQuantity',
@@ -70,30 +56,30 @@ export const changeLineItemQuantity = async (
       quantity,
     },
   ];
-  return updateCart(cart, actions, isAuth);
+  return updateCart(cart, actions);
 };
 
-export const removeLineItem = async (cart: Cart, lineItemId: string, isAuth: boolean = false) => {
+export const removeLineItem = async (cart: Cart, lineItemId: string) => {
   const actions: MyCartUpdateAction[] = [
     {
       action: 'removeLineItem',
       lineItemId,
     },
   ];
-  return updateCart(cart, actions, isAuth);
+  return updateCart(cart, actions);
 };
 
-export const addDiscountCode = async (cart: Cart, code: string, isAuth: boolean = false) => {
+export const addDiscountCode = async (cart: Cart, code: string) => {
   const actions: MyCartUpdateAction[] = [
     {
       action: 'addDiscountCode',
       code: code.toUpperCase(),
     },
   ];
-  return updateCart(cart, actions, isAuth);
+  return updateCart(cart, actions);
 };
 
-export const removeDiscountCode = async (cart: Cart, discountID: string, isAuth: boolean = false) => {
+export const removeDiscountCode = async (cart: Cart, discountID: string) => {
   const actions: MyCartUpdateAction[] = [
     {
       action: 'removeDiscountCode',
@@ -103,7 +89,7 @@ export const removeDiscountCode = async (cart: Cart, discountID: string, isAuth:
       },
     },
   ];
-  return updateCart(cart, actions, isAuth);
+  return updateCart(cart, actions);
 };
 
 export const getDiscountCode = async (ID: string) => {

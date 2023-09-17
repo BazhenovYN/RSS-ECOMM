@@ -26,7 +26,6 @@ interface CatalogProductItemProps {
 function CatalogProductItem({ product, setWaitForCartUpdate }: CatalogProductItemProps) {
   const appContext = useContext(AppContext);
   const language = appContext?.language;
-  const isAuth = appContext?.isAuth;
   const cart = appContext?.cart;
   const setCart = appContext?.setCart;
   const setMessage = appContext?.setMessage;
@@ -49,8 +48,8 @@ function CatalogProductItem({ product, setWaitForCartUpdate }: CatalogProductIte
     try {
       setWaitForCartUpdate(true);
 
-      let newCart = cart || (await createCart(isAuth));
-      newCart = await addToCart(newCart, product.id, isAuth);
+      let newCart = cart || (await createCart());
+      newCart = await addToCart(newCart, product.id);
       if (setCart) setCart(newCart);
       setIsInCart(true);
     } catch (error) {
