@@ -4,7 +4,7 @@ import { Grid, Pagination, Stack, Typography, useMediaQuery } from '@mui/materia
 import { getAttributes, searchProducts } from 'services/sdk/product';
 import { ChangeEvent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import CatalogProductItem from 'components/CatalogProductItem';
-import { AttributesList, CategoriesList, Product, SearchParams, SelectedAttributesList } from 'types/types';
+import { CategoriesList, Product, SelectedAttributesList } from 'types/types';
 import ContentLoaderWrapper from 'components/ContentLoaderWrapper';
 import AppContext from 'context';
 import CatalogSorting from 'components/CatalogSorting';
@@ -15,21 +15,22 @@ import { useParams } from 'react-router-dom';
 import { getCategories } from 'services/sdk/category';
 import BreadcrumbNavigation from 'components/BreadcrumbNavigation';
 import Loader from 'components/Loader';
+import { AttributeDefinition } from '@commercetools/platform-sdk';
 
 function CatalogPage() {
   const appContext = useContext(AppContext);
-  const language = appContext?.language;
+  const language = appContext?.language || DEFAULT_LANGUAGE;
   const { categoryId } = useParams();
-  const sortingNameParameter = useMemo(() => `name.${language || DEFAULT_LANGUAGE}`, [language]);
+  const sortingNameParameter = useMemo(() => `name.${language}`, [language]);
   const sortingPriceParameter = 'price';
-  const searchTextParameter = useMemo(() => `text.${language || DEFAULT_LANGUAGE}`, [language]);
+  const searchTextParameter = useMemo(() => `text.${language}`, [language]);
 
   const [sortingField, setSortingField] = useState(sortingNameParameter);
   const [sortingDirection, setSortingDirection] = useState(sortingDirections.ASC);
   const [searchQuery, setSearchQuery] = useState('');
-  const [attributes, setAttributes] = useState<AttributesList>({});
+  const [attributes, setAttributes] = useState<AttributeDefinition[]>([]);
   const [selectedAttributes, setSelectedAttributes] = useState<SelectedAttributesList>({});
-  const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<CategoriesList>({ mains: [], subs: [] });
   const [waitForCartUpdate, setWaitForCartUpdate] = useState(false);
   const [pagesCount, setPagesCount] = useState(1);
@@ -61,25 +62,22 @@ function CatalogPage() {
     setCurrentPage(1);
   }, [isXs, isSm, isLg, searchQuery, categoryId, selectedAttributes]);
 
+  const loadingAttributes = useCallback(async () => {
+    setAttributes(await getAttributes());
+  }, []);
+
   const loadingProducts = useCallback(async () => {
-    const searchParams: SearchParams = {
+    const searchedFilteredProducts = await searchProducts({
       searchTextParameter,
       searchQuery,
       sortingField,
       sortingDirection,
       categoryId,
-    };
-
-    const allProducts = await searchProducts(searchParams);
-    setAttributes(getAttributes(allProducts.products));
-
-    const searchedFilteredProducts = await searchProducts({
-      ...searchParams,
       selectedAttributes,
       limit: productsPerPage,
       offset: (currentPage - 1) * productsPerPage,
     });
-    setDisplayedProducts(searchedFilteredProducts.products);
+    setProducts(searchedFilteredProducts.products);
     setPagesCount(Math.ceil(searchedFilteredProducts.total / productsPerPage) || 1);
   }, [
     searchTextParameter,
@@ -109,11 +107,7 @@ function CatalogPage() {
           <Stack spacing={3}>
             <SearchField data-testid="catalog-search" onSearch={setSearchQuery} />
             <ContentLoaderWrapper loadingLogic={loadingCategories}>
-              <CategoriesListing
-                language={language || DEFAULT_LANGUAGE}
-                categories={categories}
-                currentCategoryID={categoryId}
-              />
+              <CategoriesListing language={language} categories={categories} currentCategoryID={categoryId} />
             </ContentLoaderWrapper>
             <CatalogSorting
               sortingPriceParameter={sortingPriceParameter}
@@ -121,18 +115,29 @@ function CatalogPage() {
               onChangeSortingField={setSortingField}
               onChangeSortingDirection={setSortingDirection}
             />
-            <AttributesFilter attributes={attributes} onChangeSelectedAttribute={setSelectedAttributes} />
+            <ContentLoaderWrapper loadingLogic={loadingAttributes}>
+              <AttributesFilter
+                fetchedAttributes={attributes}
+                onChangeSelectedAttribute={setSelectedAttributes}
+                language={language}
+              />
+            </ContentLoaderWrapper>
           </Stack>
         </Grid>
         <Grid item sm={12} md={9} lg={10}>
           <ContentLoaderWrapper loadingLogic={loadingProducts}>
             <BreadcrumbNavigation categories={categories} categoryId={categoryId} language={language} />
             <Grid container spacing={3}>
-              {displayedProducts.map((product) => (
+              {products.map((product) => (
                 <Grid item xs={12} sm={6} lg={4} xl={3} key={product.id}>
                   <CatalogProductItem product={product} setWaitForCartUpdate={setWaitForCartUpdate} />
                 </Grid>
               ))}
+              {!products.length && (
+                <Typography textAlign="center" width="100%">
+                  Products not found. Use another filters.
+                </Typography>
+              )}
             </Grid>
             {pagesCount !== 1 && (
               <Pagination
