@@ -22,14 +22,8 @@ export const logout = () => {
   removeAuthTokens();
 };
 
-export const login = async (email: string, password: string) => {
-  logout();
+export const login = async (email?: string, password?: string) => {
   const response = await getCustomerApiRoot(email, password).me().get().execute();
-  return response.body;
-};
-
-export const authenticate = async () => {
-  const response = await getCustomerApiRoot().me().get().execute();
   return response.body;
 };
 

@@ -6,9 +6,9 @@ import Header from 'components/Header';
 import Footer from 'components/Footer';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import AppContext, { Message } from 'context';
-import { authenticate } from 'services/sdk/customer';
+import { login, logout } from 'services/sdk/customer';
 import AppRouter from 'router';
 import PopupMessage from 'components/PopupMessage';
 import { getCookie } from 'utils/cookie';
@@ -44,10 +44,46 @@ function App() {
   const [user, setUser] = useState<Customer>();
   const [wishList, setWishList] = useState<WishList>();
 
+  const signInUser = useCallback(async (email?: string, password?: string) => {
+    setIsLoading(true);
+    try {
+      const obtainedUser = await login(email, password);
+      setUser(obtainedUser);
+      setIsAuth(true);
+      setCart(await getActiveCart());
+      setWishList(await getWishList());
+      return true;
+    } catch (error) {
+      if (email && password) {
+        setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
+      } else {
+        setIsAuth(false);
+        setUser(undefined);
+        setCart(await getActiveCart());
+        setWishList(await getWishList());
+      }
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const signOutUser = useCallback(() => {
+    setIsLoading(true);
+    logout();
+    setUser(undefined);
+    setIsAuth(false);
+    setCart(undefined);
+    setWishList(undefined);
+    setIsLoading(false);
+  }, []);
+
   const appContext = useMemo(() => {
     return {
       isAuth,
       setIsAuth,
+      signInUser,
+      signOutUser,
       message,
       setMessage,
       language,
@@ -62,6 +98,8 @@ function App() {
   }, [
     isAuth,
     setIsAuth,
+    signInUser,
+    signOutUser,
     message,
     setMessage,
     language,
@@ -75,24 +113,12 @@ function App() {
   ]);
 
   useEffect(() => {
-    const authenticateToApp = async () => {
-      if (hasAuthTokenInCookie) {
-        try {
-          const obtainedUser = await authenticate();
-          setUser(obtainedUser);
-          setIsAuth(true);
-          setCart(await getActiveCart());
-          setWishList(await getWishList());
-        } catch (error) {
-          setIsAuth(false);
-          setCart(await getActiveCart());
-          setWishList(await getWishList());
-        }
-      }
-    };
-
-    authenticateToApp().finally(() => setIsLoading(false));
-  }, []);
+    if (hasAuthTokenInCookie) {
+      signInUser();
+    } else {
+      setIsLoading(false);
+    }
+  }, [signInUser]);
 
   if (isLoading) {
     return <Loader />;

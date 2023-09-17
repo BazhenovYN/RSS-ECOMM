@@ -28,6 +28,8 @@ const context: IAppContext = {
   setCart: jest.fn,
   isAuth: false,
   setIsAuth: jest.fn,
+  signInUser: () => Promise.resolve(true),
+  signOutUser: jest.fn,
   message: { text: null, severity: 'error' },
   setMessage: jest.fn,
   language: DEFAULT_LANGUAGE,
@@ -45,6 +47,19 @@ const context: IAppContext = {
     authenticationMode: 'Password',
   },
   setUser: jest.fn,
+  wishList: {
+    products: [],
+    shoppingList: {
+      id: 'test-id',
+      version: 1,
+      name: { [DEFAULT_LANGUAGE]: 'test-shopping-list-name' },
+      lineItems: [],
+      textLineItems: [],
+      createdAt: '',
+      lastModifiedAt: '',
+    },
+  },
+  setWishList: jest.fn,
 };
 
 describe('UserProfilePage', () => {

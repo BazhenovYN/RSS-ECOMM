@@ -6,10 +6,11 @@ import {
   Client,
   PasswordAuthMiddlewareOptions,
   TokenStore,
+  TokenCache,
 } from '@commercetools/sdk-client-v2';
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import getEnvironmentVariable from 'utils/getEnvironmentVariable';
-import { deleteCookie, getCookie, getCookieExpiration, setCookie } from 'utils/cookie';
+import { deleteCookie, getCookie, setCookie } from 'utils/cookie';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 
 export const projectKey: string = getEnvironmentVariable('REACT_APP_PROJECT_KEY');
@@ -44,20 +45,20 @@ export const getAppApiRoot = (): ByProjectKeyRequestBuilder => {
   return createApiBuilderFromCtpClient(appClient).withProjectKey({ projectKey });
 };
 
-const createTokenCache = (tokenCookieName: string, refreshTokenCookieName: string) => {
+const createTokenCache = (tokenCookieName: string, refreshTokenCookieName: string): TokenCache => {
   return {
-    get: (): TokenStore => {
+    get: () => {
       return {
-        token: getCookie(tokenCookieName) || '',
-        expirationTime: getCookieExpiration(tokenCookieName) || 0,
-        refreshToken: getCookie(refreshTokenCookieName) || undefined,
+        token: '',
+        expirationTime: 0,
+        refreshToken: '',
       };
     },
-    set: (tokenStore: TokenStore): void => {
-      const msInYear = 31536000000;
+    set: (tokenStore: TokenStore) => {
+      const msIn200days = 17280000000;
       setCookie(tokenCookieName, tokenStore.token, tokenStore.expirationTime);
       if (tokenStore.refreshToken) {
-        setCookie(refreshTokenCookieName, tokenStore.refreshToken, new Date().getTime() + msInYear);
+        setCookie(refreshTokenCookieName, tokenStore.refreshToken, new Date().getTime() + msIn200days);
       }
     },
   };

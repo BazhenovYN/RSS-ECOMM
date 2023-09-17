@@ -13,6 +13,8 @@ describe('ShoppingCart', () => {
           setCart: jest.fn,
           isAuth: false,
           setIsAuth: jest.fn,
+          signInUser: () => Promise.resolve(true),
+          signOutUser: jest.fn,
           message: { text: null, severity: 'error' },
           setMessage: jest.fn,
           language: DEFAULT_LANGUAGE,

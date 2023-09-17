@@ -21,7 +21,6 @@ import { getDiscountID, getMoneyValue, getTotalPriceWithoutDiscount } from './ut
 
 function ShoppingCart() {
   const appContext = useContext(AppContext);
-  const isAuth = appContext?.isAuth ?? false;
   const language = appContext?.language ?? DEFAULT_LANGUAGE;
   const setMessage = appContext?.setMessage;
   const cart = appContext?.cart;
@@ -60,14 +59,14 @@ function ShoppingCart() {
   };
 
   const setProductQuantity = (lineItemId: string, quantity: number) =>
-    handleCartOperation(changeLineItemQuantity, lineItemId, quantity, isAuth);
+    handleCartOperation(changeLineItemQuantity, lineItemId, quantity);
 
-  const removeProduct = (lineItemId: string) => handleCartOperation(removeLineItem, lineItemId, isAuth);
+  const removeProduct = (lineItemId: string) => handleCartOperation(removeLineItem, lineItemId);
 
-  const clearShoppingCart = () => handleCartOperation(deleteActiveCart, isAuth);
+  const clearShoppingCart = () => handleCartOperation(deleteActiveCart);
 
   const applyPromoCode = async (code: string) => {
-    const isCodeApplied = await handleCartOperation(addDiscountCode, code, isAuth);
+    const isCodeApplied = await handleCartOperation(addDiscountCode, code);
     if (isCodeApplied) {
       setPromoCode(code);
     }
@@ -77,7 +76,7 @@ function ShoppingCart() {
     if (!cart) return;
     const discountID = getDiscountID(cart);
     if (discountID) {
-      await handleCartOperation(removeDiscountCode, discountID, isAuth);
+      await handleCartOperation(removeDiscountCode, discountID);
     }
     setPromoCode(undefined);
   };

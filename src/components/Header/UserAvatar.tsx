@@ -8,17 +8,13 @@ import { logout } from 'services/sdk/customer';
 
 function UserProfileButton() {
   const appContext = useContext(AppContext);
-  const setIsAuth = appContext?.setIsAuth;
-  const setCart = appContext?.setCart;
-  const setUser = appContext?.setUser;
+  const signOutUser = appContext?.signOutUser;
 
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
     logout();
-    if (setUser) setUser(undefined);
-    if (setIsAuth) setIsAuth(false);
-    if (setCart) setCart(undefined);
+    if (signOutUser) signOutUser();
     navigate('/');
   };
 

@@ -20,18 +20,3 @@ export function deleteCookie(name: string) {
   expires.setDate(expires.getDate() - 1);
   document.cookie = `${name}=; expires=${expires.toUTCString()}; path=/`;
 }
-
-export function getCookieExpiration(name: string): number | null {
-  const cookieArray = document.cookie.split(';');
-  for (let i = 0; i < cookieArray.length; i += 1) {
-    const cookie = cookieArray[i].trim();
-    const [cookieName] = cookie.split('=');
-    if (cookieName === name) {
-      const expiresPart = cookie.split(';').find((part) => part.trim().startsWith('expires='));
-      if (expiresPart) {
-        return Number(expiresPart.trim().substring('expires='.length));
-      }
-    }
-  }
-  return null;
-}

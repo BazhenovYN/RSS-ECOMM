@@ -2,11 +2,9 @@ import validationSchemes from 'constants/validationSchemes';
 import { useForm } from 'react-hook-form';
 import { Box, Button, Stack, TextField } from '@mui/material';
 import PasswordField from 'components/PasswordField';
-import { login } from 'services/sdk/customer';
 import { useContext } from 'react';
 import AppContext from 'context';
 import { useNavigate } from 'react-router-dom';
-import { getActiveCart } from 'services/sdk/cart';
 
 interface IFormValues {
   email: string;
@@ -23,21 +21,16 @@ function LoginForm() {
   } = useForm<IFormValues>({ defaultValues, mode: 'all' });
 
   const appContext = useContext(AppContext);
-  const setIsAuth = appContext?.setIsAuth;
-  const setMessage = appContext?.setMessage;
-  const setCart = appContext?.setCart;
-  const setUser = appContext?.setUser;
+  const signInUser = appContext?.signInUser;
 
   const navigate = useNavigate();
 
   const onSubmit = async (data: IFormValues): Promise<void> => {
-    try {
-      if (setUser) setUser(await login(data.email, data.password));
-      if (setIsAuth) setIsAuth(true);
-      if (setCart) setCart(await getActiveCart());
-      navigate('/');
-    } catch (error) {
-      if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
+    if (signInUser) {
+      const successfulLogin = await signInUser(data.email, data.password);
+      if (successfulLogin) {
+        navigate('/');
+      }
     }
   };
   return (

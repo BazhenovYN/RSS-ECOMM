@@ -3,7 +3,7 @@ import { IconButton } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import AppContext from 'context';
-import { addToWishlist, removeFromWishlist } from 'services/sdk/wishlist';
+import { addToWishlist, createShoppingList, removeFromWishlist } from 'services/sdk/wishlist';
 import { findLineItemInList } from 'utils/utils';
 import type { Product } from 'types/types';
 
@@ -14,7 +14,6 @@ interface IProps {
 
 function WishListToggle({ product, setLoading }: IProps) {
   const appContext = useContext(AppContext);
-  const isAuth = appContext?.isAuth ?? false;
   const setMessage = appContext?.setMessage;
   const wishlist = appContext?.wishList;
   const setWishList = appContext?.setWishList;
@@ -28,16 +27,11 @@ function WishListToggle({ product, setLoading }: IProps) {
   }, [product, wishListItems]);
 
   const handleOperation = async (operation: Function) => {
-    if (!wishlist) {
-      if (setMessage) setMessage({ severity: 'error', text: 'Wishlist not found' });
-      return;
-    }
-
     try {
       setLoading(true);
-      const newWishList = await operation(wishlist, product, isAuth);
+      let newWishList = wishlist || { products: [], shoppingList: await createShoppingList() };
+      newWishList = await operation(newWishList, product);
       if (setWishList) setWishList(newWishList);
-      setIsInWishList(false);
     } catch (error) {
       if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
     } finally {
@@ -45,14 +39,14 @@ function WishListToggle({ product, setLoading }: IProps) {
     }
   };
 
-  const handleAdd = (event: MouseEvent) => {
+  const handleAdd = async (event: MouseEvent) => {
     event.preventDefault();
-    handleOperation(addToWishlist);
+    await handleOperation(addToWishlist);
   };
 
-  const handleRemove = (event: MouseEvent) => {
+  const handleRemove = async (event: MouseEvent) => {
     event.preventDefault();
-    handleOperation(removeFromWishlist);
+    await handleOperation(removeFromWishlist);
   };
 
   return (

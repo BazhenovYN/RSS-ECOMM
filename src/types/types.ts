@@ -92,5 +92,5 @@ export interface SearchData {
 
 export interface WishList {
   products: Product[];
-  shoppingList?: ShoppingList;
+  shoppingList: ShoppingList;
 }

@@ -17,7 +17,6 @@ import WishListToggle from 'components/WishListToggle';
 function ProductPage() {
   const appContext = useContext(AppContext);
   const language = appContext?.language;
-  const isAuth = appContext?.isAuth ?? false;
   const setMessage = appContext?.setMessage;
 
   const [product, setProduct] = useState<Product | undefined>();
@@ -60,10 +59,10 @@ function ProductPage() {
   };
 
   const handleAddToBasket = async () =>
-    handleCartOperation(addToCart, 'Product has been successfully added to cart', productId, isAuth, count);
+    handleCartOperation(addToCart, 'Product has been successfully added to cart', productId, count);
 
   const handleDeleteFromBasket = async () =>
-    handleCartOperation(removeLineItem, 'Product has been successfully removed from cart', lineItem?.id || '', isAuth);
+    handleCartOperation(removeLineItem, 'Product has been successfully removed from cart', lineItem?.id || '');
 
   return (
     <ContentLoaderWrapper loadingLogic={getProduct}>

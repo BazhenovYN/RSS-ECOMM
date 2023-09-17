@@ -6,6 +6,8 @@ import { Language, WishList } from 'types/types';
 export interface IAppContext {
   isAuth: boolean;
   setIsAuth: Dispatch<SetStateAction<boolean>>;
+  signInUser: (email: string, password: string) => Promise<boolean>;
+  signOutUser: () => void;
   message: Message;
   setMessage: Dispatch<SetStateAction<Message>>;
   language: Language;
