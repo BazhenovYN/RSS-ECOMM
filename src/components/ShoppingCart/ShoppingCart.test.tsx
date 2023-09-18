@@ -4,6 +4,16 @@ import AppContext from 'context';
 import { cart } from './mock';
 import ShoppingCart from './ShoppingCart';
 
+const discountCode = {
+  code: 'PROMO',
+};
+
+jest.mock('services/sdk/cart', () => ({
+  __esModule: true,
+  ...jest.requireActual('services/sdk/cart'),
+  getDiscountCode: () => Promise.resolve(discountCode),
+}));
+
 describe('ShoppingCart', () => {
   test('renders correctly', async () => {
     render(
@@ -13,7 +23,7 @@ describe('ShoppingCart', () => {
           setCart: jest.fn,
           isAuth: false,
           setIsAuth: jest.fn,
-          signInUser: () => Promise.resolve(true),
+          signInUser: jest.fn().mockResolvedValue(true),
           signOutUser: jest.fn,
           message: { text: null, severity: 'error' },
           setMessage: jest.fn,
