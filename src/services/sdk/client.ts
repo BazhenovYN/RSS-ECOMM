@@ -38,7 +38,6 @@ const httpMiddlewareOptions: HttpMiddlewareOptions = {
 const appClient: Client = new ClientBuilder()
   .withClientCredentialsFlow(authMiddlewareOptions)
   .withHttpMiddleware(httpMiddlewareOptions)
-  .withLoggerMiddleware()
   .build();
 
 export const getAppApiRoot = (): ByProjectKeyRequestBuilder => {
