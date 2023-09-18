@@ -45,7 +45,7 @@ export const getAppApiRoot = (): ByProjectKeyRequestBuilder => {
   return createApiBuilderFromCtpClient(appClient).withProjectKey({ projectKey });
 };
 
-const createTokenCache = (tokenCookieName: string, refreshTokenCookieName: string): TokenCache => {
+const createTokenCache = (): TokenCache => {
   return {
     get: () => {
       return {
@@ -56,9 +56,9 @@ const createTokenCache = (tokenCookieName: string, refreshTokenCookieName: strin
     },
     set: (tokenStore: TokenStore) => {
       const msIn200days = 17280000000;
-      setCookie(tokenCookieName, tokenStore.token, tokenStore.expirationTime);
+      setCookie(cookieNames.authToken, tokenStore.token, tokenStore.expirationTime);
       if (tokenStore.refreshToken) {
-        setCookie(refreshTokenCookieName, tokenStore.refreshToken, new Date().getTime() + msIn200days);
+        setCookie(cookieNames.refreshAuthToken, tokenStore.refreshToken, new Date().getTime() + msIn200days);
       }
     },
   };
@@ -76,7 +76,7 @@ const customerClientBuilder = (email: string, password: string): Client => {
       },
     },
     scopes: customerScopes,
-    tokenCache: createTokenCache(cookieNames.authToken, cookieNames.refreshAuthToken),
+    tokenCache: createTokenCache(),
   };
 
   return new ClientBuilder()
@@ -99,6 +99,7 @@ export const getApiRootByRefreshToken = (refreshToken: string) => {
         clientSecret,
       },
       refreshToken,
+      tokenCache: createTokenCache(),
     })
     .withHttpMiddleware(httpMiddlewareOptions)
     .build();
@@ -128,7 +129,7 @@ export const getAnonymousApiRoot = (): ByProjectKeyRequestBuilder => {
     .withAnonymousSessionFlow({
       ...authMiddlewareOptions,
       scopes: customerScopes,
-      tokenCache: createTokenCache(cookieNames.authToken, cookieNames.refreshAuthToken),
+      tokenCache: createTokenCache(),
     })
     .withHttpMiddleware(httpMiddlewareOptions)
     .build();
