@@ -18,17 +18,13 @@ import type {
 } from 'types/types';
 import dayjs from 'dayjs';
 
-export const login = async (email: string = 'default', password: string = 'default'): Promise<void> => {
-  try {
-    await getCustomerApiRoot(email, password).me().get().execute();
-  } catch (error) {
-    removeAuthTokens();
-    throw error;
-  }
-};
-
 export const logout = () => {
   removeAuthTokens();
+};
+
+export const login = async (email?: string, password?: string) => {
+  const response = await getCustomerApiRoot(email, password).me().get().execute();
+  return response.body;
 };
 
 export const createAddressDraft = (registrationFormAddress: RegistrationFormAddress | AddressData): AddressDraft => {
@@ -41,7 +37,10 @@ export const createAddressDraft = (registrationFormAddress: RegistrationFormAddr
   };
 };
 
-export const createCustomerDraft = (registrationFormData: RegistrationFormData): CustomerDraft => {
+export const createCustomerDraft = (
+  registrationFormData: RegistrationFormData,
+  anonymousId?: string
+): CustomerDraft => {
   const shippingAddress: AddressDraft = createAddressDraft(registrationFormData.shippingAddress);
   const billingAddress: AddressDraft = createAddressDraft(registrationFormData.billingAddress);
 
@@ -59,20 +58,19 @@ export const createCustomerDraft = (registrationFormData: RegistrationFormData):
     defaultShippingAddress: registrationFormData.shippingAddress.isDefault ? 0 : undefined,
     billingAddresses: [1],
     defaultBillingAddress: registrationFormData.billingAddress.isDefault ? 1 : undefined,
+    anonymousId,
   };
 };
 
-export const createCustomer = async (registrationFormData: RegistrationFormData): Promise<CustomerSignInResult> => {
-  const customerDraft: CustomerDraft = createCustomerDraft(registrationFormData);
+export const createCustomer = async (
+  registrationFormData: RegistrationFormData,
+  anonymousId?: string
+): Promise<CustomerSignInResult> => {
+  const customerDraft: CustomerDraft = createCustomerDraft(registrationFormData, anonymousId);
   const response: ClientResponse<CustomerSignInResult> = await getAppApiRoot()
     .customers()
     .post({ body: customerDraft })
     .execute();
-  return response.body;
-};
-
-export const getUserCustomer = async (): Promise<Customer> => {
-  const response = await getCustomerApiRoot().me().get().execute();
   return response.body;
 };
 

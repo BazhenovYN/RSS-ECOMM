@@ -1,13 +1,13 @@
 import { createContext, Dispatch, SetStateAction } from 'react';
 import { AlertColor } from '@mui/material';
-import { Cart } from '@commercetools/platform-sdk';
+import { Cart, Customer } from '@commercetools/platform-sdk';
 import { Language, WishList } from 'types/types';
 
 export interface IAppContext {
   isAuth: boolean;
   setIsAuth: Dispatch<SetStateAction<boolean>>;
   signInUser: (email: string, password: string) => Promise<boolean>;
-  signOutUser: () => Promise<boolean>;
+  signOutUser: () => void;
   message: Message;
   setMessage: Dispatch<SetStateAction<Message>>;
   language: Language;
@@ -15,6 +15,8 @@ export interface IAppContext {
   setCart: Dispatch<Cart | undefined>;
   wishList: WishList | undefined;
   setWishList: Dispatch<SetStateAction<WishList | undefined>>;
+  user: Customer | undefined;
+  setUser: Dispatch<SetStateAction<Customer | undefined>>;
 }
 
 export interface Message {

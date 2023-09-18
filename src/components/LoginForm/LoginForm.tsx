@@ -26,10 +26,11 @@ function LoginForm() {
   const navigate = useNavigate();
 
   const onSubmit = async (data: IFormValues): Promise<void> => {
-    if (!signInUser) return;
-    const successfulLogin = await signInUser(data.email, data.password);
-    if (successfulLogin) {
-      navigate('/');
+    if (signInUser) {
+      const successfulLogin = await signInUser(data.email, data.password);
+      if (successfulLogin) {
+        navigate('/');
+      }
     }
   };
   return (

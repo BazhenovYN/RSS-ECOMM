@@ -17,7 +17,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { getProductDescription, getProductName, findLineItemInList } from 'utils/utils';
 import PriceField from 'components/PriceField';
 import WishListToggle from 'components/WishListToggle';
-import { addToCart, getActiveCart } from 'services/sdk/cart';
+import { addToCart, createCart } from 'services/sdk/cart';
 
 interface CatalogProductItemProps {
   product: Product;
@@ -27,7 +27,6 @@ interface CatalogProductItemProps {
 function CatalogProductItem({ product, setWaitForCartUpdate }: CatalogProductItemProps) {
   const appContext = useContext(AppContext);
   const language = appContext?.language;
-  const isAuth = appContext?.isAuth;
   const cart = appContext?.cart;
   const setCart = appContext?.setCart;
   const setMessage = appContext?.setMessage;
@@ -51,8 +50,8 @@ function CatalogProductItem({ product, setWaitForCartUpdate }: CatalogProductIte
     try {
       setWaitForCartUpdate(true);
 
-      let newCart = cart || (await getActiveCart(isAuth));
-      newCart = await addToCart(newCart, product.id, isAuth);
+      let newCart = cart || (await createCart());
+      newCart = await addToCart(newCart, product.id);
       if (setCart) setCart(newCart);
       setIsInCart(true);
     } catch (error) {

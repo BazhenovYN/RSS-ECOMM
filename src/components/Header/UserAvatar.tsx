@@ -4,6 +4,7 @@ import { Avatar, Box, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/mate
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AppContext from 'context';
+import { logout } from 'services/sdk/customer';
 
 function UserProfileButton() {
   const appContext = useContext(AppContext);
@@ -12,11 +13,9 @@ function UserProfileButton() {
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
-    if (!signOutUser) return;
-    const successfulLogout = await signOutUser();
-    if (successfulLogout) {
-      navigate('/');
-    }
+    logout();
+    if (signOutUser) signOutUser();
+    navigate('/');
   };
 
   const handleUserProfile = () => navigate('/profile');

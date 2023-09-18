@@ -11,7 +11,7 @@ import type { UserDataUpdate } from 'types/types';
 
 interface IProps {
   user: Customer;
-  setUser: Dispatch<SetStateAction<Customer>>;
+  setUser: Dispatch<SetStateAction<Customer | undefined>>;
 }
 
 function UserInformation({ user, setUser }: IProps) {

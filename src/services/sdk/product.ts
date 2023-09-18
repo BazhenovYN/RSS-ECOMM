@@ -1,6 +1,6 @@
 import { getAppApiRoot } from 'services/sdk/client';
-import { ProductProjection } from '@commercetools/platform-sdk';
-import { AttributesList, Product, SearchData, SearchParams } from 'types/types';
+import { AttributeDefinition, ProductProjection } from '@commercetools/platform-sdk';
+import { Product, SearchData, SearchParams } from 'types/types';
 
 interface ISellingPrice {
   price?: number;
@@ -60,7 +60,7 @@ export const searchProducts = async (searchParams: SearchParams): Promise<Search
     offset,
   } = searchParams;
   const filterStrings = Object.keys(selectedAttributes).map((attributeName) => {
-    const filterAttributeName = `variants.attributes.${attributeName}`;
+    const filterAttributeName = `variants.attributes.${attributeName}.key`;
     const filterAttributeValue = selectedAttributes[attributeName];
     return `${filterAttributeName}:"${filterAttributeValue}"`;
   });
@@ -90,14 +90,7 @@ export const searchProducts = async (searchParams: SearchParams): Promise<Search
   };
 };
 
-export const getAttributes = (products: Product[]): AttributesList => {
-  const attributes: AttributesList = {};
-  products.forEach((product) => {
-    product.attributes?.forEach((productAttribute) => {
-      if (!attributes[productAttribute.name]) attributes[productAttribute.name] = new Set();
-      attributes[productAttribute.name].add(productAttribute.value);
-    });
-  });
-
-  return attributes;
+export const getAttributes = async (): Promise<AttributeDefinition[]> => {
+  const response = await getAppApiRoot().productTypes().get().execute();
+  return response.body.results.flatMap((productType) => productType.attributes || []);
 };

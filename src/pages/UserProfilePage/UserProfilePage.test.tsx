@@ -1,26 +1,13 @@
+import { DEFAULT_LANGUAGE } from 'constants/const';
 import { fireEvent, render, screen } from '@testing-library/react';
-import type { Customer } from '@commercetools/platform-sdk';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { AddressData } from 'types/types';
+import AppContext, { IAppContext } from 'context';
 import UserProfilePage from './UserProfilePage';
 
 jest.mock('services/sdk/customer', () => ({
   __esModule: true,
-  getUserCustomer: () =>
-    Promise.resolve<Customer>({
-      id: 'test-id',
-      version: 1,
-      firstName: 'John',
-      lastName: 'Doe',
-      dateOfBirth: '1995-08-02',
-      email: 'test@test.com',
-      createdAt: '',
-      lastModifiedAt: '',
-      addresses: [],
-      isEmailVerified: false,
-      authenticationMode: 'Password',
-    }),
   getAddressesData: (): AddressData[] => [
     {
       id: 'test-id',
@@ -36,12 +23,53 @@ jest.mock('services/sdk/customer', () => ({
   ],
 }));
 
+const context: IAppContext = {
+  cart: undefined,
+  setCart: jest.fn,
+  isAuth: false,
+  setIsAuth: jest.fn,
+  signInUser: () => Promise.resolve(true),
+  signOutUser: jest.fn,
+  message: { text: null, severity: 'error' },
+  setMessage: jest.fn,
+  language: DEFAULT_LANGUAGE,
+  user: {
+    id: 'test-id',
+    version: 1,
+    firstName: 'John',
+    lastName: 'Doe',
+    dateOfBirth: '1995-08-02',
+    email: 'test@test.com',
+    createdAt: '',
+    lastModifiedAt: '',
+    addresses: [],
+    isEmailVerified: false,
+    authenticationMode: 'Password',
+  },
+  setUser: jest.fn,
+  wishList: {
+    products: [],
+    shoppingList: {
+      id: 'test-id',
+      version: 1,
+      name: { [DEFAULT_LANGUAGE]: 'test-shopping-list-name' },
+      lineItems: [],
+      textLineItems: [],
+      createdAt: '',
+      lastModifiedAt: '',
+    },
+  },
+  setWishList: jest.fn,
+};
+
 describe('UserProfilePage', () => {
   test('renders correctly', async () => {
     render(
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <UserProfilePage />
-      </LocalizationProvider>
+      <AppContext.Provider value={context}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <UserProfilePage />
+        </LocalizationProvider>
+      </AppContext.Provider>
     );
 
     const generalTab = await screen.findByLabelText('General');
@@ -59,9 +87,11 @@ describe('UserProfilePage', () => {
 
   test('tab Password opened correctly', async () => {
     render(
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <UserProfilePage />
-      </LocalizationProvider>
+      <AppContext.Provider value={context}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <UserProfilePage />
+        </LocalizationProvider>
+      </AppContext.Provider>
     );
 
     const passwordTab = await screen.findByRole('tab', { name: /password/i });
@@ -73,9 +103,11 @@ describe('UserProfilePage', () => {
 
   test('tab Addresses opened correctly', async () => {
     render(
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <UserProfilePage />
-      </LocalizationProvider>
+      <AppContext.Provider value={context}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <UserProfilePage />
+        </LocalizationProvider>
+      </AppContext.Provider>
     );
 
     const addressesTab = await screen.findByRole('tab', { name: /addresses/i });

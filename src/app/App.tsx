@@ -14,7 +14,7 @@ import PopupMessage from 'components/PopupMessage';
 import { getCookie } from 'utils/cookie';
 import { Language, WishList } from 'types/types';
 import Loader from 'components/Loader';
-import { Cart } from '@commercetools/platform-sdk';
+import { Cart, Customer } from '@commercetools/platform-sdk';
 import { getWishList } from 'services/sdk/wishlist';
 import { getActiveCart } from 'services/sdk/cart';
 import styles from './App.module.scss';
@@ -33,45 +33,49 @@ const theme = createTheme({
   },
 });
 
+const hasAuthTokenInCookie = !!(getCookie(CookieNames.authToken) || getCookie(CookieNames.refreshAuthToken));
+
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
   const [message, setMessage] = useState<Message>({ text: null, severity: undefined });
   const [language, setLanguage] = useState<Language>(DEFAULT_LANGUAGE);
   const [cart, setCart] = useState<Cart>();
+  const [user, setUser] = useState<Customer>();
   const [wishList, setWishList] = useState<WishList>();
 
-  const signOutUser = useCallback(async () => {
+  const signInUser = useCallback(async (email?: string, password?: string) => {
+    setIsLoading(true);
     try {
-      logout();
-      setIsAuth(false);
-      setCart(await getActiveCart(false));
-      setWishList(await getWishList(false));
+      const obtainedUser = await login(email, password);
+      setUser(obtainedUser);
+      setIsAuth(true);
+      setCart(await getActiveCart());
+      setWishList(await getWishList());
       return true;
     } catch (error) {
-      setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
+      if (email && password) {
+        setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
+      } else {
+        setIsAuth(false);
+        setUser(undefined);
+        setCart(await getActiveCart());
+        setWishList(await getWishList());
+      }
       return false;
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  const signInUser = useCallback(async (email?: string, passwors?: string) => {
-    try {
-      await login(email, passwors);
-      setIsAuth(true);
-      setCart(await getActiveCart(true));
-      setWishList(await getWishList(true));
-      return true;
-    } catch (error) {
-      setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
-      setIsAuth(false);
-      setCart(undefined);
-      setWishList(undefined);
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
+  const signOutUser = useCallback(() => {
+    setIsLoading(true);
+    logout();
+    setUser(undefined);
+    setIsAuth(false);
+    setCart(undefined);
+    setWishList(undefined);
+    setIsLoading(false);
   }, []);
 
   const appContext = useMemo(() => {
@@ -88,6 +92,8 @@ function App() {
       setCart,
       wishList,
       setWishList,
+      user,
+      setUser,
     };
   }, [
     isAuth,
@@ -102,24 +108,15 @@ function App() {
     setCart,
     wishList,
     setWishList,
+    user,
+    setUser,
   ]);
 
   useEffect(() => {
-    const anonymousSession = async () => {
-      try {
-        setCart(await getActiveCart(false));
-        setWishList(await getWishList(false));
-      } catch (error) {
-        setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (getCookie(CookieNames.authToken) || getCookie(CookieNames.refreshAuthToken)) {
+    if (hasAuthTokenInCookie) {
       signInUser();
     } else {
-      anonymousSession();
+      setIsLoading(false);
     }
   }, [signInUser]);
 

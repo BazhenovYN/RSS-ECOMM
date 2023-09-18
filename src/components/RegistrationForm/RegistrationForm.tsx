@@ -42,8 +42,9 @@ function RegistrationForm() {
   } = methods;
 
   const appContext = useContext(AppContext);
-  const signInUser = appContext?.signInUser;
   const setMessage = appContext?.setMessage;
+  const cart = appContext?.cart;
+  const signInUser = appContext?.signInUser;
 
   const [disabledAddress, setDisabledAddress] = useState(false);
 
@@ -58,7 +59,7 @@ function RegistrationForm() {
 
   const onSubmit = async (data: RegistrationFormData) => {
     try {
-      await createCustomer(data);
+      await createCustomer(data, cart?.anonymousId);
       if (setMessage) setMessage({ severity: 'success', text: 'The account was successfully created' });
       if (signInUser) {
         const successfulLogin = await signInUser(data.email, data.password);

@@ -63,7 +63,7 @@ export interface PasswordUpdate {
   confirmNewPassword: string;
 }
 
-export type AttributesList = Record<string, Set<string>>;
+export type AttributesList = Record<string, { label: string; list: Set<string> }>;
 
 export type SelectedAttributesList = Record<string, string>;
 
@@ -92,5 +92,5 @@ export interface SearchData {
 
 export interface WishList {
   products: Product[];
-  shoppingList?: ShoppingList;
+  shoppingList: ShoppingList;
 }

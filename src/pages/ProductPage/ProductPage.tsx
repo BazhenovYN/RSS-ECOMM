@@ -10,14 +10,13 @@ import PriceField from 'components/PriceField';
 import { getProductDetails } from 'services/sdk/product';
 import { getProductDescription, getProductName, findLineItemInList } from 'utils/utils';
 import type { Product } from 'types/types';
-import { addToCart, getActiveCart, removeLineItem } from 'services/sdk/cart';
+import { addToCart, createCart, removeLineItem } from 'services/sdk/cart';
 import Loader from 'components/Loader';
 import WishListToggle from 'components/WishListToggle';
 
 function ProductPage() {
   const appContext = useContext(AppContext);
   const language = appContext?.language;
-  const isAuth = appContext?.isAuth ?? false;
   const setMessage = appContext?.setMessage;
 
   const [product, setProduct] = useState<Product | undefined>();
@@ -47,7 +46,7 @@ function ProductPage() {
   ) => {
     setIsLoading(true);
     try {
-      let newCart = cart || (await getActiveCart(isAuth));
+      let newCart = cart || (await createCart());
       newCart = await operation(newCart, ...args);
       if (setCart) setCart(newCart);
       if (setMessage) setMessage({ severity: 'success', text: successMessage });
@@ -60,10 +59,10 @@ function ProductPage() {
   };
 
   const handleAddToBasket = async () =>
-    handleCartOperation(addToCart, 'Product has been successfully added to cart', productId, isAuth, count);
+    handleCartOperation(addToCart, 'Product has been successfully added to cart', productId, count);
 
   const handleDeleteFromBasket = async () =>
-    handleCartOperation(removeLineItem, 'Product has been successfully removed from cart', lineItem?.id || '', isAuth);
+    handleCartOperation(removeLineItem, 'Product has been successfully removed from cart', lineItem?.id || '');
 
   return (
     <ContentLoaderWrapper loadingLogic={getProduct}>

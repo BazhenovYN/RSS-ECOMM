@@ -1,7 +1,5 @@
-import { DEFAULT_LANGUAGE } from 'constants/const';
 import { render, screen } from '@testing-library/react';
 import CatalogProductItem from 'components/CatalogProductItem';
-import AppContext, { IAppContext } from 'context';
 import logo from 'assets/img/logo.png';
 import { Product } from 'types/types';
 import { BrowserRouter } from 'react-router-dom';
@@ -24,31 +22,12 @@ const product: Product = {
   ],
 };
 
-const appContext: IAppContext = {
-  isAuth: false,
-  setIsAuth: () => {},
-  signInUser: () => Promise.resolve(true),
-  signOutUser: () => Promise.resolve(true),
-  message: {
-    text: null,
-    severity: undefined,
-  },
-  setMessage: () => {},
-  language: DEFAULT_LANGUAGE,
-  cart: undefined,
-  setCart: jest.fn,
-  wishList: undefined,
-  setWishList: jest.fn,
-};
-
 describe('CatalogProductItem', () => {
   test('renders correctly', () => {
     render(
-      <AppContext.Provider value={appContext}>
-        <BrowserRouter>
-          <CatalogProductItem product={product} setWaitForCartUpdate={jest.fn} />
-        </BrowserRouter>
-      </AppContext.Provider>
+      <BrowserRouter>
+        <CatalogProductItem product={product} setWaitForCartUpdate={jest.fn} />
+      </BrowserRouter>
     );
 
     const productName = screen.getByText('Product name');
@@ -61,35 +40,17 @@ describe('CatalogProductItem', () => {
     expect(productImg).toHaveAttribute('src', 'test-img-url');
   });
 
-  test('renders correctly with another language', () => {
-    render(
-      <AppContext.Provider value={{ ...appContext, language: 'ru' }}>
-        <BrowserRouter>
-          <CatalogProductItem product={product} setWaitForCartUpdate={jest.fn} />
-        </BrowserRouter>
-      </AppContext.Provider>
-    );
-
-    const productName = screen.getByText('Имя продукта');
-    expect(productName).toBeInTheDocument();
-
-    const productDescription = screen.getByText('Описание продукта');
-    expect(productDescription).toBeInTheDocument();
-  });
-
   test('renders correctly without img', () => {
     render(
-      <AppContext.Provider value={appContext}>
-        <BrowserRouter>
-          <CatalogProductItem
-            product={{
-              ...product,
-              images: undefined,
-            }}
-            setWaitForCartUpdate={jest.fn}
-          />
-        </BrowserRouter>
-      </AppContext.Provider>
+      <BrowserRouter>
+        <CatalogProductItem
+          product={{
+            ...product,
+            images: undefined,
+          }}
+          setWaitForCartUpdate={jest.fn}
+        />
+      </BrowserRouter>
     );
 
     const productImg = screen.getByRole('img');

@@ -10,7 +10,7 @@ import AppContext from 'context';
 
 interface UserAddressesProps {
   user: Customer;
-  setUser: Dispatch<SetStateAction<Customer>>;
+  setUser: Dispatch<SetStateAction<Customer | undefined>>;
 }
 
 interface AddressFormData {
