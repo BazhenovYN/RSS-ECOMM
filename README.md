@@ -19,14 +19,18 @@ Project is created with:
 * [TypeScript](https://www.typescriptlang.org/)
 * [SASS](https://sass-lang.com/)
 * [Create React App](https://create-react-app.dev/)
+* [MUI](https://mui.com/)
+* [React Hook Form](https://www.react-hook-form.com/)
+* [React Router](https://reactrouter.com/)
 * [Commercetools](https://commercetools.com/)
 
 ## Code of conduct
 ### Branching strategy
-* Create a new branch for the current sprint (e.g., feat/sprint_3) from the previous sprint's branch (e.g., feat/sprint_2). For the first sprint use develop branch as a sprint branch.
+* Create a new branch for the current sprint (e.g., `release/catalog-product-profile`) from the `develop` branch.
 * For each task, create a new branch from the sprint branch, make the changes, and create a pull request to merge the changes back into the sprint branch after a code review.
-* At the end of the sprint, create a pull request from the current sprint's branch (e.g., feat/sprint_3) to the previous sprint's branch (e.g., feat/sprint_2).
-Share the pull request link with the mentor for review and evaluation.
+* At the end of the sprint, create a pull request from the current sprint's branch (e.g., `release/catalog-product-profile`) to the `develop` branch.
+* Once the pull request has been reviewed and approved, merge the current sprint's branch (e.g., `release/catalog-product-profile`) into the `develop` branch.
+* Share the pull request link with the mentor for review and evaluation.
 
 ### Branch: 
 Template: `type/<issue-key-in-kebab-case>-<issue-summary-in-kebab-case>`

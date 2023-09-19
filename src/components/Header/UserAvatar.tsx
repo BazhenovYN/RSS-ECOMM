@@ -8,15 +8,13 @@ import { logout } from 'services/sdk/customer';
 
 function UserProfileButton() {
   const appContext = useContext(AppContext);
-  const setIsAuth = appContext?.setIsAuth;
+  const signOutUser = appContext?.signOutUser;
 
   const navigate = useNavigate();
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     logout();
-    if (setIsAuth) {
-      setIsAuth(false);
-    }
+    if (signOutUser) signOutUser();
     navigate('/');
   };
 

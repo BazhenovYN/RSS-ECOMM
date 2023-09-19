@@ -5,7 +5,7 @@ import PasswordField from 'components/PasswordField';
 import AddressFields from 'components/AddressFields';
 import DateOfBirthField from 'components/DateOfBirthField';
 import { type ChangeEvent, useState, useContext } from 'react';
-import { createCustomer, login } from 'services/sdk/customer';
+import { createCustomer } from 'services/sdk/customer';
 import { RegistrationFormData } from 'types/types';
 import { useNavigate } from 'react-router-dom';
 import AppContext from 'context';
@@ -42,8 +42,9 @@ function RegistrationForm() {
   } = methods;
 
   const appContext = useContext(AppContext);
-  const setIsAuth = appContext?.setIsAuth;
   const setMessage = appContext?.setMessage;
+  const cart = appContext?.cart;
+  const signInUser = appContext?.signInUser;
 
   const [disabledAddress, setDisabledAddress] = useState(false);
 
@@ -58,11 +59,14 @@ function RegistrationForm() {
 
   const onSubmit = async (data: RegistrationFormData) => {
     try {
-      await createCustomer(data);
-      await login(data.email, data.password);
-      if (setIsAuth) setIsAuth(true);
-      navigate('/');
+      await createCustomer(data, cart?.anonymousId);
       if (setMessage) setMessage({ severity: 'success', text: 'The account was successfully created' });
+      if (signInUser) {
+        const successfulLogin = await signInUser(data.email, data.password);
+        if (successfulLogin) {
+          navigate('/');
+        }
+      }
     } catch (error) {
       if (setMessage) setMessage({ severity: 'error', text: error instanceof Error ? error.message : 'Unknown error' });
     }

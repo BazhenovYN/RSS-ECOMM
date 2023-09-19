@@ -99,6 +99,12 @@ const validationSchemes = {
       message: 'Date of birth is required',
     },
   },
+  promoCode: {
+    required: {
+      value: true,
+      message: 'Promo code must not be empty',
+    },
+  },
 };
 
 export default validationSchemes;

@@ -9,7 +9,7 @@ import { updateUserPassword } from 'services/sdk/customer';
 import { PasswordUpdate } from 'types/types';
 
 interface IProps {
-  user: Customer | undefined;
+  user: Customer;
   setUser: Dispatch<SetStateAction<Customer | undefined>>;
 }
 
@@ -28,10 +28,6 @@ function UserPassword({ user, setUser }: IProps) {
   const [editMode, setEditMode] = useState(false);
 
   const onSubmit = async (data: PasswordUpdate): Promise<void> => {
-    if (!user?.email || !user?.version) {
-      if (setMessage) setMessage({ severity: 'error', text: 'User data not found' });
-      return;
-    }
     try {
       const updatedUser = await updateUserPassword(user.email, data, user.version);
       setUser(updatedUser);

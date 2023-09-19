@@ -10,7 +10,7 @@ import { updateUserCustomer } from 'services/sdk/customer';
 import type { UserDataUpdate } from 'types/types';
 
 interface IProps {
-  user: Customer | undefined;
+  user: Customer;
   setUser: Dispatch<SetStateAction<Customer | undefined>>;
 }
 
@@ -29,10 +29,6 @@ function UserInformation({ user, setUser }: IProps) {
   const [editMode, setEditMode] = useState(false);
 
   const onSubmit = async (data: UserDataUpdate) => {
-    if (!user?.version) {
-      if (setMessage) setMessage({ severity: 'error', text: 'User data not found' });
-      return;
-    }
     try {
       const updatedUser = await updateUserCustomer(data, user.version);
       setUser(updatedUser);
@@ -44,10 +40,10 @@ function UserInformation({ user, setUser }: IProps) {
   };
 
   useEffect(() => {
-    if (user?.firstName) setValue('firstName', user.firstName);
-    if (user?.lastName) setValue('lastName', user.lastName);
-    if (user?.dateOfBirth) setValue('dateOfBirth', dayjs(user.dateOfBirth));
-    if (user?.email) setValue('email', user.email);
+    if (user.firstName) setValue('firstName', user.firstName);
+    if (user.lastName) setValue('lastName', user.lastName);
+    if (user.dateOfBirth) setValue('dateOfBirth', dayjs(user.dateOfBirth));
+    setValue('email', user.email);
   }, [user, setValue]);
 
   return (
@@ -116,10 +112,10 @@ function UserInformation({ user, setUser }: IProps) {
                 onClick={() => {
                   setEditMode(false);
                   reset({
-                    firstName: user?.firstName,
-                    lastName: user?.lastName,
-                    dateOfBirth: dayjs(user?.dateOfBirth),
-                    email: user?.email,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    dateOfBirth: dayjs(user.dateOfBirth),
+                    email: user.email,
                   });
                 }}>
                 Cancel

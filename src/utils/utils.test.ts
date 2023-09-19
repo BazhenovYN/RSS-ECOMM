@@ -1,4 +1,4 @@
-import { isPostCodeValid } from './utils';
+import { findLineItemInList, isPostCodeValid } from './utils';
 
 describe('util isPostCodeValid is correct', () => {
   const testData = [
@@ -17,5 +17,17 @@ describe('util isPostCodeValid is correct', () => {
     test(`test: ${data.postalCode}`, () => {
       expect(isPostCodeValid(data.postalCode, 'RU')).toEqual(data.expected);
     });
+  });
+});
+
+describe('util hasItemInCart is correct', () => {
+  const cartItems = [{ productId: 'test-product-id', id: 'test-line-item-id', quantity: 1 }];
+
+  test('correct if product in cart', () => {
+    expect(findLineItemInList(cartItems, 'test-product-id')).toEqual(cartItems[0]);
+  });
+
+  test('correct if product not in cart', () => {
+    expect(findLineItemInList(cartItems, 'test-product-id-02')).toEqual(undefined);
   });
 });

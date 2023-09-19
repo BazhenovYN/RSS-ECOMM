@@ -9,7 +9,7 @@ import { AddressData } from 'types/types';
 
 interface AddressCardProps {
   address: AddressData;
-  userVersion: number | undefined;
+  userVersion: number;
   setUser: Dispatch<SetStateAction<Customer | undefined>>;
   setRedactedAddress: Dispatch<SetStateAction<AddressData>>;
   handleEdit: () => void;
@@ -20,10 +20,6 @@ function AddressCard({ address, userVersion, setUser, setRedactedAddress, handle
   const setMessage = appContext?.setMessage;
 
   const onDeleteClick = async () => {
-    if (!userVersion) {
-      if (setMessage) setMessage({ severity: 'error', text: 'User data not found' });
-      return;
-    }
     try {
       const updatedUser = await deleteAddress(address, userVersion);
       if (setMessage) setMessage({ severity: 'success', text: 'The address was successfully deleted' });

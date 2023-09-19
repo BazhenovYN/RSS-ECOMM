@@ -1,4 +1,4 @@
-import { Attribute, Category, Image, LocalizedString } from '@commercetools/platform-sdk';
+import { Attribute, Category, Image, LocalizedString, ShoppingList } from '@commercetools/platform-sdk';
 import dayjs from 'dayjs';
 
 export interface RegistrationFormData {
@@ -63,7 +63,7 @@ export interface PasswordUpdate {
   confirmNewPassword: string;
 }
 
-export type AttributesList = Record<string, Set<string>>;
+export type AttributesList = Record<string, { label: string; list: Set<string> }>;
 
 export type SelectedAttributesList = Record<string, string>;
 
@@ -81,4 +81,16 @@ export interface SearchParams {
   sortingDirection: string;
   selectedAttributes?: SelectedAttributesList;
   categoryId?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export interface SearchData {
+  products: Product[];
+  total: number;
+}
+
+export interface WishList {
+  products: Product[];
+  shoppingList: ShoppingList;
 }

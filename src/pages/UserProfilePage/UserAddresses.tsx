@@ -9,7 +9,7 @@ import { addAddress, editAddress, getAddressesData } from 'services/sdk/customer
 import AppContext from 'context';
 
 interface UserAddressesProps {
-  user: Customer | undefined;
+  user: Customer;
   setUser: Dispatch<SetStateAction<Customer | undefined>>;
 }
 
@@ -17,7 +17,7 @@ interface AddressFormData {
   address: AddressData;
 }
 
-type FormSubmitAction = (address: AddressData, version: number) => Promise<Customer | undefined>;
+type FormSubmitAction = (address: AddressData, version: number) => Promise<Customer>;
 
 const defaultAddress: AddressData = {
   street: '',
@@ -73,10 +73,6 @@ function UserAddresses({ user, setUser }: UserAddressesProps) {
   };
 
   const handleFormSubmit = async (addressFormData: AddressFormData) => {
-    if (!user?.version) {
-      if (setMessage) setMessage({ severity: 'error', text: 'User data not found' });
-      return;
-    }
     try {
       const updatedUser = await formAction(addressFormData.address, user.version);
       if (setMessage) setMessage({ severity: 'success', text: formSuccessMessage });
@@ -95,7 +91,7 @@ function UserAddresses({ user, setUser }: UserAddressesProps) {
             <AddressCard
               address={address}
               setUser={setUser}
-              userVersion={user?.version}
+              userVersion={user.version}
               setRedactedAddress={setRedactedAddress}
               handleEdit={handleEditAddressFormOpen}
             />

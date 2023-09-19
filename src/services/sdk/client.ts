@@ -1,3 +1,4 @@
+import cookieNames from 'constants/cookieNames';
 import {
   ClientBuilder,
   type AuthMiddlewareOptions,
@@ -5,10 +6,11 @@ import {
   Client,
   PasswordAuthMiddlewareOptions,
   TokenStore,
+  TokenCache,
 } from '@commercetools/sdk-client-v2';
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import getEnvironmentVariable from 'utils/getEnvironmentVariable';
-import { deleteCookie, getCookie, getCookieExpiration, setCookie } from 'utils/cookie';
+import { deleteCookie, getCookie, setCookie } from 'utils/cookie';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 
 export const projectKey: string = getEnvironmentVariable('REACT_APP_PROJECT_KEY');
@@ -36,11 +38,29 @@ const httpMiddlewareOptions: HttpMiddlewareOptions = {
 const appClient: Client = new ClientBuilder()
   .withClientCredentialsFlow(authMiddlewareOptions)
   .withHttpMiddleware(httpMiddlewareOptions)
-  .withLoggerMiddleware()
   .build();
 
 export const getAppApiRoot = (): ByProjectKeyRequestBuilder => {
   return createApiBuilderFromCtpClient(appClient).withProjectKey({ projectKey });
+};
+
+const createTokenCache = (): TokenCache => {
+  return {
+    get: () => {
+      return {
+        token: '',
+        expirationTime: 0,
+        refreshToken: '',
+      };
+    },
+    set: (tokenStore: TokenStore) => {
+      const msIn200days = 17280000000;
+      setCookie(cookieNames.authToken, tokenStore.token, tokenStore.expirationTime);
+      if (tokenStore.refreshToken) {
+        setCookie(cookieNames.refreshAuthToken, tokenStore.refreshToken, new Date().getTime() + msIn200days);
+      }
+    },
+  };
 };
 
 const customerClientBuilder = (email: string, password: string): Client => {
@@ -55,22 +75,7 @@ const customerClientBuilder = (email: string, password: string): Client => {
       },
     },
     scopes: customerScopes,
-    tokenCache: {
-      get: (): TokenStore => {
-        return {
-          token: getCookie('authToken') || '',
-          expirationTime: getCookieExpiration('authToken') || 0,
-          refreshToken: getCookie('refreshToken') || undefined,
-        };
-      },
-      set: (tokenStore: TokenStore): void => {
-        const msInYear = 31536000000;
-        setCookie('authToken', tokenStore.token, tokenStore.expirationTime);
-        if (tokenStore.refreshToken) {
-          setCookie('refreshToken', tokenStore.refreshToken, new Date().getTime() + msInYear);
-        }
-      },
-    },
+    tokenCache: createTokenCache(),
   };
 
   return new ClientBuilder()
@@ -79,35 +84,65 @@ const customerClientBuilder = (email: string, password: string): Client => {
     .build();
 };
 
-let customerApiRoot: ByProjectKeyRequestBuilder | null = null;
-
-const checkApiRoot = async (testedApiRoot: ByProjectKeyRequestBuilder): Promise<void> => {
-  await testedApiRoot.me().get().execute();
+export const removeAuthTokens = (): void => {
+  deleteCookie(cookieNames.authToken);
+  deleteCookie(cookieNames.refreshAuthToken);
 };
 
-export const removeCustomerApiRoot = (): void => {
-  customerApiRoot = null;
-  deleteCookie('authToken');
-  deleteCookie('refreshToken');
+export const getApiRootByRefreshToken = (refreshToken: string) => {
+  const client = new ClientBuilder()
+    .withRefreshTokenFlow({
+      ...authMiddlewareOptions,
+      credentials: {
+        clientId,
+        clientSecret,
+      },
+      refreshToken,
+      tokenCache: createTokenCache(),
+    })
+    .withHttpMiddleware(httpMiddlewareOptions)
+    .build();
+
+  return createApiBuilderFromCtpClient(client).withProjectKey({ projectKey });
 };
 
-const createCustomerApiRoot = (email: string, password: string): ByProjectKeyRequestBuilder => {
+export const getApiRootByToken = (token: string) => {
+  const client = new ClientBuilder()
+    .withExistingTokenFlow(`Bearer ${token}`, { force: false })
+    .withHttpMiddleware(httpMiddlewareOptions)
+    .build();
+
+  return createApiBuilderFromCtpClient(client).withProjectKey({ projectKey });
+};
+
+export const getCustomerApiRootByAuthorization = (
+  email: string = 'default',
+  password: string = 'default'
+): ByProjectKeyRequestBuilder => {
   const customerClient: Client = customerClientBuilder(email, password);
   return createApiBuilderFromCtpClient(customerClient).withProjectKey({ projectKey });
 };
 
-export const getCustomerApiRoot = async (
-  email: string = 'default',
-  password: string = 'default'
-): Promise<ByProjectKeyRequestBuilder | null> => {
-  customerApiRoot = createCustomerApiRoot(email, password);
+export const getAnonymousApiRoot = (): ByProjectKeyRequestBuilder => {
+  const anonymousClient = new ClientBuilder()
+    .withAnonymousSessionFlow({
+      ...authMiddlewareOptions,
+      scopes: customerScopes,
+      tokenCache: createTokenCache(),
+    })
+    .withHttpMiddleware(httpMiddlewareOptions)
+    .build();
+  return createApiBuilderFromCtpClient(anonymousClient).withProjectKey({ projectKey });
+};
 
-  try {
-    await checkApiRoot(customerApiRoot);
-  } catch (error) {
-    removeCustomerApiRoot();
-    throw error;
-  }
+export const getCustomerApiRoot = (email?: string, password?: string): ByProjectKeyRequestBuilder => {
+  if (email && password) return getCustomerApiRootByAuthorization(email, password);
 
-  return customerApiRoot;
+  const token = getCookie(cookieNames.authToken);
+  if (token) return getApiRootByToken(token);
+
+  const refreshToken = getCookie(cookieNames.refreshAuthToken);
+  if (refreshToken) return getApiRootByRefreshToken(refreshToken);
+
+  return getAnonymousApiRoot();
 };

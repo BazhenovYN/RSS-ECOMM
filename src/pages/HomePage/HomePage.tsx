@@ -1,7 +1,8 @@
+import { Link } from 'react-router-dom';
 import { Box, Stack, Typography } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import { Link } from 'react-router-dom';
+import PromoCodeList from 'components/PromoCodeList';
 
 function HomePage() {
   return (
@@ -9,6 +10,7 @@ function HomePage() {
       <Typography component="h2" variant="h2" mb={2}>
         Home
       </Typography>
+      <PromoCodeList />
       <Stack spacing={1}>
         <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
           <PersonIcon />
